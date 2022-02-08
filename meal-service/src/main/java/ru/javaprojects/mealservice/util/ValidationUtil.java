@@ -2,26 +2,28 @@ package ru.javaprojects.mealservice.util;
 
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
+import ru.javaprojects.mealservice.to.MealTo;
+import ru.javaprojects.mealservice.util.exception.IllegalRequestDataException;
 
 public class ValidationUtil {
 
     private ValidationUtil() {
     }
 
-//    public static void checkNew(HasId bean) {
-//        if (!bean.isNew()) {
-//            throw new IllegalRequestDataException(bean + " must be new (id=null)");
-//        }
-//    }
+    public static void checkNew(MealTo mealTo) {
+        if (!(mealTo.getId() == null)) {
+            throw new IllegalRequestDataException(mealTo + " must be new (id=null)");
+        }
+    }
 
-//    public static void assureIdConsistent(HasId bean, int id) {
-////      conservative when you reply, but accept liberally (http://stackoverflow.com/a/32728226/548473)
-//        if (bean.isNew()) {
-//            bean.setId(id);
-//        } else if (bean.id() != id) {
-//            throw new IllegalRequestDataException(bean + " must be with id=" + id);
-//        }
-//    }
+    public static void assureIdConsistent(MealTo mealTo, long id) {
+//      conservative when you reply, but accept liberally (http://stackoverflow.com/a/32728226/548473)
+        if (mealTo.getId() == null) {
+            mealTo.setId(id);
+        } else if (mealTo.getId() != id) {
+            throw new IllegalRequestDataException(mealTo + " must be with id=" + id);
+        }
+    }
 
 //    public static String getMessage(Throwable e) {
 //        return e.getMessage() != null ? e.getMessage() : e.getClass().getName();

@@ -14,7 +14,7 @@ import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.repository.MealRepository;
 import ru.javaprojects.mealservice.to.MealTo;
 import ru.javaprojects.mealservice.util.MessageSender;
-import ru.javaprojects.mealservice.util.NotFoundException;
+import ru.javaprojects.mealservice.util.exception.NotFoundException;
 import ru.javaprojects.mealservice.util.ValidationUtil;
 
 import javax.validation.ConstraintViolationException;
@@ -108,8 +108,8 @@ class MealServiceTest {
     }
 
     @Test
-    void getAll() {
-        Page<Meal> mealPage = service.getAll(PAGEABLE, USER1_ID);
+    void getPage() {
+        Page<Meal> mealPage = service.getPage(PAGEABLE, USER1_ID);
         assertThat(mealPage).usingRecursiveComparison().isEqualTo(PAGE);
         assertThat(mealPage.getContent()).usingRecursiveComparison().isEqualTo(List.of(meal7, meal6, meal5, meal4, meal3));
     }

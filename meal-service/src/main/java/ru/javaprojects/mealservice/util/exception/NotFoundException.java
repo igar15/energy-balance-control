@@ -1,4 +1,4 @@
-package ru.javaprojects.mealservice.util;
+package ru.javaprojects.mealservice.util.exception;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {

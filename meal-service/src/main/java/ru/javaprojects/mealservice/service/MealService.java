@@ -9,7 +9,7 @@ import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.repository.MealRepository;
 import ru.javaprojects.mealservice.to.MealTo;
 import ru.javaprojects.mealservice.util.MessageSender;
-import ru.javaprojects.mealservice.util.NotFoundException;
+import ru.javaprojects.mealservice.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,7 +51,7 @@ public class MealService {
         repository.delete(meal);
     }
 
-    public Page<Meal> getAll(Pageable pageable, long userId) {
+    public Page<Meal> getPage(Pageable pageable, long userId) {
         Assert.notNull(pageable, "pageable must not be null");
         return repository.findAllByUserIdOrderByDateTimeDesc(pageable, userId);
     }
