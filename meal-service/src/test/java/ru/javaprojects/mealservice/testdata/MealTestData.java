@@ -1,10 +1,15 @@
 package ru.javaprojects.mealservice.testdata;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.to.MealTo;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.List;
 
 import static java.time.LocalDateTime.*;
 import static java.time.Month.*;
@@ -27,11 +32,22 @@ public class MealTestData {
     public static final Meal user2Meal1 = new Meal(USER2_MEAL_ID, of(2022, FEBRUARY, 5, 9, 30), "2User Breakfast", 800, USER2_ID);
     public static final Meal user2Meal2 = new Meal(USER2_MEAL_ID + 1, of(2022, FEBRUARY, 5, 13, 20), "2User Lunch", 1500, USER2_ID);
 
+    public static final Pageable PAGEABLE = PageRequest.of(0, 5);
+    public static final Page<Meal> PAGE = new PageImpl<>(List.of(meal7, meal6, meal5, meal4, meal3), PAGEABLE, 7);
+
     public static Meal getNew() {
         return new Meal(null, LocalDateTime.of(2022, FEBRUARY, 1, 15, 0), "new meal", 600, USER1_ID);
     }
 
     public static MealTo getNewTo() {
         return new MealTo(null, LocalDateTime.of(2022, FEBRUARY, 1, 15, 0), "new meal", 600);
+    }
+
+    public static Meal getUpdated() {
+        return new Meal(MEAL1_ID, of(2022, FEBRUARY, 3, 14, 30), "Updated description", 400, USER1_ID);
+    }
+
+    public static MealTo getUpdatedTo() {
+        return new MealTo(MEAL1_ID, of(2022, FEBRUARY, 3, 14, 30), "Updated description", 400);
     }
 }
