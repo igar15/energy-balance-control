@@ -2,6 +2,7 @@ package ru.javaprojects.mealservice.web.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,8 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.service.MealService;
 import ru.javaprojects.mealservice.to.MealTo;
-import ru.javaprojects.mealservice.util.SecurityUtil;
+import ru.javaprojects.mealservice.web.security.JwtProvider;
+import ru.javaprojects.mealservice.web.security.SecurityUtil;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.time.LocalDate;
 
@@ -29,6 +32,20 @@ public class MealRestController {
     public MealRestController(MealService service) {
         this.service = service;
     }
+
+    // ----REMOVE THIS LATER----->>>
+
+    @Autowired
+    private JwtProvider jwtProvider;
+
+    @GetMapping("/token")
+    @ResponseStatus(HttpStatus.OK)
+    public void createAuthToken(HttpServletResponse response) {
+        String token = jwtProvider.generateAuthorizationToken("200000","ROLE_USER");
+        response.addHeader("token", token);
+    }
+
+    // ----REMOVE THIS LATER-----<<<<
 
     @GetMapping
     public Page<Meal> getPage(Pageable pageable) {
@@ -63,7 +80,7 @@ public class MealRestController {
         service.delete(id, userId);
     }
 
-    @GetMapping("/total-calories")
+    @GetMapping(value = "/total-calories", produces = MediaType.TEXT_PLAIN_VALUE)
     public Integer getTotalCalories(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         long userId = SecurityUtil.authUserId();
         log.info("getTotalCalories for date {} for user {}", date, userId);

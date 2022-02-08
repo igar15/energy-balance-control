@@ -1,13 +1,12 @@
 package ru.javaprojects.mealservice.web.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,13 +27,13 @@ import static ru.javaprojects.mealservice.util.exception.ErrorType.BAD_TOKEN_ERR
 import static ru.javaprojects.mealservice.web.AppExceptionHandler.EXCEPTION_BAD_TOKEN;
 
 @Component
-public class AuthorizationFilter extends OncePerRequestFilter {
+public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final Environment environment;
     private final JwtProvider jwtProvider;
     private final ObjectMapper mapper = JacksonObjectMapper.getMapper();
 
-    public AuthorizationFilter(Environment environment, JwtProvider jwtProvider) {
+    public JwtAuthorizationFilter(Environment environment, JwtProvider jwtProvider) {
         this.environment = environment;
         this.jwtProvider = jwtProvider;
     }
@@ -57,8 +56,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                     List<GrantedAuthority> authorities = jwtProvider.getAuthorities(token);
                     Authentication authentication = jwtProvider.getAuthentication(userId, authorities, request);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-                else {
+                } else {
                     SecurityContextHolder.clearContext();
                 }
             } catch (JWTVerificationException e) {

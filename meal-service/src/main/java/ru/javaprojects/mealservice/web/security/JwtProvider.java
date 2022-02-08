@@ -34,26 +34,29 @@ public class JwtProvider {
         this.environment = environment;
     }
 
-    public  String generateAuthorizationToken(AuthorizedUser authorizedUser) {
-        String[] claims = getClaimsFromUser(authorizedUser);
+    //-----------DELETE AFTER CREATING AUTHENTICATION SERVICE------------------------>>>
+
+    public  String generateAuthorizationToken(String userId, String ... authorities) {
         return JWT.create()
                 .withIssuer(JAVA_PROJECTS)
                 .withAudience(REWARD_CALCULATOR_AUDIENCE)
                 .withIssuedAt(new Date())
-                .withSubject(String.valueOf(authorizedUser.getId()))
-                .withArrayClaim("authorities", claims)
+                .withSubject(userId)
+                .withArrayClaim("authorities", authorities)
                 .withExpiresAt(new Date(System.currentTimeMillis() + AUTHORIZATION_TOKEN_EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(Objects.requireNonNull(environment.getProperty("jwt.secretKey"))));
     }
+
+    //-----------DELETE AFTER CREATING AUTHENTICATION SERVICE------------------------<<<
 
     public List<GrantedAuthority> getAuthorities(String token) {
         String[] claims = getClaimsFromToken(token);
         return Arrays.stream(claims).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
-    public Authentication getAuthentication(String userName, List<GrantedAuthority> authorities, HttpServletRequest request) {
+    public Authentication getAuthentication(String userId, List<GrantedAuthority> authorities, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(userName, null, authorities);
+                new UsernamePasswordAuthenticationToken(userId, null, authorities);
         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         return usernamePasswordAuthenticationToken;
     }
@@ -71,11 +74,6 @@ public class JwtProvider {
         JWTVerifier jwtVerifier = getJWTVerifier();
         Date expirationDate = jwtVerifier.verify(token).getExpiresAt();
         return expirationDate.before(new Date());
-    }
-
-    private String[] getClaimsFromUser(AuthorizedUser authorizedUser) {
-        return authorizedUser.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority).toArray(String[]::new);
     }
 
     private String[] getClaimsFromToken(String token) {

@@ -10,17 +10,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
+import ru.javaprojects.mealservice.MealMatcher;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.repository.MealRepository;
 import ru.javaprojects.mealservice.to.MealTo;
 import ru.javaprojects.mealservice.util.MessageSender;
-import ru.javaprojects.mealservice.util.exception.NotFoundException;
 import ru.javaprojects.mealservice.util.ValidationUtil;
+import ru.javaprojects.mealservice.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 import static java.time.LocalDateTime.of;
 import static java.time.Month.FEBRUARY;
@@ -49,7 +49,7 @@ class MealServiceTest {
         long newId = created.id();
         Meal newMeal = getNew();
         newMeal.setId(newId);
-        assertThat(created).usingRecursiveComparison().isEqualTo(newMeal);
+        MealMatcher.assertMatch(created, newMeal);
     }
 
     @Test
@@ -76,7 +76,7 @@ class MealServiceTest {
     @Test
     void update() {
         service.update(getUpdatedTo(), USER1_ID);
-        assertThat(repository.findById(MEAL1_ID).get()).usingRecursiveComparison().isEqualTo(getUpdated());
+        MealMatcher.assertMatch(repository.findById(MEAL1_ID).get(), getUpdated());
     }
 
     @Test
@@ -111,7 +111,7 @@ class MealServiceTest {
     void getPage() {
         Page<Meal> mealPage = service.getPage(PAGEABLE, USER1_ID);
         assertThat(mealPage).usingRecursiveComparison().isEqualTo(PAGE);
-        assertThat(mealPage.getContent()).usingRecursiveComparison().isEqualTo(List.of(meal7, meal6, meal5, meal4, meal3));
+        MealMatcher.assertMatch(mealPage.getContent(), meal7, meal6, meal5, meal4, meal3);
     }
 
     @Test
