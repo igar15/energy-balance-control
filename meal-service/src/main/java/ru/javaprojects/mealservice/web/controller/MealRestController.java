@@ -80,7 +80,7 @@ public class MealRestController {
         service.delete(id, userId);
     }
 
-    @GetMapping(value = "/total-calories", produces = MediaType.TEXT_PLAIN_VALUE)
+    @GetMapping("/total-calories")
     public Integer getTotalCalories(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         long userId = SecurityUtil.authUserId();
         log.info("getTotalCalories for date {} for user {}", date, userId);

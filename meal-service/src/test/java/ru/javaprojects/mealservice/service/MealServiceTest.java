@@ -94,6 +94,7 @@ class MealServiceTest {
     @Test
     void delete() {
         service.delete(MEAL1_ID, USER1_ID);
+        assertThrows(NotFoundException.class, () -> repository.findById(MEAL1_ID).orElseThrow((() -> new NotFoundException("Not found meal with id=" + MEAL1_ID))));
         assertTrue(() -> repository.findById(MEAL1_ID).isEmpty());
     }
 
@@ -117,13 +118,13 @@ class MealServiceTest {
     @Test
     void getTotalCalories() {
         int totalCalories = service.getTotalCalories(LocalDate.of(2022, FEBRUARY, 6), USER1_ID);
-        assertEquals(2100, totalCalories);
+        assertEquals(Integer.parseInt(TOTAL_CALORIES), totalCalories);
     }
 
     @Test
     void getTotalCaloriesWhenNoMeals() {
         int totalCalories = service.getTotalCalories(LocalDate.of(2022, FEBRUARY, 20), USER1_ID);
-        assertEquals(0, totalCalories);
+        assertEquals(Integer.parseInt(ZERO_CALORIES), totalCalories);
     }
 
     @Test

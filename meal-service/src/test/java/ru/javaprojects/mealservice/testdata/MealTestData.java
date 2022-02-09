@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.to.MealTo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
@@ -17,7 +18,6 @@ import static ru.javaprojects.mealservice.model.Meal.*;
 
 public class MealTestData {
     public static final long MEAL1_ID = START_SEQ;
-    public static final long USER2_MEAL_ID = START_SEQ + 7;
     public static final long NOT_FOUND = 10;
     public static final long USER1_ID = 200000;
     public static final long USER2_ID = 200001;
@@ -31,10 +31,17 @@ public class MealTestData {
     public static final Meal meal5 = new Meal(MEAL1_ID + 4, of(2022, FEBRUARY, 6, 13, 20), "1User Lunch", 1100, USER1_ID);
     public static final Meal meal6 = new Meal(MEAL1_ID + 5, of(2022, FEBRUARY, 6, 19, 40), "1User Dinner", 600, USER1_ID);
     public static final Meal meal7 = new Meal(MEAL1_ID + 6, of(2022, FEBRUARY, 7, 0, 0), "1User Night Eating", 100, USER1_ID);
-    public static final Meal user2Meal1 = new Meal(USER2_MEAL_ID, of(2022, FEBRUARY, 5, 9, 30), "2User Breakfast", 800, USER2_ID);
-    public static final Meal user2Meal2 = new Meal(USER2_MEAL_ID + 1, of(2022, FEBRUARY, 5, 13, 20), "2User Lunch", 1500, USER2_ID);
 
-    public static final Pageable PAGEABLE = PageRequest.of(0, 5);
+    public static final String INVALID_MEAL_DESCRIPTION = " ";
+    public static final int INVALID_MEAL_CALORIES = 6000;
+
+    public static final String DATE = "2022-02-06";
+    public static final String TOTAL_CALORIES = "2100";
+    public static final String ZERO_CALORIES = "0";
+
+    public static final String PAGE_NUMBER = "0";
+    public static final String PAGE_SIZE = "5";
+    public static final Pageable PAGEABLE = PageRequest.of(Integer.parseInt(PAGE_NUMBER), Integer.parseInt(PAGE_SIZE));
     public static final Page<Meal> PAGE = new PageImpl<>(List.of(meal7, meal6, meal5, meal4, meal3), PAGEABLE, 7);
 
     public static Meal getNew() {

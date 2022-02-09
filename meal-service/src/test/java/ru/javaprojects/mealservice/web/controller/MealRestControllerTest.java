@@ -5,34 +5,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.mealservice.MealMatcher;
 import ru.javaprojects.mealservice.TestUtil;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.repository.MealRepository;
-import ru.javaprojects.mealservice.service.MealService;
 import ru.javaprojects.mealservice.to.MealTo;
 import ru.javaprojects.mealservice.util.exception.ErrorType;
+import ru.javaprojects.mealservice.util.exception.NotFoundException;
 import ru.javaprojects.mealservice.web.json.JsonUtil;
-import ru.javaprojects.mealservice.web.security.JwtProvider;
 
+import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.mealservice.testdata.MealTestData.*;
-import static ru.javaprojects.mealservice.util.exception.ErrorType.UNAUTHORIZED_ERROR;
-import static ru.javaprojects.mealservice.util.exception.ErrorType.VALIDATION_ERROR;
+import static ru.javaprojects.mealservice.util.exception.ErrorType.*;
+import static ru.javaprojects.mealservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_DATE_TIME;
 
 @SpringBootTest
 @Transactional
@@ -59,8 +57,8 @@ class MealRestControllerTest {
     @WithMockCustomUser(userId = USER1_ID_STRING)
     void getPage() throws Exception {
         ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("page", "0")
-                .param("size", "5"))
+                .param("page", PAGE_NUMBER)
+                .param("size", PAGE_SIZE))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -71,8 +69,8 @@ class MealRestControllerTest {
     @Test
     void getPageUnAuth() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("page", "0")
-                .param("size", "5"))
+                .param("page", PAGE_NUMBER)
+                .param("size", PAGE_SIZE))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR));
     }
@@ -107,7 +105,7 @@ class MealRestControllerTest {
     @WithMockCustomUser(userId = USER1_ID_STRING)
     void createInvalid() throws Exception {
         MealTo newMealTo = getNewTo();
-        newMealTo.setDescription("s");
+        newMealTo.setDescription(INVALID_MEAL_DESCRIPTION);
         mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newMealTo)))
@@ -117,14 +115,168 @@ class MealRestControllerTest {
     }
 
     @Test
-    void update() {
+    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @Transactional(propagation = Propagation.NEVER)
+    void createDuplicate() throws Exception {
+        MealTo newMealTo = getNewTo();
+        newMealTo.setDateTime(meal1.getDateTime());
+        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newMealTo)))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(errorType(DATA_ERROR))
+                .andExpect(detailMessage(EXCEPTION_DUPLICATE_DATE_TIME));
     }
 
     @Test
-    void delete() {
+    @WithMockCustomUser(userId = USER1_ID_STRING)
+    void update() throws Exception {
+        MealTo updatedTo = getUpdatedTo();
+        mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedTo)))
+                .andExpect(status().isNoContent());
+        MealMatcher.assertMatch(repository.findById(MEAL1_ID).get(), getUpdated());
     }
 
     @Test
-    void getTotalCalories() {
+    @WithMockCustomUser(userId = USER1_ID_STRING)
+    void updateIdNotConsistent() throws Exception {
+        MealTo updatedTo = getUpdatedTo();
+        updatedTo.setId(MEAL1_ID + 1);
+        mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedTo)))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER1_ID_STRING)
+    void updateNotFound() throws Exception {
+        MealTo updatedTo = getUpdatedTo();
+        updatedTo.setId(NOT_FOUND);
+        mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedTo)))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(DATA_NOT_FOUND));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER2_ID_STRING)
+    void updateNotOwn() throws Exception {
+        MealTo updatedTo = getUpdatedTo();
+        mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedTo)))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(DATA_NOT_FOUND));
+    }
+
+    @Test
+    void updateUnAuth() throws Exception {
+        MealTo updatedTo = getUpdatedTo();
+        mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedTo)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(errorType(UNAUTHORIZED_ERROR));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER1_ID_STRING)
+    void updateInvalid() throws Exception {
+        MealTo updatedTo = getUpdatedTo();
+        updatedTo.setCalories(INVALID_MEAL_CALORIES);
+        mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedTo)))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(VALIDATION_ERROR));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @Transactional(propagation = Propagation.NEVER)
+    void updateDuplicate() throws Exception {
+        MealTo updatedTo = getUpdatedTo();
+        updatedTo.setDateTime(meal2.getDateTime());
+        mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedTo)))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(errorType(DATA_ERROR))
+                .andExpect(detailMessage(EXCEPTION_DUPLICATE_DATE_TIME));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER1_ID_STRING)
+    void delete() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete(REST_URL + MEAL1_ID))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+        assertThrows(NotFoundException.class, () -> repository.findById(MEAL1_ID).orElseThrow(() -> new NotFoundException("Not found meal with id=" + MEAL1_ID)));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER1_ID_STRING)
+    void deleteNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(DATA_NOT_FOUND));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER2_ID_STRING)
+    void deleteNotOwn() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete(REST_URL + MEAL1_ID))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(errorType(DATA_NOT_FOUND));
+    }
+
+    @Test
+    void deleteUnAuth() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete(REST_URL + MEAL1_ID))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andExpect(errorType(UNAUTHORIZED_ERROR));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER1_ID_STRING)
+    void getTotalCalories() throws Exception {
+        ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "total-calories")
+                .param("date", DATE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        String totalCalories = actions.andReturn().getResponse().getContentAsString();
+        assertEquals(TOTAL_CALORIES, totalCalories);
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER1_ID_STRING)
+    void getTotalCaloriesWhenNoMeals() throws Exception {
+        ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "total-calories")
+                .param("date", LocalDate.now().toString()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        String totalCalories = actions.andReturn().getResponse().getContentAsString();
+        assertEquals(ZERO_CALORIES, totalCalories);
+    }
+
+    @Test
+    void getTotalCaloriesUnAuth() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "total-calories")
+                .param("date", DATE))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andExpect(errorType(UNAUTHORIZED_ERROR));
     }
 }
