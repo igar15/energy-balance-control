@@ -21,12 +21,11 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
-    public static final String TOKEN_PREFIX = "Bearer ";
-    public static final String AUTHORIZATION_TOKEN_HEADER = "Authorization-Token";
     public static final String JAVA_PROJECTS = "javaprojects.ru";
     public static final String ENERGY_BALANCE_CONTROL_AUDIENCE = "Energy Balance Control System";
     public static final long AUTHORIZATION_TOKEN_EXPIRATION_TIME = 432_000_000; // 5 days
     public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified";
+    public static final String AUTHORITIES = "authorities";
 
     private final Environment environment;
 
@@ -42,7 +41,7 @@ public class JwtProvider {
                 .withAudience(ENERGY_BALANCE_CONTROL_AUDIENCE)
                 .withIssuedAt(new Date())
                 .withSubject(userId)
-                .withArrayClaim("authorities", authorities)
+                .withArrayClaim(AUTHORITIES, authorities)
                 .withExpiresAt(new Date(System.currentTimeMillis() + AUTHORIZATION_TOKEN_EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(Objects.requireNonNull(environment.getProperty("jwt.secretKey"))));
     }
@@ -78,7 +77,7 @@ public class JwtProvider {
 
     private String[] getClaimsFromToken(String token) {
         JWTVerifier verifier = getJWTVerifier();
-        return verifier.verify(token).getClaim("authorities").asArray(String.class);
+        return verifier.verify(token).getClaim(AUTHORITIES).asArray(String.class);
     }
 
     private JWTVerifier getJWTVerifier() {

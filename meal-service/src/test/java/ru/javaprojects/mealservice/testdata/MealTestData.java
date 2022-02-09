@@ -7,14 +7,12 @@ import org.springframework.data.domain.Pageable;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.to.MealTo;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 
-import static java.time.LocalDateTime.*;
-import static java.time.Month.*;
-import static ru.javaprojects.mealservice.model.Meal.*;
+import static java.time.LocalDateTime.of;
+import static java.time.Month.FEBRUARY;
+import static ru.javaprojects.mealservice.model.Meal.START_SEQ;
 
 public class MealTestData {
     public static final long MEAL1_ID = START_SEQ;
