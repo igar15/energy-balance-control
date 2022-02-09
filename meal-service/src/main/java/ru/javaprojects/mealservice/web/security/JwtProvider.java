@@ -24,7 +24,7 @@ public class JwtProvider {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String AUTHORIZATION_TOKEN_HEADER = "Authorization-Token";
     public static final String JAVA_PROJECTS = "javaprojects.ru";
-    public static final String REWARD_CALCULATOR_AUDIENCE = "Reward Calculator System";
+    public static final String ENERGY_BALANCE_CONTROL_AUDIENCE = "Energy Balance Control System";
     public static final long AUTHORIZATION_TOKEN_EXPIRATION_TIME = 432_000_000; // 5 days
     public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified";
 
@@ -39,7 +39,7 @@ public class JwtProvider {
     public  String generateAuthorizationToken(String userId, String ... authorities) {
         return JWT.create()
                 .withIssuer(JAVA_PROJECTS)
-                .withAudience(REWARD_CALCULATOR_AUDIENCE)
+                .withAudience(ENERGY_BALANCE_CONTROL_AUDIENCE)
                 .withIssuedAt(new Date())
                 .withSubject(userId)
                 .withArrayClaim("authorities", authorities)

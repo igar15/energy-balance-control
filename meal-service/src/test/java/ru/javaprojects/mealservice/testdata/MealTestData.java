@@ -44,6 +44,13 @@ public class MealTestData {
     public static final Pageable PAGEABLE = PageRequest.of(Integer.parseInt(PAGE_NUMBER), Integer.parseInt(PAGE_SIZE));
     public static final Page<Meal> PAGE = new PageImpl<>(List.of(meal7, meal6, meal5, meal4, meal3), PAGEABLE, 7);
 
+    public static final String JSON_MEAL_PAGE = "{\"content\":[{\"id\":100006,\"dateTime\":\"2022-02-07T00:00:00\",\"description\":\"1User Night Eating\",\"calories\":100,\"userId\":200000}," +
+            "{\"id\":100005,\"dateTime\":\"2022-02-06T19:40:00\",\"description\":\"1User Dinner\",\"calories\":600,\"userId\":200000}," +
+            "{\"id\":100004,\"dateTime\":\"2022-02-06T13:20:00\",\"description\":\"1User Lunch\",\"calories\":1100,\"userId\":200000}," +
+            "{\"id\":100003,\"dateTime\":\"2022-02-06T09:30:00\",\"description\":\"1User Breakfast\",\"calories\":400,\"userId\":200000}," +
+            "{\"id\":100002,\"dateTime\":\"2022-02-05T19:00:00\",\"description\":\"1User Dinner\",\"calories\":500,\"userId\":200000}]," +
+            "\"pageable\":{\"page\":0,\"size\":5,\"sort\":{\"orders\":[]}},\"total\":7}";
+
     public static Meal getNew() {
         return new Meal(null, LocalDateTime.of(2022, FEBRUARY, 1, 15, 0), "new meal", 600, USER1_ID);
     }
