@@ -6,6 +6,7 @@
 
 	<modules>
 		<module>meal-service</module>
+		<module>training-service</module>
 	</modules>
 
 	<parent>

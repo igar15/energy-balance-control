@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>ru.javaprojects</groupId>
-    <artifactId>meal-service</artifactId>
+    <artifactId>training-service</artifactId>
     <version>1.0</version>
-    <name>meal-service</name>
-    <description>Meal Web Service</description>
+    <name>training-service</name>
+    <description>Training Web Service</description>
 
     <dependencies>
         <!--Web-->
@@ -46,17 +46,6 @@
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
             <version>3.18.3</version>
-        </dependency>
-
-        <!--Security-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
