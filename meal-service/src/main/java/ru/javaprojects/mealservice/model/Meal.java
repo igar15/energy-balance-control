@@ -1,5 +1,6 @@
 package ru.javaprojects.mealservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.Hibernate;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.util.Assert;
@@ -37,6 +38,7 @@ public class Meal {
 
     @Column(name = "user_id", nullable = false)
     @NotNull
+    @JsonIgnore
     private Long userId;
 
     public Meal() {
@@ -47,14 +49,6 @@ public class Meal {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
-    }
-
-    public Meal(Long id, LocalDateTime dateTime, String description, Integer calories, Long userId) {
-        this.id = id;
-        this.dateTime = dateTime;
-        this.description = description;
-        this.calories = calories;
-        this.userId = userId;
     }
 
     public Long getId() {

@@ -11,7 +11,7 @@ public class MealMatcher {
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+        assertThat(actual).usingRecursiveComparison().ignoringFields("userId").isEqualTo(expected);
     }
 
     public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
@@ -19,6 +19,6 @@ public class MealMatcher {
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+        assertThat(actual).usingRecursiveComparison().ignoringFields("userId").isEqualTo(expected);
     }
 }

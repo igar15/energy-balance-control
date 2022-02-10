@@ -111,7 +111,7 @@ class MealServiceTest {
     @Test
     void getPage() {
         Page<Meal> mealPage = service.getPage(PAGEABLE, USER1_ID);
-        assertThat(mealPage).usingRecursiveComparison().isEqualTo(PAGE);
+        assertThat(mealPage).usingRecursiveComparison().ignoringFields("userId").isEqualTo(PAGE);
         MealMatcher.assertMatch(mealPage.getContent(), meal7, meal6, meal5, meal4, meal3);
     }
 
