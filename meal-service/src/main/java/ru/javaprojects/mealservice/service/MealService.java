@@ -42,12 +42,14 @@ public class MealService {
     @Transactional
     public void update(MealTo mealTo, long userId) {
         Assert.notNull(mealTo, "mealTo must not be null");
-        Meal meal = repository.findByIdAndUserId(mealTo.getId(), userId).orElseThrow(() -> new NotFoundException("Not found meal with id=" + mealTo.getId() + ", userId=" + userId));
+        Meal meal = repository.findByIdAndUserId(mealTo.getId(), userId)
+                .orElseThrow(() -> new NotFoundException("Not found meal with id=" + mealTo.getId() + ", userId=" + userId));
         updateFromTo(meal, mealTo);
     }
 
     public void delete(long id, long userId) {
-        Meal meal = repository.findByIdAndUserId(id, userId).orElseThrow(() -> new NotFoundException("Not found meal with id=" + id + ", userId=" + userId));
+        Meal meal = repository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException("Not found meal with id=" + id + ", userId=" + userId));
         repository.delete(meal);
     }
 
