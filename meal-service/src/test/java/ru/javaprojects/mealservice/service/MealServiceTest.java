@@ -25,8 +25,7 @@ import static java.time.LocalDateTime.of;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static ru.javaprojects.mealservice.testdata.MealTestData.*;
 
 @SpringBootTest
@@ -71,6 +70,11 @@ class MealServiceTest {
     }
 
     @Test
+    void duplicateDateTimeCreateDifferentUser() {
+        assertDoesNotThrow(() -> service.create(new MealTo(null, meal1.getDateTime(), "duplicate", 250), USER2_ID));
+    }
+
+    @Test
     void update() {
         service.update(getUpdatedTo(), USER1_ID);
         MealMatcher.assertMatch(service.get(MEAL1_ID, USER1_ID), getUpdated());
@@ -93,6 +97,14 @@ class MealServiceTest {
         MealTo updatedTo = getUpdatedTo();
         updatedTo.setDateTime(meal2.getDateTime());
         assertThrows(DataAccessException.class, () -> service.update(updatedTo, USER1_ID));
+    }
+
+    @Test
+    void duplicateDateTimeUpdateDifferentUser() {
+        MealTo updatedTo = getUpdatedTo();
+        updatedTo.setId(USER2_MEAL1_ID);
+        updatedTo.setDateTime(meal1.getDateTime());
+        assertDoesNotThrow(() -> service.update(updatedTo, USER2_ID));
     }
 
     @Test

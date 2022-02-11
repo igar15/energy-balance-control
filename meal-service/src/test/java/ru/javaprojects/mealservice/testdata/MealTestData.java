@@ -16,6 +16,7 @@ import static ru.javaprojects.mealservice.model.Meal.START_SEQ;
 
 public class MealTestData {
     public static final long MEAL1_ID = START_SEQ;
+    public static final long USER2_MEAL1_ID = START_SEQ + 7;
     public static final long NOT_FOUND = 10;
     public static final long USER1_ID = 200000;
     public static final long USER2_ID = 200001;

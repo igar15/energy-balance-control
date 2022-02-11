@@ -13,6 +13,7 @@ import ru.javaprojects.mealservice.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static ru.javaprojects.mealservice.util.MealUtil.createFromTo;
 import static ru.javaprojects.mealservice.util.MealUtil.updateFromTo;
@@ -75,7 +76,9 @@ public class MealService {
     }
 
     private void sendMessageDateCreated(LocalDateTime dateTime, long userId) {
-        messageSender.sendMessageDateCreated(dateTime.toLocalDate(), userId);
+        if (Objects.nonNull(dateTime)) {
+            messageSender.sendMessageDateCreated(dateTime.toLocalDate(), userId);
+        }
     }
 
     //Use only for tests

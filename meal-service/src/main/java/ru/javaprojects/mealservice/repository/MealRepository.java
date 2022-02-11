@@ -20,8 +20,10 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
     Page<Meal> findAllByUserIdOrderByDateTimeDesc(Pageable pageable, long userId);
 
     @Query(value = "SELECT SUM(calories) FROM meals WHERE user_id= :userId AND date_time >= :startOfTheDay AND date_time < :endOfTheDay", nativeQuery = true)
-    Optional<Integer> getTotalCalories(@Param("startOfTheDay") LocalDateTime startOfTheDay, @Param("endOfTheDay") LocalDateTime endOfTheDay, @Param("userId") long userId);
+    Optional<Integer> getTotalCalories(@Param("startOfTheDay") LocalDateTime startOfTheDay,
+                                       @Param("endOfTheDay") LocalDateTime endOfTheDay, @Param("userId") long userId);
 
     @Query(value = "SELECT * FROM meals WHERE user_id= :userId AND date_time >= :startOfTheDay AND date_time < :endOfTheDay LIMIT 1", nativeQuery = true)
-    Optional<Meal> findFirstByUserIdAndDate(@Param("startOfTheDay") LocalDateTime startOfTheDay, @Param("endOfTheDay") LocalDateTime endOfTheDay, @Param("userId") long userId);
+    Optional<Meal> findFirstByUserIdAndDate(@Param("startOfTheDay") LocalDateTime startOfTheDay,
+                                            @Param("endOfTheDay") LocalDateTime endOfTheDay, @Param("userId") long userId);
 }
