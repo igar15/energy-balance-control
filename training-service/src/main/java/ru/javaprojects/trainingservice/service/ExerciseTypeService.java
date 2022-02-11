@@ -35,15 +35,18 @@ public class ExerciseTypeService {
     @Transactional
     public void update(ExerciseTypeTo exerciseTypeTo, long userId) {
         Assert.notNull(exerciseTypeTo, "exerciseTypeTo must not be null");
-        ExerciseType exerciseType = repository.findByIdAndUserId(exerciseTypeTo.getId(), userId)
-                .orElseThrow(() -> new NotFoundException("Not found exerciseType with id=" + exerciseTypeTo.getId() + ", userId=" + userId));
+        ExerciseType exerciseType = get(exerciseTypeTo.getId(), userId);
         updateFromTo(exerciseType, exerciseTypeTo);
     }
 
     @Transactional
     public void delete(long id, long userId) {
-        ExerciseType exerciseType = repository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new NotFoundException("Not found exerciseType with id=" + id + ", userId=" + userId));
+        ExerciseType exerciseType = get(id, userId);
         exerciseType.setDeleted(true);
+    }
+
+    ExerciseType get(long id, long userId) {
+        return repository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException("Not found exerciseType with id=" + id + ", userId=" + userId));
     }
 }

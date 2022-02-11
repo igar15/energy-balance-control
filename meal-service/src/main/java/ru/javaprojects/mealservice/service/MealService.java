@@ -42,14 +42,12 @@ public class MealService {
     @Transactional
     public void update(MealTo mealTo, long userId) {
         Assert.notNull(mealTo, "mealTo must not be null");
-        Meal meal = repository.findByIdAndUserId(mealTo.getId(), userId)
-                .orElseThrow(() -> new NotFoundException("Not found meal with id=" + mealTo.getId() + ", userId=" + userId));
+        Meal meal = get(mealTo.getId(), userId);
         updateFromTo(meal, mealTo);
     }
 
     public void delete(long id, long userId) {
-        Meal meal = repository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new NotFoundException("Not found meal with id=" + id + ", userId=" + userId));
+        Meal meal = get(id, userId);
         repository.delete(meal);
     }
 
@@ -61,6 +59,11 @@ public class MealService {
     public int getTotalCalories(LocalDate date, long userId) {
         Assert.notNull(date, "date must not be null");
         return repository.getTotalCalories(date.atStartOfDay(), date.plusDays(1).atStartOfDay(), userId).orElse(0);
+    }
+
+    Meal get(long id, long userId) {
+        return repository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException("Not found meal with id=" + id + ", userId=" + userId));
     }
 
     private boolean checkDateAlreadyExists(LocalDateTime dateTime, long userId) {

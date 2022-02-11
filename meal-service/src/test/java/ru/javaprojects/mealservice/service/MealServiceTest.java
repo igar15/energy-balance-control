@@ -12,7 +12,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import ru.javaprojects.mealservice.MealMatcher;
 import ru.javaprojects.mealservice.model.Meal;
-import ru.javaprojects.mealservice.repository.MealRepository;
 import ru.javaprojects.mealservice.to.MealTo;
 import ru.javaprojects.mealservice.util.MessageSender;
 import ru.javaprojects.mealservice.util.ValidationUtil;
@@ -26,7 +25,8 @@ import static java.time.LocalDateTime.of;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.javaprojects.mealservice.testdata.MealTestData.*;
 
 @SpringBootTest
@@ -39,9 +39,6 @@ class MealServiceTest {
 
     @Mock
     private MessageSender messageSender;
-
-    @Autowired
-    private MealRepository repository;
 
     @Test
     void create() {
@@ -76,7 +73,7 @@ class MealServiceTest {
     @Test
     void update() {
         service.update(getUpdatedTo(), USER1_ID);
-        MealMatcher.assertMatch(repository.findById(MEAL1_ID).get(), getUpdated());
+        MealMatcher.assertMatch(service.get(MEAL1_ID, USER1_ID), getUpdated());
     }
 
     @Test
@@ -101,8 +98,7 @@ class MealServiceTest {
     @Test
     void delete() {
         service.delete(MEAL1_ID, USER1_ID);
-        assertThrows(NotFoundException.class, () -> repository.findById(MEAL1_ID).orElseThrow((() -> new NotFoundException("Not found meal with id=" + MEAL1_ID))));
-        assertTrue(() -> repository.findById(MEAL1_ID).isEmpty());
+        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER1_ID));
     }
 
     @Test
@@ -132,6 +128,22 @@ class MealServiceTest {
     void getTotalCaloriesWhenNoMeals() {
         int totalCalories = service.getTotalCalories(LocalDate.of(2022, FEBRUARY, 20), USER1_ID);
         assertEquals(Integer.parseInt(ZERO_CALORIES), totalCalories);
+    }
+
+    @Test
+    void get() {
+        Meal meal = service.get(MEAL1_ID, USER1_ID);
+        MealMatcher.assertMatch(meal, meal1);
+    }
+
+    @Test
+    void getNotFound() {
+        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER1_ID));
+    }
+
+    @Test
+    void getNotOwn() {
+        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER2_ID));
     }
 
     @Test

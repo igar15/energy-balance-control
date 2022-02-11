@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import ru.javaprojects.trainingservice.model.ExerciseType;
-import ru.javaprojects.trainingservice.repository.ExerciseTypeRepository;
 import ru.javaprojects.trainingservice.to.ExerciseTypeTo;
 import ru.javaprojects.trainingservice.util.exception.NotFoundException;
 
@@ -18,9 +17,6 @@ class ExerciseTypeServiceTest extends AbstractServiceTest {
 
     @Autowired
     private ExerciseTypeService service;
-
-    @Autowired
-    private ExerciseTypeRepository repository;
 
     @Test
     void getAll() {
@@ -51,7 +47,7 @@ class ExerciseTypeServiceTest extends AbstractServiceTest {
     @Test
     void update() {
         service.update(getUpdatedTo(), USER1_ID);
-        EXERCISE_TYPE_MATCHER.assertMatch(repository.findById(EXERCISE_TYPE1_ID).get(), getUpdated());
+        EXERCISE_TYPE_MATCHER.assertMatch(service.get(EXERCISE_TYPE1_ID, USER1_ID), getUpdated());
     }
 
     @Test
@@ -83,7 +79,7 @@ class ExerciseTypeServiceTest extends AbstractServiceTest {
     @Test
     void delete() {
         service.delete(EXERCISE_TYPE1_ID, USER1_ID);
-        assertTrue(repository.findById(EXERCISE_TYPE1_ID).get().isDeleted());
+        assertTrue(service.get(EXERCISE_TYPE1_ID, USER1_ID).isDeleted());
     }
 
     @Test
@@ -94,6 +90,22 @@ class ExerciseTypeServiceTest extends AbstractServiceTest {
     @Test
     void deleteNotOwn() {
         assertThrows(NotFoundException.class, () -> service.delete(EXERCISE_TYPE1_ID, USER2_ID));
+    }
+
+    @Test
+    void get() {
+        ExerciseType exerciseType = service.get(EXERCISE_TYPE1_ID, USER1_ID);
+        EXERCISE_TYPE_MATCHER.assertMatch(exerciseType, exerciseType1);
+    }
+
+    @Test
+    void getNotFound() {
+        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER1_ID));
+    }
+
+    @Test
+    void getNotOwn() {
+        assertThrows(NotFoundException.class, () -> service.get(EXERCISE_TYPE1_ID, USER2_ID));
     }
 
     @Test
