@@ -92,6 +92,13 @@ class MealServiceTest {
     }
 
     @Test
+    void duplicateDateTimeUpdate() {
+        MealTo updatedTo = getUpdatedTo();
+        updatedTo.setDateTime(meal2.getDateTime());
+        assertThrows(DataAccessException.class, () -> service.update(updatedTo, USER1_ID));
+    }
+
+    @Test
     void delete() {
         service.delete(MEAL1_ID, USER1_ID);
         assertThrows(NotFoundException.class, () -> repository.findById(MEAL1_ID).orElseThrow((() -> new NotFoundException("Not found meal with id=" + MEAL1_ID))));

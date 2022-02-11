@@ -12,7 +12,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface ExerciseTypeRepository extends JpaRepository<ExerciseType, Long> {
 
-    List<ExerciseType> findAllByUserIdAndDeletedFalse(long userId);
+    List<ExerciseType> findAllByUserIdAndDeletedFalseOrderByDescription(long userId);
 
     Optional<ExerciseType> findByIdAndUserId(long id, long userId);
 }

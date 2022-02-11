@@ -1,7 +1,10 @@
 package ru.javaprojects.trainingservice;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import ru.javaprojects.trainingservice.web.json.JacksonObjectMapper;
 
 @SpringBootApplication
 public class TrainingServiceApplication {
@@ -10,4 +13,8 @@ public class TrainingServiceApplication {
         SpringApplication.run(TrainingServiceApplication.class, args);
     }
 
+    @Bean
+    public ObjectMapper objectMapper() {
+        return JacksonObjectMapper.getMapper();
+    }
 }

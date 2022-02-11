@@ -6,7 +6,6 @@ import org.springframework.util.Assert;
 import ru.javaprojects.trainingservice.model.ExerciseType;
 import ru.javaprojects.trainingservice.repository.ExerciseTypeRepository;
 import ru.javaprojects.trainingservice.to.ExerciseTypeTo;
-import ru.javaprojects.trainingservice.util.ExerciseTypeUtil;
 import ru.javaprojects.trainingservice.util.exception.NotFoundException;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class ExerciseTypeService {
     }
 
     public List<ExerciseType> getAll(long userId) {
-        return repository.findAllByUserIdAndDeletedFalse(userId);
+        return repository.findAllByUserIdAndDeletedFalseOrderByDescription(userId);
     }
 
     public ExerciseType create(ExerciseTypeTo exerciseTypeTo, long userId) {
