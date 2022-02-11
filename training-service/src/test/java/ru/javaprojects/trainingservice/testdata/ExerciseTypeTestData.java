@@ -10,11 +10,8 @@ public class ExerciseTypeTestData {
     public static final TestMatcher<ExerciseType> EXERCISE_TYPE_MATCHER = TestMatcher.usingIgnoringFieldsComparator(ExerciseType.class, "userId");
 
     public static final long EXERCISE_TYPE1_ID = START_SEQ;
+    public static final long USER2_EXERCISE_TYPE1_ID = START_SEQ + 4;
     public static final long NOT_FOUND = 10;
-    public static final long USER1_ID = 200000;
-    public static final long USER2_ID = 200001;
-    public static final String USER1_ID_STRING = "200000";
-    public static final String USER2_ID_STRING = "200001";
 
     public static final ExerciseType exerciseType1 = new ExerciseType(EXERCISE_TYPE1_ID, "1User Exercise Type 1", "times", 2, false);
     public static final ExerciseType exerciseType2 = new ExerciseType(EXERCISE_TYPE1_ID + 1, "1User Exercise Type 2", "meters", 3, false);

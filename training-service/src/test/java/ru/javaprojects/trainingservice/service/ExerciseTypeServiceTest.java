@@ -12,6 +12,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.javaprojects.trainingservice.testdata.ExerciseTypeTestData.*;
+import static ru.javaprojects.trainingservice.testdata.UserTestData.USER1_ID;
+import static ru.javaprojects.trainingservice.testdata.UserTestData.USER2_ID;
 
 class ExerciseTypeServiceTest extends AbstractServiceTest {
 
