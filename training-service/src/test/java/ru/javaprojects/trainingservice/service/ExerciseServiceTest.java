@@ -137,8 +137,8 @@ class ExerciseServiceTest extends AbstractServiceTest {
         Page<Exercise> exercisePage = service.getPage(PAGEABLE, USER1_ID);
         assertThat(exercisePage).usingRecursiveComparison().ignoringFields("exerciseType").isEqualTo(PAGE);
         List<Exercise> exercises = exercisePage.getContent();
-        assertThat(exercises.get(0).getExerciseType()).usingRecursiveComparison().ignoringFields("userId").isEqualTo(exerciseType3);
-        assertThat(exercises.get(1).getExerciseType()).usingRecursiveComparison().ignoringFields("userId").isEqualTo(exerciseType1);
+        assertThat(exercises.get(0).getExerciseType()).usingRecursiveComparison().ignoringFields("userId").isEqualTo(exerciseTypeDeleted);
+        assertThat(exercises.get(1).getExerciseType()).usingRecursiveComparison().ignoringFields("userId").isEqualTo(exerciseType3);
         assertThat(exercises.get(2).getExerciseType()).usingRecursiveComparison().ignoringFields("userId").isEqualTo(exerciseType1);
     }
 

@@ -30,6 +30,7 @@ public class ExerciseType extends AbstractBaseEntity {
     private Integer caloriesBurned;
 
     @Column(name = "deleted", nullable = false, columnDefinition = "bool default false")
+    @JsonIgnore
     private boolean deleted = false;
 
     @Column(name = "user_id", nullable = false)

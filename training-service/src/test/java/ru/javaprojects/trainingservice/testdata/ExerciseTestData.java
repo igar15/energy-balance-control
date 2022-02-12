@@ -19,7 +19,7 @@ public class ExerciseTestData {
     public static final TestMatcher<Exercise> EXERCISE_MATCHER = TestMatcher.usingIgnoringFieldsComparator(Exercise.class, "exerciseType");
 
     public static final long EXERCISE1_ID = START_SEQ + 5;
-    public static final long USER2_EXERCISE1_ID = START_SEQ + 10;
+    public static final long USER2_EXERCISE1_ID = START_SEQ + 11;
     public static final long NOT_FOUND = 10;
 
     public static final Exercise exercise1 = new Exercise(EXERCISE1_ID, of(2022, FEBRUARY, 5, 11, 20), 30);
@@ -27,16 +27,17 @@ public class ExerciseTestData {
     public static final Exercise exercise3 = new Exercise(EXERCISE1_ID + 2, of(2022, FEBRUARY, 5, 15, 15), 20);
     public static final Exercise exercise4 = new Exercise(EXERCISE1_ID + 3, of(2022, FEBRUARY, 6, 14, 15), 50);
     public static final Exercise exercise5 = new Exercise(EXERCISE1_ID + 4, of(2022, FEBRUARY, 6, 18, 15), 20);
+    public static final Exercise exercise6 = new Exercise(EXERCISE1_ID + 5, of(2022, FEBRUARY, 6, 20, 10), 35);
 
     public static final String DATE = "2022-02-06";
-    public static final String TOTAL_CALORIES_BURNED = "120";
+    public static final String TOTAL_CALORIES_BURNED = "190";
     public static final String ZERO_CALORIES = "0";
 
 
     public static final String PAGE_NUMBER = "0";
     public static final String PAGE_SIZE = "3";
     public static final Pageable PAGEABLE = PageRequest.of(Integer.parseInt(PAGE_NUMBER), Integer.parseInt(PAGE_SIZE));
-    public static final Page<Exercise> PAGE = new PageImpl<>(List.of(exercise5, exercise4, exercise3), PAGEABLE, 5);
+    public static final Page<Exercise> PAGE = new PageImpl<>(List.of(exercise6, exercise5, exercise4), PAGEABLE, 6);
 
     public static Exercise getNew() {
         return new Exercise(null, of(2022, FEBRUARY, 4, 7, 0), 50);
