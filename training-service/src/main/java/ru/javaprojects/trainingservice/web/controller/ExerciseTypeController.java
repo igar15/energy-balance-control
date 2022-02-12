@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.javaprojects.trainingservice.model.ExerciseType;
 import ru.javaprojects.trainingservice.service.ExerciseTypeService;
 import ru.javaprojects.trainingservice.to.ExerciseTypeTo;
-import ru.javaprojects.trainingservice.util.ValidationUtil;
 import ru.javaprojects.trainingservice.web.security.SecurityUtil;
 
 import javax.validation.Valid;

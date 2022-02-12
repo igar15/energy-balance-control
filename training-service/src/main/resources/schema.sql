@@ -16,7 +16,7 @@ CREATE TABLE exercise_types
 );
 -- FOR POSTGRES USE COMMAND BELOW (INSTEAD OF CREATION extra_column)
 -- CREATE UNIQUE INDEX exercise_types_unique_user_description_idx ON exercise_types (user_id, description) WHERE deleted = false;
-CREATE UNIQUE INDEX exercise_types_unique_user_description_idx ON exercise_types (h2_extra_column);
+CREATE UNIQUE INDEX exercise_types_unique_user_description_idx ON exercise_types (user_id, h2_extra_column);
 
 CREATE TABLE exercises
 (

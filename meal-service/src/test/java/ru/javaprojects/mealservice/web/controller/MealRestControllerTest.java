@@ -88,7 +88,7 @@ class MealRestControllerTest {
         Meal newMeal = getNew();
         newMeal.setId(newId);
         MealMatcher.assertMatch(created, newMeal);
-        MealMatcher.assertMatch(repository.findById(newId).get(), newMeal);
+        MealMatcher.assertMatch(repository.findByIdAndUserId(newId, USER1_ID).get(), newMeal);
     }
 
     @Test
@@ -137,7 +137,7 @@ class MealRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updatedTo)))
                 .andExpect(status().isNoContent());
-        MealMatcher.assertMatch(repository.findById(MEAL1_ID).get(), getUpdated());
+        MealMatcher.assertMatch(repository.findByIdAndUserId(MEAL1_ID, USER1_ID).get(), getUpdated());
     }
 
     @Test
@@ -218,7 +218,7 @@ class MealRestControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete(REST_URL + MEAL1_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> repository.findById(MEAL1_ID).orElseThrow(() -> new NotFoundException("Not found meal with id=" + MEAL1_ID)));
+        assertThrows(NotFoundException.class, () -> repository.findByIdAndUserId(MEAL1_ID, USER1_ID).orElseThrow(() -> new NotFoundException("Not found meal with id=" + MEAL1_ID)));
     }
 
     @Test

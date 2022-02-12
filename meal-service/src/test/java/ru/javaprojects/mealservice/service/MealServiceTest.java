@@ -75,6 +75,14 @@ class MealServiceTest {
     }
 
     @Test
+    void createInvalid() {
+        validateRootCause(ConstraintViolationException.class, () -> service.create(new MealTo(null, of(2022, JANUARY, 1, 10, 0), " ", 300), USER1_ID));
+        validateRootCause(ConstraintViolationException.class, () -> service.create(new MealTo(null, null, "Description", 300), USER1_ID));
+        validateRootCause(ConstraintViolationException.class, () -> service.create(new MealTo(null, of(2022, JANUARY, 1, 10, 0), "Description", 0), USER1_ID));
+        validateRootCause(ConstraintViolationException.class, () -> service.create(new MealTo(null, of(2022, JANUARY, 1, 10, 0), "Description", 5001), USER1_ID));
+    }
+
+    @Test
     void update() {
         service.update(getUpdatedTo(), USER1_ID);
         MealMatcher.assertMatch(service.get(MEAL1_ID, USER1_ID), getUpdated());
@@ -156,14 +164,6 @@ class MealServiceTest {
     @Test
     void getNotOwn() {
         assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER2_ID));
-    }
-
-    @Test
-    void createWithException() {
-        validateRootCause(ConstraintViolationException.class, () -> service.create(new MealTo(null, of(2022, JANUARY, 1, 10, 0), " ", 300), USER1_ID));
-        validateRootCause(ConstraintViolationException.class, () -> service.create(new MealTo(null, null, "Description", 300), USER1_ID));
-        validateRootCause(ConstraintViolationException.class, () -> service.create(new MealTo(null, of(2022, JANUARY, 1, 10, 0), "Description", 0), USER1_ID));
-        validateRootCause(ConstraintViolationException.class, () -> service.create(new MealTo(null, of(2022, JANUARY, 1, 10, 0), "Description", 5001), USER1_ID));
     }
 
     private <T extends Throwable> void validateRootCause(Class<T> rootExceptionClass, Runnable runnable) {

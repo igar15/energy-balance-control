@@ -76,6 +76,13 @@ class ExerciseServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    void createInvalid() {
+        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTo(null, null, 50, EXERCISE_TYPE1_ID), USER1_ID));
+        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTo(null, of(2022, JANUARY, 1, 10, 0), 0, EXERCISE_TYPE1_ID), USER1_ID));
+        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTo(null, of(2022, JANUARY, 1, 10, 0), 100001, EXERCISE_TYPE1_ID), USER1_ID));
+    }
+
+    @Test
     void update() {
         service.update(getUpdatedTo(), USER1_ID);
         EXERCISE_MATCHER.assertMatch(service.get(EXERCISE1_ID, USER1_ID), getUpdated());
@@ -161,12 +168,5 @@ class ExerciseServiceTest extends AbstractServiceTest {
     @Test
     void getNotOwn() {
         assertThrows(NotFoundException.class, () -> service.get(EXERCISE1_ID, USER2_ID));
-    }
-
-    @Test
-    void createWithException() {
-        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTo(null, null, 50, EXERCISE_TYPE1_ID), USER1_ID));
-        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTo(null, of(2022, JANUARY, 1, 10, 0), 0, EXERCISE_TYPE1_ID), USER1_ID));
-        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTo(null, of(2022, JANUARY, 1, 10, 0), 100001, EXERCISE_TYPE1_ID), USER1_ID));
     }
 }

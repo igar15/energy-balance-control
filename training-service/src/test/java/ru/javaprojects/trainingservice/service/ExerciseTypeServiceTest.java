@@ -47,6 +47,19 @@ class ExerciseTypeServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    void duplicateDescriptionCreateDifferentUser() {
+        assertDoesNotThrow(() -> service.create(new ExerciseTypeTo(null, exerciseType1.getDescription(), "seconds", 1), USER2_ID));
+    }
+
+    @Test
+    void createInvalid() {
+        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTypeTo(null, " ", "times", 3), USER1_ID));
+        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTypeTo(null, "description", " ", 3), USER1_ID));
+        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTypeTo(null, "description", "times", 0), USER1_ID));
+        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTypeTo(null, "description", "times", 1001), USER1_ID));
+    }
+
+    @Test
     void update() {
         service.update(getUpdatedTo(), USER1_ID);
         EXERCISE_TYPE_MATCHER.assertMatch(service.get(EXERCISE_TYPE1_ID, USER1_ID), getUpdated());
@@ -79,6 +92,14 @@ class ExerciseTypeServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    void duplicateDescriptionUpdateDifferentUser() {
+        ExerciseTypeTo updatedTo = getUpdatedTo();
+        updatedTo.setId(USER2_EXERCISE_TYPE1_ID);
+        updatedTo.setDescription(exerciseType1.getDescription());
+        assertDoesNotThrow(() -> service.update(updatedTo, USER2_ID));
+    }
+
+    @Test
     void delete() {
         service.delete(EXERCISE_TYPE1_ID, USER1_ID);
         assertTrue(service.get(EXERCISE_TYPE1_ID, USER1_ID).isDeleted());
@@ -108,13 +129,5 @@ class ExerciseTypeServiceTest extends AbstractServiceTest {
     @Test
     void getNotOwn() {
         assertThrows(NotFoundException.class, () -> service.get(EXERCISE_TYPE1_ID, USER2_ID));
-    }
-
-    @Test
-    void createWithException() {
-        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTypeTo(null, " ", "times", 3), USER1_ID));
-        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTypeTo(null, "description", " ", 3), USER1_ID));
-        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTypeTo(null, "description", "times", 0), USER1_ID));
-        validateRootCause(ConstraintViolationException.class, () -> service.create(new ExerciseTypeTo(null, "description", "times", 1001), USER1_ID));
     }
 }

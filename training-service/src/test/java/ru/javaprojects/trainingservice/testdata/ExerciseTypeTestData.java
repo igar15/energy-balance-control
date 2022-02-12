@@ -18,6 +18,9 @@ public class ExerciseTypeTestData {
     public static final ExerciseType exerciseType3 = new ExerciseType(EXERCISE_TYPE1_ID + 2, "1User Exercise Type 3", "times", 1, false);
     public static final ExerciseType exerciseTypeDeleted = new ExerciseType(EXERCISE_TYPE1_ID + 3, "1User Exercise Type Deleted", "times", 2, true);
 
+    public static final String INVALID_DESCRIPTION = " ";
+    public static final Integer INVALID_CALORIES_BURNED = 0;
+
     public static ExerciseType getNew() {
         return new ExerciseType(null, "new exercise type", "times", 3, false);
     }
