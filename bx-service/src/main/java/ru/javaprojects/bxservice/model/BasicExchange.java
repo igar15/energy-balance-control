@@ -2,7 +2,6 @@ package ru.javaprojects.bxservice.model;
 
 import org.hibernate.Hibernate;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -78,11 +77,6 @@ public class BasicExchange {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public long id() {
-        Assert.notNull(id, "Entity must have id");
-        return id;
     }
 
     @Override
