@@ -1,6 +1,5 @@
 package ru.javaprojects.bxservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.Hibernate;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.util.Assert;
@@ -31,7 +30,6 @@ public class BasicExchange {
 
     @Column(name = "user_id", nullable = false)
     @NotNull
-    @JsonIgnore
     private Long userId;
 
     public BasicExchange() {

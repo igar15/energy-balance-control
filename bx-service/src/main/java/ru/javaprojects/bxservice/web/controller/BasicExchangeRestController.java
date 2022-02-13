@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.javaprojects.bxservice.security.SecurityUtil;
 import ru.javaprojects.bxservice.service.BasicExchangeService;
+import ru.javaprojects.bxservice.web.security.SecurityUtil;
 
 import java.time.LocalDate;
 
@@ -24,7 +24,7 @@ public class BasicExchangeRestController {
         this.service = service;
     }
 
-    @GetMapping("/calories")
+    @GetMapping
     public Integer getBxCalories(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         long userId = SecurityUtil.authUserId();
         log.info("getBxCalories for date {} for user {}", date, userId);

@@ -28,6 +28,8 @@ public class BasicExchangeTestData {
     public static final int UPDATED_USER1_BX_CALORIES = 1866;
     public static final int USER2_BX_CALORIES = 1308;
 
+    public static final String DATE = "2022-02-06";
+
     public static final BasicExchange basicExchange1 = new BasicExchange(BASIC_EXCHANGE1_ID, FEBRUARY_5_2022, USER1_BX_CALORIES);
     public static final BasicExchange basicExchange2 = new BasicExchange(BASIC_EXCHANGE1_ID + 1, FEBRUARY_6_2022, USER1_BX_CALORIES);
     public static final BasicExchange basicExchange3 = new BasicExchange(BASIC_EXCHANGE1_ID + 2, FEBRUARY_7_2022, USER1_BX_CALORIES);
