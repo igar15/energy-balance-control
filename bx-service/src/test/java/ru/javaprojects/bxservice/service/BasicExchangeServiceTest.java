@@ -16,7 +16,6 @@ import ru.javaprojects.bxservice.util.UserServiceClient;
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 
-import static java.time.Month.FEBRUARY;
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.javaprojects.bxservice.testdata.BasicExchangeTestData.*;
 
@@ -43,13 +42,13 @@ class BasicExchangeServiceTest {
 
     @Test
     void getCalories() {
-        Integer bxCalories = service.getCalories(FEBRUARY_6_2022, USER1_ID);
+        Integer bxCalories = service.getBxCalories(FEBRUARY_6_2022, USER1_ID);
         assertEquals(USER1_BX_CALORIES, bxCalories);
     }
 
     @Test
     void getCaloriesWhenBasicExchangeDoesNotExist() {
-        Integer bxCalories = service.getCalories(LocalDate.now(), USER1_ID);
+        Integer bxCalories = service.getBxCalories(LocalDate.now(), USER1_ID);
         assertEquals(USER1_BX_CALORIES, bxCalories);
         assertTrue(repository.findByUserIdAndDate(USER1_ID, LocalDate.now()).isPresent());
     }

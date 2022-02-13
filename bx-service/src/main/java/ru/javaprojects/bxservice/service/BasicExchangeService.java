@@ -23,7 +23,7 @@ public class BasicExchangeService {
         this.repository = repository;
     }
 
-    public Integer getCalories(LocalDate date, long userId) {
+    public Integer getBxCalories(LocalDate date, long userId) {
         Assert.notNull(date, "date must not be null");
         return repository.findByUserIdAndDate(userId, date)
                 .orElseGet(() -> create(date, userId))
