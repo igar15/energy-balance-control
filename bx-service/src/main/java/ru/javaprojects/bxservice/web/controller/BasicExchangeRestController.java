@@ -1,4 +1,4 @@
-package ru.javaprojects.bxservice.web;
+package ru.javaprojects.bxservice.web.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
