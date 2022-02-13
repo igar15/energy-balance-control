@@ -22,7 +22,7 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
     @EntityGraph(attributePaths = {"exerciseType"})
     Page<Exercise> findAllByExerciseType_UserIdOrderByDateTimeDesc(Pageable pageable, long userId);
 
-    Optional<Exercise> findByDateTimeAndExerciseType_UserId(LocalDateTime dateTime, long userId);
+    Optional<Exercise> findByExerciseType_UserIdAndDateTime(long userId, LocalDateTime dateTime);
 
     @Query(value = "SELECT * FROM exercises JOIN exercise_types ON exercises.exercise_type_id = exercise_types.id" +
             " WHERE user_id= :userId AND date_time >= :startOfTheDay AND date_time < :endOfTheDay LIMIT 1", nativeQuery = true)

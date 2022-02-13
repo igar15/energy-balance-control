@@ -81,7 +81,7 @@ public class ExerciseService {
     }
 
     private void checkDateTimeOnUnique(long userId, Long id, LocalDateTime dateTime) {
-        repository.findByDateTimeAndExerciseType_UserId(dateTime, userId)
+        repository.findByExerciseType_UserIdAndDateTime(userId, dateTime)
                 .ifPresent(exercise -> {
                     if (!exercise.getId().equals(id)) {
                         throw new DateTimeUniqueException("Exercise with this date and time already exists");
