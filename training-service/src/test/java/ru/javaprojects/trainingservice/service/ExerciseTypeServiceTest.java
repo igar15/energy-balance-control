@@ -106,6 +106,15 @@ class ExerciseTypeServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    void deleteWhenDescriptionDeletedTrueExists() {
+        ExerciseTypeTo updatedTo = getUpdatedTo();
+        updatedTo.setDescription(exerciseTypeDeleted.getDescription());
+        service.update(updatedTo, USER1_ID);
+        assertDoesNotThrow(() -> service.delete(EXERCISE_TYPE1_ID, USER1_ID));
+        assertTrue(service.get(EXERCISE_TYPE1_ID, USER1_ID).isDeleted());
+    }
+
+    @Test
     void deleteNotFound() {
         assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND, USER1_ID));
     }
