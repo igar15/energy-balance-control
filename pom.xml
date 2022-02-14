@@ -9,6 +9,7 @@
 		<module>training-service</module>
 		<module>bx-service</module>
 		<module>energy-balance-service</module>
+		<module>email-verification-service</module>
 	</modules>
 
 	<parent>
