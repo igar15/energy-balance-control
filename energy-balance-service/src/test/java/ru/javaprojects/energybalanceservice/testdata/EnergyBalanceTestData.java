@@ -10,6 +10,8 @@ import static java.time.Month.FEBRUARY;
 import static ru.javaprojects.energybalanceservice.util.EnergyBalanceUtil.*;
 
 public class EnergyBalanceTestData {
+    public static final String USER1_ID_STRING = "200000";
+
     public static final Integer MEAL_CALORIES = 2100;
     public static final Integer TRAINING_CALORIES = 190;
     public static final Integer BX_CALORIES = 1891;

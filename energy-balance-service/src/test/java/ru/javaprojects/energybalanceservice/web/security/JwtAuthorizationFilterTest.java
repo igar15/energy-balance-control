@@ -1,40 +1,28 @@
-package ru.javaprojects.bxservice.web.security;
+package ru.javaprojects.energybalanceservice.web.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.javaprojects.bxservice.util.exception.ErrorType;
+import ru.javaprojects.energybalanceservice.web.controller.AbstractControllerTest;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.javaprojects.bxservice.testdata.BasicExchangeTestData.*;
-import static ru.javaprojects.bxservice.util.exception.ErrorType.BAD_TOKEN_ERROR;
-import static ru.javaprojects.bxservice.web.AppExceptionHandler.EXCEPTION_BAD_TOKEN;
-import static ru.javaprojects.bxservice.web.security.JwtProvider.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaprojects.energybalanceservice.testdata.EnergyBalanceTestData.DATE;
+import static ru.javaprojects.energybalanceservice.testdata.EnergyBalanceTestData.USER1_ID_STRING;
+import static ru.javaprojects.energybalanceservice.util.exception.ErrorType.BAD_TOKEN_ERROR;
+import static ru.javaprojects.energybalanceservice.web.AppExceptionHandler.EXCEPTION_BAD_TOKEN;
+import static ru.javaprojects.energybalanceservice.web.security.JwtProvider.*;
 
-@SpringBootTest
-@ActiveProfiles("dev")
-@AutoConfigureMockMvc
-class JwtAuthorizationFilterTest {
-    private static final String REST_URL = "/api/bx";
-
-    @Autowired
-    private MockMvc mockMvc;
+class JwtAuthorizationFilterTest extends AbstractControllerTest {
 
     @Autowired
     private JwtProvider jwtProvider;
@@ -48,14 +36,6 @@ class JwtAuthorizationFilterTest {
 
     private HttpHeaders jwtInvalidHeader;
 
-    public ResultMatcher errorType(ErrorType type) {
-        return jsonPath("$.type").value(type.name());
-    }
-
-    public ResultMatcher detailMessage(String code) {
-        return jsonPath("$.details").value(code);
-    }
-
     @PostConstruct
     private void postConstruct() {
         String secretKey = environment.getProperty("jwt.secretKey");
@@ -65,20 +45,19 @@ class JwtAuthorizationFilterTest {
     }
 
     @Test
-    void getBxCalories() throws Exception {
-        ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", DATE)
+    void getReport() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
+                .param("date", DATE.toString())
                 .headers(jwtHeader))
                 .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        String bxCalories = actions.andReturn().getResponse().getContentAsString();
-        assertEquals(USER1_BX_CALORIES, Integer.parseInt(bxCalories));
     }
 
     @Test
-    void getBxCaloriesTokenExpired() throws Exception {
+    void getReportTokenExpired() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", DATE)
+                .param("date", DATE.toString())
                 .headers(jwtExpiredHeader))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(BAD_TOKEN_ERROR))
@@ -86,9 +65,9 @@ class JwtAuthorizationFilterTest {
     }
 
     @Test
-    void getBxCaloriesTokenInvalid() throws Exception {
+    void getReportTokenInvalid() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", DATE)
+                .param("date", DATE.toString())
                 .headers(jwtInvalidHeader))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(BAD_TOKEN_ERROR))

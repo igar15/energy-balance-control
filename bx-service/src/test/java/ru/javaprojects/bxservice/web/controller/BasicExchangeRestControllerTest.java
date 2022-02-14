@@ -44,6 +44,10 @@ class BasicExchangeRestControllerTest {
     @Mock
     private UserServiceClient userServiceClient;
 
+    public ResultMatcher errorType(ErrorType type) {
+        return jsonPath("$.type").value(type.name());
+    }
+
     @PostConstruct
     private void setupUserServiceClient() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Mockito.when(userServiceClient.getUserDetails(USER1_ID)).thenReturn(user1Details);
@@ -51,10 +55,6 @@ class BasicExchangeRestControllerTest {
         Method userServiceClientSetter = service.getClass().getDeclaredMethod("setUserServiceClient",  UserServiceClient.class);
         userServiceClientSetter.setAccessible(true);
         userServiceClientSetter.invoke(service, userServiceClient);
-    }
-
-    public ResultMatcher errorType(ErrorType type) {
-        return jsonPath("$.type").value(type.name());
     }
 
     @Test
