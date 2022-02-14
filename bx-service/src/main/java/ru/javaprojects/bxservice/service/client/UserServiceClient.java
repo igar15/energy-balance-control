@@ -1,4 +1,4 @@
-package ru.javaprojects.bxservice.util;
+package ru.javaprojects.bxservice.service.client;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;

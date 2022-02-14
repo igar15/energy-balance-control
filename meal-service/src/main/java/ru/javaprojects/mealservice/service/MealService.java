@@ -8,7 +8,7 @@ import org.springframework.util.Assert;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.repository.MealRepository;
 import ru.javaprojects.mealservice.to.MealTo;
-import ru.javaprojects.mealservice.util.MessageSender;
+import ru.javaprojects.mealservice.messaging.MessageSender;
 import ru.javaprojects.mealservice.util.exception.NotFoundException;
 
 import java.time.LocalDate;

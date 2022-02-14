@@ -8,6 +8,7 @@
 		<module>meal-service</module>
 		<module>training-service</module>
 		<module>bx-service</module>
+		<module>energy-balance-service</module>
 	</modules>
 
 	<parent>

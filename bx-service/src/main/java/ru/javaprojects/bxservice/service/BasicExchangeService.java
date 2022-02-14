@@ -6,7 +6,7 @@ import org.springframework.util.Assert;
 import ru.javaprojects.bxservice.model.BasicExchange;
 import ru.javaprojects.bxservice.repository.BasicExchangeRepository;
 import ru.javaprojects.bxservice.to.UserDetails;
-import ru.javaprojects.bxservice.util.UserServiceClient;
+import ru.javaprojects.bxservice.service.client.UserServiceClient;
 
 import java.time.LocalDate;
 import java.util.List;

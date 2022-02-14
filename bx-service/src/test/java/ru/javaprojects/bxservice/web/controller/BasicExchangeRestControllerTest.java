@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.bxservice.service.BasicExchangeService;
-import ru.javaprojects.bxservice.util.UserServiceClient;
+import ru.javaprojects.bxservice.service.client.UserServiceClient;
 import ru.javaprojects.bxservice.util.exception.ErrorType;
 
 import javax.annotation.PostConstruct;

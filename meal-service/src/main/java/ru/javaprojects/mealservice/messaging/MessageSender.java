@@ -1,4 +1,4 @@
-package ru.javaprojects.trainingservice.util;
+package ru.javaprojects.mealservice.messaging;
 
 import org.springframework.stereotype.Component;
 

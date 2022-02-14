@@ -13,7 +13,7 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import ru.javaprojects.mealservice.MealMatcher;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.to.MealTo;
-import ru.javaprojects.mealservice.util.MessageSender;
+import ru.javaprojects.mealservice.messaging.MessageSender;
 import ru.javaprojects.mealservice.util.ValidationUtil;
 import ru.javaprojects.mealservice.util.exception.NotFoundException;
 

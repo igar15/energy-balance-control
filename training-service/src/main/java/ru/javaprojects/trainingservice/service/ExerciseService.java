@@ -9,7 +9,7 @@ import ru.javaprojects.trainingservice.model.Exercise;
 import ru.javaprojects.trainingservice.model.ExerciseType;
 import ru.javaprojects.trainingservice.repository.ExerciseRepository;
 import ru.javaprojects.trainingservice.to.ExerciseTo;
-import ru.javaprojects.trainingservice.util.MessageSender;
+import ru.javaprojects.trainingservice.messaging.MessageSender;
 import ru.javaprojects.trainingservice.util.exception.DateTimeUniqueException;
 import ru.javaprojects.trainingservice.util.exception.NotFoundException;
 

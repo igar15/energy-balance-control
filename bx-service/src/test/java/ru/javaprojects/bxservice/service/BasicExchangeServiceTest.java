@@ -11,7 +11,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import ru.javaprojects.bxservice.model.BasicExchange;
 import ru.javaprojects.bxservice.repository.BasicExchangeRepository;
-import ru.javaprojects.bxservice.util.UserServiceClient;
+import ru.javaprojects.bxservice.service.client.UserServiceClient;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import ru.javaprojects.trainingservice.model.Exercise;
 import ru.javaprojects.trainingservice.testdata.ExerciseTypeTestData;
 import ru.javaprojects.trainingservice.to.ExerciseTo;
-import ru.javaprojects.trainingservice.util.MessageSender;
+import ru.javaprojects.trainingservice.messaging.MessageSender;
 import ru.javaprojects.trainingservice.util.exception.DateTimeUniqueException;
 import ru.javaprojects.trainingservice.util.exception.NotFoundException;
 
