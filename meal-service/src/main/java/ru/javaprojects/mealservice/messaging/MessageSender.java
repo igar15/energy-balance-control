@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Component
 public class MessageSender {
 
-    public void sendMessageDateCreated(LocalDate date, long userId) {
+    public void sendDateCreatedMessage(LocalDate date, long userId) {
         //TODO: SEND MESSAGE TO QUEUE TO CREATE BX FOR CURRENT DATE
     }
 }

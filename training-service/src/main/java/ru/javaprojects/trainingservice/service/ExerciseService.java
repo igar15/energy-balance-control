@@ -99,7 +99,7 @@ public class ExerciseService {
 
     private void sendMessageDateCreated(LocalDateTime dateTime, long userId) {
         if (Objects.nonNull(dateTime)) {
-            messageSender.sendMessageDateCreated(dateTime.toLocalDate(), userId);
+            messageSender.sendDateCreatedMessage(dateTime.toLocalDate(), userId);
         }
     }
 

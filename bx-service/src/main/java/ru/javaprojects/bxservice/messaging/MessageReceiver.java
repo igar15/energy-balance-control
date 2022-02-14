@@ -16,7 +16,7 @@ public class MessageReceiver {
         this.service = service;
     }
 
-    public void receiveMessageDateCreated() {
+    public void receiveDateCreatedMessage() {
         //TODO: RECEIVE MESSAGE FROM QUEUE TO CREATE BX FOR CURRENT DATE
         DateMessage dateMessage = new DateMessage();
         if (dateMessage.isUserDetailsChanged()) {
