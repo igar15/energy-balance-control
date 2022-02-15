@@ -13,9 +13,9 @@ import java.time.LocalDate;
 public class EnergyBalanceService {
 
     //TODO Autowired real FeignClients
-    private MealServiceClient mealServiceClient;
-    private TrainingServiceClient trainingServiceClient;
-    private BxServiceClient bxServiceClient;
+    private MealServiceClient mealServiceClient = (date) -> 1900;
+    private TrainingServiceClient trainingServiceClient = (date) -> 150;
+    private BxServiceClient bxServiceClient = (date) -> 1700;
 
     public EnergyBalanceReport getReport(LocalDate date) {
         Assert.notNull(date, "date must not be null");

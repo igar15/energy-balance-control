@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "verification_tokens", uniqueConstraints = {@UniqueConstraint(columnNames = "email", name = "verification_tokens_unique_email_idx")})
@@ -113,6 +114,6 @@ public class VerificationToken {
 
     @Override
     public int hashCode() {
-        return id == null ? 0 : id.intValue();
+        return Objects.hash(id);
     }
 }

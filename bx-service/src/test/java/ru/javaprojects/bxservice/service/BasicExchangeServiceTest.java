@@ -35,8 +35,8 @@ class BasicExchangeServiceTest {
 
     @PostConstruct
     private void setupUserServiceClient() {
-        Mockito.when(userServiceClient.getUserDetails(USER1_ID)).thenReturn(user1Details);
-        Mockito.when(userServiceClient.getUserDetails(USER2_ID)).thenReturn(user2Details);
+        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(user1BxDetails);
+        Mockito.when(userServiceClient.getUserBxDetails(USER2_ID)).thenReturn(user2BxDetails);
         service.setUserServiceClient(userServiceClient);
     }
 
@@ -73,22 +73,22 @@ class BasicExchangeServiceTest {
 
     @Test
     void updateBasicExchanges() {
-        Mockito.when(userServiceClient.getUserDetails(USER1_ID)).thenReturn(updatedUser1Details);
+        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(updatedUser1BxDetails);
         service.updateBasicExchanges(FEBRUARY_6_2022, USER1_ID);
         assertEquals(USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_5_2022).get().getCalories());
         assertEquals(UPDATED_USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_6_2022).get().getCalories());
         assertEquals(UPDATED_USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_7_2022).get().getCalories());
-        Mockito.when(userServiceClient.getUserDetails(USER1_ID)).thenReturn(user1Details);
+        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(user1BxDetails);
     }
 
     @Test
     void updateBasicExchangesWhenBasicExchangesNotFound() {
-        Mockito.when(userServiceClient.getUserDetails(USER1_ID)).thenReturn(updatedUser1Details);
+        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(updatedUser1BxDetails);
         service.updateBasicExchanges(LocalDate.now(), USER1_ID);
         assertTrue(repository.findAllByUserIdAndDateGreaterThanEqual(USER1_ID, LocalDate.now()).isEmpty());
         assertEquals(USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_5_2022).get().getCalories());
         assertEquals(USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_6_2022).get().getCalories());
         assertEquals(USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_7_2022).get().getCalories());
-        Mockito.when(userServiceClient.getUserDetails(USER1_ID)).thenReturn(user1Details);
+        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(user1BxDetails);
     }
 }

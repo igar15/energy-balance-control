@@ -1,15 +1,13 @@
 package ru.javaprojects.bxservice.testdata;
 
-import ru.javaprojects.bxservice.model.BasicExchange;
-import ru.javaprojects.bxservice.to.UserDetails;
+import ru.javaprojects.bxservice.to.UserBxDetails;
 
 import java.time.LocalDate;
 
 import static java.time.LocalDate.of;
 import static java.time.Month.FEBRUARY;
-import static ru.javaprojects.bxservice.model.BasicExchange.START_SEQ;
-import static ru.javaprojects.bxservice.to.UserDetails.Sex.MAN;
-import static ru.javaprojects.bxservice.to.UserDetails.Sex.WOMAN;
+import static ru.javaprojects.bxservice.to.UserBxDetails.Sex.MAN;
+import static ru.javaprojects.bxservice.to.UserBxDetails.Sex.WOMAN;
 
 public class BasicExchangeTestData {
     public static final long USER1_ID = 200000;
@@ -26,7 +24,7 @@ public class BasicExchangeTestData {
 
     public static final String DATE = "2022-02-06";
 
-    public static final UserDetails user1Details = new UserDetails(MAN, 90, 185, 34);
-    public static final UserDetails updatedUser1Details = new UserDetails(MAN, 88, 185, 35);
-    public static final UserDetails user2Details = new UserDetails(WOMAN, 60, 163, 30);
+    public static final UserBxDetails user1BxDetails = new UserBxDetails(MAN, 90, 185, 34);
+    public static final UserBxDetails updatedUser1BxDetails = new UserBxDetails(MAN, 88, 185, 35);
+    public static final UserBxDetails user2BxDetails = new UserBxDetails(WOMAN, 60, 163, 30);
 }

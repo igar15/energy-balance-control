@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.Range;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "basic_exchanges", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date"}, name = "basic_exchanges_unique_user_date_idx")})
@@ -103,6 +104,6 @@ public class BasicExchange {
 
     @Override
     public int hashCode() {
-        return id == null ? 0 : id.intValue();
+        return Objects.hash(id);
     }
 }

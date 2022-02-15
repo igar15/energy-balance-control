@@ -5,19 +5,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.bxservice.model.BasicExchange;
 import ru.javaprojects.bxservice.repository.BasicExchangeRepository;
-import ru.javaprojects.bxservice.to.UserDetails;
+import ru.javaprojects.bxservice.to.UserBxDetails;
 import ru.javaprojects.bxservice.service.client.UserServiceClient;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import static ru.javaprojects.bxservice.to.UserBxDetails.Sex.MAN;
 import static ru.javaprojects.bxservice.util.BasicExchangeUtil.calculateBxCalories;
 
 @Service
 public class BasicExchangeService {
     private final BasicExchangeRepository repository;
     //TODO Autowired real FeignClient
-    private UserServiceClient userServiceClient = (userId, token) -> null;
+    private UserServiceClient userServiceClient = (userId, token) -> new UserBxDetails(MAN, 90, 185, 34);
 
     public BasicExchangeService(BasicExchangeRepository repository) {
         this.repository = repository;
@@ -48,8 +49,8 @@ public class BasicExchangeService {
     }
 
     private int getBxCalories(long userId) {
-        UserDetails userDetails = userServiceClient.getUserDetails(userId);
-        return calculateBxCalories(userDetails);
+        UserBxDetails userBxDetails = userServiceClient.getUserBxDetails(userId);
+        return calculateBxCalories(userBxDetails);
     }
 
     //use only for tests

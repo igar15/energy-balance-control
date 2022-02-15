@@ -4,6 +4,7 @@ import org.hibernate.Hibernate;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @MappedSuperclass
 @Access(AccessType.FIELD)
@@ -54,6 +55,6 @@ public abstract class AbstractBaseEntity {
 
     @Override
     public int hashCode() {
-        return id == null ? 0 : id.intValue();
+        return Objects.hash(id);
     }
 }

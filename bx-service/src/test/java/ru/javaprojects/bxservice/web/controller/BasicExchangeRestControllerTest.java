@@ -50,8 +50,8 @@ class BasicExchangeRestControllerTest {
 
     @PostConstruct
     private void setupUserServiceClient() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Mockito.when(userServiceClient.getUserDetails(USER1_ID)).thenReturn(user1Details);
-        Mockito.when(userServiceClient.getUserDetails(USER2_ID)).thenReturn(user2Details);
+        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(user1BxDetails);
+        Mockito.when(userServiceClient.getUserBxDetails(USER2_ID)).thenReturn(user2BxDetails);
         Method userServiceClientSetter = service.getClass().getDeclaredMethod("setUserServiceClient",  UserServiceClient.class);
         userServiceClientSetter.setAccessible(true);
         userServiceClientSetter.invoke(service, userServiceClient);

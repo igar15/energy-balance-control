@@ -62,7 +62,7 @@ class EmailVerificationRestControllerTest {
     }
 
     @PostConstruct
-    void setupEmailVerificationService() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    void setupEmailVerificationService() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Method mailSenderSetter = service.getClass().getDeclaredMethod("setMailSender", JavaMailSender.class);
         mailSenderSetter.setAccessible(true);
         mailSenderSetter.invoke(service, mailSender);

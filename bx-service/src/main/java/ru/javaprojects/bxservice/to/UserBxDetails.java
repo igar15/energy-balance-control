@@ -1,15 +1,15 @@
 package ru.javaprojects.bxservice.to;
 
-public class UserDetails {
+public class UserBxDetails {
     private Sex sex;
     private int weight;
     private int growth;
     private int age;
 
-    public UserDetails() {
+    public UserBxDetails() {
     }
 
-    public UserDetails(Sex sex, int weight, int growth, int age) {
+    public UserBxDetails(Sex sex, int weight, int growth, int age) {
         this.sex = sex;
         this.weight = weight;
         this.growth = growth;
@@ -50,7 +50,7 @@ public class UserDetails {
 
     @Override
     public String toString() {
-        return "UserParams{" +
+        return "UserBxDetails{" +
                 "sex=" + sex +
                 ", weight=" + weight +
                 ", growth=" + growth +
