@@ -23,7 +23,7 @@ public class VerificationToken {
     @Column(name = "email", nullable = false, unique = true)
     @Email
     @NotBlank
-    @Size(max = 40)
+    @Size(max = 50)
     private String email;
 
     @Column(name = "token", nullable = false)
@@ -34,14 +34,18 @@ public class VerificationToken {
     @NotNull
     private Date expiryDate;
 
+    @Column(name = "email_verified", nullable = false, columnDefinition = "bool default false")
+    private boolean emailVerified = false;
+
     public VerificationToken() {
     }
 
-    public VerificationToken(Long id, String email, String token, Date expiryDate) {
+    public VerificationToken(Long id, String email, String token, Date expiryDate, boolean emailVerified) {
         this.id = id;
         this.email = email;
         this.token = token;
         this.expiryDate = expiryDate;
+        this.emailVerified = emailVerified;
     }
 
     public Long getId() {
@@ -76,6 +80,14 @@ public class VerificationToken {
         this.expiryDate = expiryDate;
     }
 
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
     @Override
     public String toString() {
         return "VerificationToken{" +
@@ -83,6 +95,7 @@ public class VerificationToken {
                 ", email='" + email + '\'' +
                 ", token='" + token + '\'' +
                 ", expiryDate=" + expiryDate +
+                ", emailVerified=" + emailVerified +
                 '}';
     }
 

@@ -5,35 +5,50 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javaprojects.emailverificationservice.messaging.MessageSender;
 import ru.javaprojects.emailverificationservice.model.VerificationToken;
 import ru.javaprojects.emailverificationservice.repository.VerificationTokenRepository;
 
 import java.util.Date;
-import java.util.UUID;
+
+import static ru.javaprojects.emailverificationservice.util.VerificationTokenUtil.*;
 
 @Service
 public class EmailVerificationService {
 
-    private final VerificationTokenRepository repository;
-    private final Environment environment;
+    private VerificationTokenRepository repository;
+    private Environment environment;
     private JavaMailSender mailSender;
+    private MessageSender messageSender;
 
-    public EmailVerificationService(VerificationTokenRepository repository, Environment environment, JavaMailSender mailSender) {
+    public EmailVerificationService(VerificationTokenRepository repository, Environment environment,
+                                    JavaMailSender mailSender, MessageSender messageSender) {
         this.repository = repository;
         this.environment = environment;
         this.mailSender = mailSender;
+        this.messageSender = messageSender;
     }
 
     @Transactional
     public void sendVerificationEmail(String email) {
-        String token = UUID.randomUUID().toString();
-        Date expiryDate = new Date(System.currentTimeMillis() + Long.parseLong(environment.getProperty("email.verification-token.expiration-time")));
         VerificationToken verificationToken = repository.findByEmail(email).orElse(new VerificationToken());
-        verificationToken.setEmail(email);
-        verificationToken.setToken(token);
-        verificationToken.setExpiryDate(expiryDate);
+        checkAlreadyVerified(verificationToken);
+        prepareVerificationToken(verificationToken, email, getExpiryDate());
         repository.save(verificationToken);
-        sendEmail(email, token);
+        sendEmail(email, verificationToken.getToken());
+    }
+
+    @Transactional
+    public void verifyEmail(String token) {
+        VerificationToken verificationToken = repository.findByToken(token).orElseThrow(() -> new NotFoundException("Not found verification record with token=" + token));
+        checkAlreadyVerified(verificationToken);
+        checkTokenExpired(verificationToken);
+        verificationToken.setEmailVerified(true);
+        messageSender.sendEmailVerifiedMessage(verificationToken.getEmail());
+    }
+
+    private Date getExpiryDate() {
+        return new Date(System.currentTimeMillis() + Long.parseLong(environment.getProperty("email.verification-token.expiration-time")));
     }
 
     private void sendEmail(String email, String token) {
@@ -44,5 +59,13 @@ public class EmailVerificationService {
         mail.setText("Please open the following URL to verify your email: \r\n" + url);
         mail.setFrom(environment.getProperty("support.email"));
         mailSender.send(mail);
+    }
+
+    //use only for tests
+    void setMailSender(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+    void setMessageSender(MessageSender messageSender) {
+        this.messageSender = messageSender;
     }
 }

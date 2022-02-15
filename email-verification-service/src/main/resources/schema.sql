@@ -5,9 +5,10 @@ CREATE SEQUENCE global_seq START WITH 100000 INCREMENT BY 1 MINVALUE 1 MAXVALUE 
 
 CREATE TABLE verification_tokens
 (
-    id          BIGINT DEFAULT global_seq.nextval PRIMARY KEY,
-    email       VARCHAR   NOT NULL,
-    token       VARCHAR   NOT NULL,
-    expiry_date TIMESTAMP NOT NULL
+    id             BIGINT DEFAULT global_seq.nextval PRIMARY KEY,
+    email          VARCHAR              NOT NULL,
+    token          VARCHAR              NOT NULL,
+    expiry_date    TIMESTAMP            NOT NULL,
+    email_verified BOOL   DEFAULT FALSE NOT NULL
 );
 CREATE UNIQUE INDEX verification_tokens_unique_email_idx ON verification_tokens (email);
