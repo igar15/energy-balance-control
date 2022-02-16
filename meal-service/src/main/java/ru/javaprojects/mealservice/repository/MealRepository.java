@@ -3,6 +3,7 @@ package ru.javaprojects.mealservice.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.mealservice.model.Meal;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -26,4 +28,11 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
     @Query(value = "SELECT * FROM meals WHERE user_id= :userId AND date_time >= :startOfTheDay AND date_time < :endOfTheDay LIMIT 1", nativeQuery = true)
     Optional<Meal> findFirstByUserIdAndDate(@Param("startOfTheDay") LocalDateTime startOfTheDay,
                                             @Param("endOfTheDay") LocalDateTime endOfTheDay, @Param("userId") long userId);
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Meal m WHERE m.userId = :userId")
+    void deleteAllByUser(@Param("userId") long userId);
+
+    List<Meal> findAllByUserId(long userId);
 }

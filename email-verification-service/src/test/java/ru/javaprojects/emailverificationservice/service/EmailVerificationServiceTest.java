@@ -95,4 +95,10 @@ class EmailVerificationServiceTest {
         assertThrows(EmailVerificationException.class, () -> service.verifyEmail(alreadyVerifiedToken.getToken()));
         Mockito.verify(messageSender, Mockito.times(0)).sendEmailVerifiedMessage(Mockito.anyString());
     }
+
+    @Test
+    void delete() {
+        service.delete(alreadyVerifiedToken.getEmail());
+        assertTrue(repository.findByEmail(alreadyVerifiedToken.getEmail()).isEmpty());
+    }
 }

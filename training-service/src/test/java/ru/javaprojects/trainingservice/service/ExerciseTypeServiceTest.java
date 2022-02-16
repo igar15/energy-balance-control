@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import ru.javaprojects.trainingservice.model.ExerciseType;
+import ru.javaprojects.trainingservice.repository.ExerciseRepository;
+import ru.javaprojects.trainingservice.repository.ExerciseTypeRepository;
 import ru.javaprojects.trainingservice.to.ExerciseTypeTo;
 import ru.javaprojects.trainingservice.util.exception.NotFoundException;
 
@@ -19,6 +21,12 @@ class ExerciseTypeServiceTest extends AbstractServiceTest {
 
     @Autowired
     private ExerciseTypeService service;
+
+    @Autowired
+    private ExerciseRepository exerciseRepository;
+
+    @Autowired
+    private ExerciseTypeRepository repository;
 
     @Test
     void getAll() {
@@ -122,6 +130,15 @@ class ExerciseTypeServiceTest extends AbstractServiceTest {
     @Test
     void deleteNotOwn() {
         assertThrows(NotFoundException.class, () -> service.delete(EXERCISE_TYPE1_ID, USER2_ID));
+    }
+
+    @Test
+    void deleteAll() {
+        service.deleteAll(USER1_ID);
+        assertTrue(repository.findAllByUserId(USER1_ID).isEmpty());
+        assertFalse(repository.findAllByUserId(USER2_ID).isEmpty());
+        assertTrue(exerciseRepository.findAllByExerciseType_UserId(USER1_ID).isEmpty());
+        assertFalse(exerciseRepository.findAllByExerciseType_UserId(USER2_ID).isEmpty());
     }
 
     @Test

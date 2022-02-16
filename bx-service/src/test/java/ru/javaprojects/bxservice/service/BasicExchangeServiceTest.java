@@ -91,4 +91,11 @@ class BasicExchangeServiceTest {
         assertEquals(USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_7_2022).get().getCalories());
         Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(user1BxDetails);
     }
+
+    @Test
+    void deleteAll() {
+        service.deleteAll(USER1_ID);
+        assertTrue(repository.findAllByUserId(USER1_ID).isEmpty());
+        assertFalse(repository.findAllByUserId(USER2_ID).isEmpty());
+    }
 }

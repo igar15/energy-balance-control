@@ -43,13 +43,18 @@ public class MealService {
     @Transactional
     public void update(MealTo mealTo, long userId) {
         Assert.notNull(mealTo, "mealTo must not be null");
-        Meal meal = get(mealTo.getId(), userId);
+        Meal meal = get(mealTo.id(), userId);
         updateFromTo(meal, mealTo);
     }
 
     public void delete(long id, long userId) {
         Meal meal = get(id, userId);
         repository.delete(meal);
+    }
+
+    @Transactional
+    public void deleteAll(long userId) {
+       repository.deleteAllByUser(userId);
     }
 
     public Page<Meal> getPage(Pageable pageable, long userId) {

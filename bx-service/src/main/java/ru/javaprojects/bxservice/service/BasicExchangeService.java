@@ -48,6 +48,11 @@ public class BasicExchangeService {
         }
     }
 
+    @Transactional
+    public void deleteAll(long userId) {
+        repository.deleteAllByUser(userId);
+    }
+
     private int getBxCalories(long userId) {
         UserBxDetails userBxDetails = userServiceClient.getUserBxDetails(userId);
         return calculateBxCalories(userBxDetails);

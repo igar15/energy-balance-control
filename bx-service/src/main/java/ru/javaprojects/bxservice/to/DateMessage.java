@@ -5,15 +5,15 @@ import java.time.LocalDate;
 public class DateMessage {
     private long userId;
     private LocalDate date;
-    private boolean userDetailsChanged;
+    private boolean userBxDetailsChanged;
 
     public DateMessage() {
     }
 
-    public DateMessage(long userId, LocalDate date, boolean userDetailsChanged) {
+    public DateMessage(long userId, LocalDate date, boolean userBxDetailsChanged) {
         this.userId = userId;
         this.date = date;
-        this.userDetailsChanged = userDetailsChanged;
+        this.userBxDetailsChanged = userBxDetailsChanged;
     }
 
     public long getUserId() {
@@ -32,20 +32,20 @@ public class DateMessage {
         this.date = date;
     }
 
-    public boolean isUserDetailsChanged() {
-        return userDetailsChanged;
+    public boolean isUserBxDetailsChanged() {
+        return userBxDetailsChanged;
     }
 
-    public void setUserDetailsChanged(boolean userDetailsChanged) {
-        this.userDetailsChanged = userDetailsChanged;
+    public void setUserBxDetailsChanged(boolean userBxDetailsChanged) {
+        this.userBxDetailsChanged = userBxDetailsChanged;
     }
 
     @Override
     public String toString() {
-        return "BxMessage{" +
+        return "DateMessage{" +
                 "userId=" + userId +
                 ", date=" + date +
-                ", userDetailsChanged=" + userDetailsChanged +
+                ", userBxDetailsChanged=" + userBxDetailsChanged +
                 '}';
     }
 }

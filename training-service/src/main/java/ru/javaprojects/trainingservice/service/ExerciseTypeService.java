@@ -35,7 +35,7 @@ public class ExerciseTypeService {
     @Transactional
     public void update(ExerciseTypeTo exerciseTypeTo, long userId) {
         Assert.notNull(exerciseTypeTo, "exerciseTypeTo must not be null");
-        ExerciseType exerciseType = get(exerciseTypeTo.getId(), userId);
+        ExerciseType exerciseType = get(exerciseTypeTo.id(), userId);
         updateFromTo(exerciseType, exerciseTypeTo);
     }
 
@@ -43,6 +43,11 @@ public class ExerciseTypeService {
     public void delete(long id, long userId) {
         ExerciseType exerciseType = get(id, userId);
         exerciseType.setDeleted(true);
+    }
+
+    @Transactional
+    public void deleteAll(long userId) {
+        repository.deleteAllByUser(userId);
     }
 
     ExerciseType get(long id, long userId) {

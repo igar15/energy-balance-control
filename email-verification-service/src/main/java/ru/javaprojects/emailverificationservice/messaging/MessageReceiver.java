@@ -25,4 +25,15 @@ public class MessageReceiver {
             log.info("email verification error: {}", e.getMessage());
         }
     }
+
+    public void receiveUserDeletedMessage() {
+        //TODO: RECEIVE MESSAGE FROM QUEUE TO DELETE VERIFICATION EMAIL TOKEN FOR DELETED USER
+        String email = "user1@test.com";
+        log.info("delete email verification token:{}", email);
+        try {
+            service.delete(email);
+        } catch (Exception e) {
+            log.info("email verification token deleting error: {}", e.getMessage());
+        }
+    }
 }

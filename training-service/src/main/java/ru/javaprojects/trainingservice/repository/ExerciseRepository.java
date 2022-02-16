@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.trainingservice.model.Exercise;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -33,4 +34,6 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
             " WHERE user_id= :userId AND date_time >= :startOfTheDay AND date_time < :endOfTheDay", nativeQuery = true)
     Optional<Integer> getTotalCaloriesBurned(@Param("startOfTheDay") LocalDateTime startOfTheDay,
                                              @Param("endOfTheDay") LocalDateTime endOfTheDay, @Param("userId") long userId);
+
+    List<Exercise> findAllByExerciseType_UserId(long userId);
 }

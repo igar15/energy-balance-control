@@ -15,13 +15,21 @@ public class UserUtil {
         user.setEmail(user.getEmail().toLowerCase());
         return user;
     }
-    public static User updateFromTo(User user, UserTo userTo) {
+    public static boolean updateFromTo(User user, UserTo userTo) {
+        boolean userDetailsChanged = isUserDetailsChanged(user, userTo);
         user.setName(userTo.getName());
         user.setSex(userTo.getSex());
         user.setWeight(userTo.getWeight());
         user.setGrowth(userTo.getGrowth());
         user.setAge(userTo.getAge());
         user.setRoles(userTo.getRoles());
-        return user;
+        return userDetailsChanged;
+    }
+
+    static boolean isUserDetailsChanged(User user, UserTo userTo) {
+        return !user.getSex().equals(userTo.getSex()) ||
+               !user.getWeight().equals(userTo.getWeight()) ||
+               !user.getGrowth().equals(userTo.getGrowth()) ||
+               !user.getAge().equals(userTo.getAge());
     }
 }

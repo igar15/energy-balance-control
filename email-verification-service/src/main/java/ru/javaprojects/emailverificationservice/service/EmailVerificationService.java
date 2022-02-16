@@ -47,6 +47,10 @@ public class EmailVerificationService {
         messageSender.sendEmailVerifiedMessage(verificationToken.getEmail());
     }
 
+    public void delete(String email) {
+        repository.deleteByEmail(email);
+    }
+
     private Date getExpiryDate() {
         return new Date(System.currentTimeMillis() + Long.parseLong(environment.getProperty("email.verification-token.expiration-time")));
     }

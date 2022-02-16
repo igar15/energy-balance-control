@@ -24,7 +24,7 @@ public class ValidationUtil {
 //      conservative when you reply, but accept liberally (http://stackoverflow.com/a/32728226/548473)
         if (baseTo.getId() == null) {
             baseTo.setId(id);
-        } else if (baseTo.getId() != id) {
+        } else if (baseTo.id() != id) {
             throw new IllegalRequestDataException(baseTo + " must be with id=" + id);
         }
     }

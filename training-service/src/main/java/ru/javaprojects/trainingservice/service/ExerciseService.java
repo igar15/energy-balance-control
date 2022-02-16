@@ -54,7 +54,7 @@ public class ExerciseService {
     public void update(ExerciseTo exerciseTo, long userId) {
         Assert.notNull(exerciseTo, "exerciseTo must not be null");
         checkDateTimeOnUnique(userId, exerciseTo.getId(), exerciseTo.getDateTime());
-        Exercise exercise = get(exerciseTo.getId(), userId);
+        Exercise exercise = get(exerciseTo.id(), userId);
         ExerciseType exerciseType = exerciseTypeService.get(exerciseTo.getExerciseTypeId(), userId);
         updateFromTo(exercise, exerciseTo);
         exercise.setExerciseType(exerciseType);

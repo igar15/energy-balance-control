@@ -11,9 +11,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import ru.javaprojects.mealservice.MealMatcher;
-import ru.javaprojects.mealservice.model.Meal;
-import ru.javaprojects.mealservice.to.MealTo;
 import ru.javaprojects.mealservice.messaging.MessageSender;
+import ru.javaprojects.mealservice.model.Meal;
+import ru.javaprojects.mealservice.repository.MealRepository;
+import ru.javaprojects.mealservice.to.MealTo;
 import ru.javaprojects.mealservice.util.ValidationUtil;
 import ru.javaprojects.mealservice.util.exception.NotFoundException;
 
@@ -35,6 +36,9 @@ class MealServiceTest {
 
     @Autowired
     private MealService service;
+
+    @Autowired
+    private MealRepository repository;
 
     @Mock
     private MessageSender messageSender;
@@ -129,6 +133,14 @@ class MealServiceTest {
     @Test
     void deleteNotOwn() {
         assertThrows(NotFoundException.class, () -> service.delete(MEAL1_ID, USER2_ID));
+    }
+
+    @Test
+    void deleteAll() {
+        service.deleteAll(USER1_ID);
+        assertTrue(repository.findAllByUserId(USER1_ID).isEmpty());
+        assertFalse(repository.findAllByUserId(USER2_ID).isEmpty());
+
     }
 
     @Test

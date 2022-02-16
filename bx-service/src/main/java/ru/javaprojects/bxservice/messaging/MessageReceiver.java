@@ -16,10 +16,10 @@ public class MessageReceiver {
         this.service = service;
     }
 
-    public void receiveDateCreatedMessage() {
+    public void receiveDateMessage() {
         //TODO: RECEIVE MESSAGE FROM QUEUE TO CREATE BX FOR CURRENT DATE
         DateMessage dateMessage = new DateMessage();
-        if (dateMessage.isUserDetailsChanged()) {
+        if (dateMessage.isUserBxDetailsChanged()) {
             log.info("update basic exchanges for {} from date {}", dateMessage.getUserId(), dateMessage.getDate());
             service.updateBasicExchanges(dateMessage.getDate(), dateMessage.getUserId());
         } else {
@@ -29,6 +29,17 @@ public class MessageReceiver {
             } catch (DataAccessException e) {
                 log.info("basic exchange for {} for date {} already exists", dateMessage.getUserId(), dateMessage.getDate());
             }
+        }
+    }
+
+    public void receiveUserDeletedMessage() {
+        //TODO: RECEIVE MESSAGE FROM QUEUE TO DELETE ALL BASIC EXCHANGES FOR DELETED USER
+        long userId = 200000;
+        log.info("delete all basic exchanges for user {}", userId);
+        try {
+            service.deleteAll(userId);
+        } catch (Exception e) {
+            log.info("all basic exchanges deleting error: {}", e.getMessage());
         }
     }
 }
