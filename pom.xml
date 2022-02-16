@@ -10,6 +10,7 @@
 		<module>bx-service</module>
 		<module>energy-balance-service</module>
 		<module>email-verification-service</module>
+		<module>user-service</module>
 	</modules>
 
 	<parent>
