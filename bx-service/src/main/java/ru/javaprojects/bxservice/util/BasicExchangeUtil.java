@@ -1,8 +1,8 @@
 package ru.javaprojects.bxservice.util;
 
-import ru.javaprojects.bxservice.to.UserBxDetails;
+import ru.javaprojects.bxservice.service.client.UserBxDetails;
 
-import static ru.javaprojects.bxservice.to.UserBxDetails.Sex.MAN;
+import static ru.javaprojects.bxservice.service.client.UserBxDetails.Sex.MAN;
 
 public class BasicExchangeUtil {
     private BasicExchangeUtil() {

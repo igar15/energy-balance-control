@@ -5,13 +5,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import ru.javaprojects.trainingservice.messaging.MessageSender;
 import ru.javaprojects.trainingservice.model.Exercise;
 import ru.javaprojects.trainingservice.testdata.ExerciseTypeTestData;
 import ru.javaprojects.trainingservice.to.ExerciseTo;
-import ru.javaprojects.trainingservice.messaging.MessageSender;
 import ru.javaprojects.trainingservice.util.exception.DateTimeUniqueException;
 import ru.javaprojects.trainingservice.util.exception.NotFoundException;
 
+import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -40,29 +41,27 @@ class ExerciseServiceTest extends AbstractServiceTest {
     @Mock
     private MessageSender messageSender;
 
+    @PostConstruct
+    void setupExerciseService() {
+        service.setMessageSender(messageSender);
+    }
+
     @Test
-    void create() {
+    void createWithSendingMessageDateCreated() {
         Exercise created = service.create(getNewTo(), USER1_ID);
         long newId = created.id();
         Exercise newExercise = getNew();
         newExercise.setId(newId);
         EXERCISE_MATCHER.assertMatch(created, newExercise);
-    }
-
-    @Test
-    void createWithSendingMessageDateCreated() {
-        service.setMessageSender(messageSender);
-        service.create(getNewTo(), USER1_ID);
         Mockito.verify(messageSender, Mockito.times(1)).sendDateCreatedMessage(getNewTo().getDateTime().toLocalDate(), USER1_ID);
     }
 
     @Test
     void createWithoutSendingMessageDateCreated() {
-        service.setMessageSender(messageSender);
         ExerciseTo newTo = getNewTo();
         newTo.setDateTime(of(exercise1.getDateTime().toLocalDate(), LocalTime.of(6, 0)));
         service.create(newTo, USER1_ID);
-        Mockito.verify(messageSender, Mockito.times(0)).sendDateCreatedMessage(newTo.getDateTime().toLocalDate(), USER1_ID);
+        Mockito.verify(messageSender, Mockito.times(0)).sendDateCreatedMessage(Mockito.any(LocalDate.class), Mockito.anyLong());
     }
 
     @Test

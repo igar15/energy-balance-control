@@ -30,6 +30,12 @@ public class User {
     @Size(min = 4, max = 70)
     private String name;
 
+    @Column(name = "email", nullable = false, unique = true)
+    @Email
+    @NotBlank
+    @Size(max = 50)
+    private String email;
+
     @Column(name = "sex", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -49,12 +55,6 @@ public class User {
     @NotNull
     @Range(min = 1, max = 120)
     private Integer age;
-
-    @Column(name = "email", nullable = false, unique = true)
-    @Email
-    @NotBlank
-    @Size(max = 50)
-    private String email;
 
     @Column(name = "password", nullable = false)
     @NotBlank
@@ -84,18 +84,17 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String name, Sex sex, Integer weight, Integer growth, Integer age, String email, String password,
-                boolean enabled, Date registered, Set<Role> roles) {
+    public User(Long id, String name, String email, Sex sex, Integer weight, Integer growth, Integer age, String password,
+                boolean enabled, Set<Role> roles) {
         this.id = id;
         this.name = name;
+        this.email = email;
         this.sex = sex;
         this.weight = weight;
         this.growth = growth;
         this.age = age;
-        this.email = email;
         this.password = password;
         this.enabled = enabled;
-        this.registered = registered;
         this.roles = roles;
     }
 
@@ -118,6 +117,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Sex getSex() {
@@ -150,14 +157,6 @@ public class User {
 
     public void setAge(Integer age) {
         this.age = age;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPassword() {
@@ -215,11 +214,11 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
                 ", sex=" + sex +
                 ", weight=" + weight +
                 ", growth=" + growth +
                 ", age=" + age +
-                ", email='" + email + '\'' +
                 ", enabled=" + enabled +
                 ", roles=" + roles +
                 '}';

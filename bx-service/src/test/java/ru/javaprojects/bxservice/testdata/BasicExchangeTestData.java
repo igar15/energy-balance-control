@@ -1,13 +1,13 @@
 package ru.javaprojects.bxservice.testdata;
 
-import ru.javaprojects.bxservice.to.UserBxDetails;
+import ru.javaprojects.bxservice.service.client.UserBxDetails;
 
 import java.time.LocalDate;
 
 import static java.time.LocalDate.of;
 import static java.time.Month.FEBRUARY;
-import static ru.javaprojects.bxservice.to.UserBxDetails.Sex.MAN;
-import static ru.javaprojects.bxservice.to.UserBxDetails.Sex.WOMAN;
+import static ru.javaprojects.bxservice.service.client.UserBxDetails.Sex.MAN;
+import static ru.javaprojects.bxservice.service.client.UserBxDetails.Sex.WOMAN;
 
 public class BasicExchangeTestData {
     public static final long USER1_ID = 200000;

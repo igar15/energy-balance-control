@@ -18,6 +18,7 @@ import ru.javaprojects.mealservice.to.MealTo;
 import ru.javaprojects.mealservice.util.ValidationUtil;
 import ru.javaprojects.mealservice.util.exception.NotFoundException;
 
+import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -43,29 +44,28 @@ class MealServiceTest {
     @Mock
     private MessageSender messageSender;
 
+    @PostConstruct
+    void setupMealService() {
+        service.setMessageSender(messageSender);
+    }
+
     @Test
-    void create() {
+    void createWithSendingMessageDateCreated() {
         Meal created = service.create(getNewTo(), USER1_ID);
         long newId = created.id();
         Meal newMeal = getNew();
         newMeal.setId(newId);
         MealMatcher.assertMatch(created, newMeal);
-    }
-
-    @Test
-    void createWithSendingMessageDateCreated() {
-        service.setMessageSender(messageSender);
-        service.create(getNewTo(), USER1_ID);
         Mockito.verify(messageSender, Mockito.times(1)).sendDateCreatedMessage(getNewTo().getDateTime().toLocalDate(), USER1_ID);
+
     }
 
     @Test
     void createWithoutSendingMessageDateCreated() {
-        service.setMessageSender(messageSender);
         MealTo newTo = getNewTo();
         newTo.setDateTime(of(meal1.getDateTime().toLocalDate(), LocalTime.of(6, 0)));
         service.create(newTo, USER1_ID);
-        Mockito.verify(messageSender, Mockito.times(0)).sendDateCreatedMessage(newTo.getDateTime().toLocalDate(), USER1_ID);
+        Mockito.verify(messageSender, Mockito.times(0)).sendDateCreatedMessage(Mockito.any(LocalDate.class), Mockito.anyLong());
     }
 
     @Test

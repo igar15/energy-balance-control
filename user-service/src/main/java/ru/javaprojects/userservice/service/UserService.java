@@ -44,14 +44,14 @@ public class UserService {
         return repository.findById(id).orElseThrow(() -> new NotFoundException("Not found user with id=" + id));
     }
 
-    public Page<User> getPage(Pageable pageable) {
-        Assert.notNull(pageable, "pageable must not be null");
-        return repository.findAllByOrderByNameAscEmail(pageable);
-    }
-
     public User getByEmail(String email) {
         Assert.notNull(email, "email must not be null");
         return repository.findByEmail(email).orElseThrow(() -> new NotFoundException("Not found user with email=" + email));
+    }
+
+    public Page<User> getPage(Pageable pageable) {
+        Assert.notNull(pageable, "pageable must not be null");
+        return repository.findAllByOrderByNameAscEmail(pageable);
     }
 
     public Page<User> getPageByKeyword(String keyword, Pageable pageable) {
@@ -60,10 +60,10 @@ public class UserService {
         return repository.findAllByNameContainsIgnoreCaseOrEmailContainsIgnoreCaseOrderByNameAscEmail(keyword, keyword, pageable);
     }
 
-    public void delete(int id) {
+    public void delete(long id) {
         User user = get(id);
         repository.delete(user);
-        messageSender.sendUserDeletedMessage(id);
+        messageSender.sendUserDeletedMessage(user.getEmail(), id);
     }
 
     @Transactional
@@ -77,9 +77,16 @@ public class UserService {
     }
 
     @Transactional
-    public void changePassword(int id, String password) {
+    public void changePassword(long id, String password) {
         Assert.notNull(password, "password must not be null");
         User user = get(id);
+        user.setPassword(passwordEncoder.encode(password));
+    }
+
+    @Transactional
+    public void changePassword(String email, String password) {
+        Assert.notNull(password, "password must not be null");
+        User user = getByEmail(email);
         user.setPassword(passwordEncoder.encode(password));
     }
 
@@ -89,11 +96,21 @@ public class UserService {
         user.setEnabled(true);
     }
 
-    public void resendEmailVerify(String email) {
+    public void sendEmailVerify(String email) {
         User user = getByEmail(email);
         if (user.isEnabled()) {
             throw new EmailVerificationException("Email already verified:" + email);
         }
         messageSender.sendEmailVerifyMessage(email);
+    }
+
+    public void resetPassword(String email) {
+        getByEmail(email);
+        messageSender.sendPasswordResetMessage(email);
+    }
+
+    //use only for tests
+    void setMessageSender(MessageSender messageSender) {
+        this.messageSender = messageSender;
     }
 }

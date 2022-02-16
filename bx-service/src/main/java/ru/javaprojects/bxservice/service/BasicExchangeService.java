@@ -5,13 +5,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.bxservice.model.BasicExchange;
 import ru.javaprojects.bxservice.repository.BasicExchangeRepository;
-import ru.javaprojects.bxservice.to.UserBxDetails;
+import ru.javaprojects.bxservice.service.client.UserBxDetails;
 import ru.javaprojects.bxservice.service.client.UserServiceClient;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static ru.javaprojects.bxservice.to.UserBxDetails.Sex.MAN;
+import static ru.javaprojects.bxservice.service.client.UserBxDetails.Sex.MAN;
 import static ru.javaprojects.bxservice.util.BasicExchangeUtil.calculateBxCalories;
 
 @Service
