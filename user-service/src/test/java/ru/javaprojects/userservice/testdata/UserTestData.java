@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.to.AdminUserTo;
+import ru.javaprojects.userservice.to.NewUserTo;
 import ru.javaprojects.userservice.to.UserTo;
 
 import java.util.List;
@@ -20,6 +21,8 @@ import static ru.javaprojects.userservice.model.User.Sex.WOMAN;
 public class UserTestData {
     public static final long USER_ID = START_SEQ;
     public static final long ADMIN_ID = START_SEQ + 1;
+    public static final String USER_ID_STRING = START_SEQ + "";
+    public static final String ADMIN_ID_STRING = (START_SEQ + 1) + "";
     public static final long USER_DISABLED_ID = START_SEQ + 2;
     public static final long NOT_FOUND = 10;
     public static final String NOT_FOUND_EMAIL = "notfound@test.com";
@@ -40,6 +43,8 @@ public class UserTestData {
 
     public static final String NEW_PASSWORD = "newPassword";
 
+    public static final String JSON_USER_PAGE = "";
+
 
     public static User getNew() {
         return new User(null, "new name", "new@test.com", WOMAN, 65, 170, 30, "newPassword", false, Set.of(USER));
@@ -59,5 +64,13 @@ public class UserTestData {
 
     public static AdminUserTo getAdminUpdatedTo() {
         return new AdminUserTo(USER_ID, "Updated name", "updated@test.com", MAN, 95, 186, 35, Set.of(USER, ADMIN));
+    }
+
+    public static NewUserTo getNewUserTo() {
+        return new NewUserTo("new username", "newuser@test.com", WOMAN, 60, 175, 30, "newPass");
+    }
+
+    public static User getNewForRegister() {
+        return new User(null, "new username", "newuser@test.com", WOMAN, 60, 175, 30, "newPass", false, Set.of(USER));
     }
 }

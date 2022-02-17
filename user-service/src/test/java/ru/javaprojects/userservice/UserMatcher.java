@@ -1,8 +1,10 @@
 package ru.javaprojects.userservice;
 
+import org.springframework.test.web.servlet.ResultMatcher;
 import ru.javaprojects.userservice.model.User;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,16 +24,16 @@ public class UserMatcher {
         assertThat(actual).usingRecursiveComparison().ignoringFields("registered", "password").isEqualTo(expected);
     }
 
-//    public ResultMatcher contentJson(T expected) {
-//        return result -> assertMatch(TestUtil.readFromJsonMvcResult(result, clazz), expected);
-//    }
-//
-//    @SafeVarargs
-//    public final ResultMatcher contentJson(T... expected) {
-//        return contentJson(List.of(expected));
-//    }
-//
-//    public ResultMatcher contentJson(Iterable<T> expected) {
-//        return result -> assertMatch(TestUtil.readListFromJsonMvcResult(result, clazz), expected);
-//    }
+    public static ResultMatcher contentJson(User expected) {
+        return result -> assertMatch(TestUtil.readFromJsonMvcResult(result, User.class), expected);
+    }
+
+    @SafeVarargs
+    public static final ResultMatcher contentJson(User... expected) {
+        return contentJson(List.of(expected));
+    }
+
+    public static ResultMatcher contentJson(Iterable<User> expected) {
+        return result -> assertMatch(TestUtil.readListFromJsonMvcResult(result, User.class), expected);
+    }
 }

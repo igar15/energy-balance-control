@@ -20,7 +20,7 @@ public class NewUserTo extends BaseUserTo {
     public NewUserTo() {
     }
 
-    public NewUserTo( String name, String email, Sex sex, Integer weight, Integer growth, Integer age, String password) {
+    public NewUserTo(String name, String email, Sex sex, Integer weight, Integer growth, Integer age, String password) {
         super(name, sex, weight, growth, age);
         this.email = email;
         this.password = password;

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaprojects.userservice.model.User;
@@ -30,6 +31,7 @@ import static ru.javaprojects.userservice.web.security.JwtProvider.AUTHORIZATION
 
 @RestController
 @RequestMapping(value = ProfileRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Validated
 public class ProfileRestController {
     static final String REST_URL = "/api/profile";
     private final Logger log = LoggerFactory.getLogger(getClass());
