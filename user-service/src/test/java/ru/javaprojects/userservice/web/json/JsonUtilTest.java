@@ -43,9 +43,9 @@ class JsonUtilTest {
         assertEquals(newUserTo.getPassword(), "newPass");
     }
 
-//    @Test
-//    void readContentFromPage() {
-//        List<User> users = JsonUtil.readContentFromPage(JSON_USER_PAGE, User.class);
-//        UserMatcher.assertMatch(users, userDisabled, user);
-//    }
+    @Test
+    void readContentFromPage() {
+        List<User> users = JsonUtil.readContentFromPage(JSON_USER_PAGE, User.class);
+        UserMatcher.assertMatch(users, userDisabled, user);
+    }
 }

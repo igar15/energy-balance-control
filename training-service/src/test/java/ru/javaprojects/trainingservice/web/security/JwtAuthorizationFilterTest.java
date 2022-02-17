@@ -44,7 +44,7 @@ class JwtAuthorizationFilterTest extends AbstractControllerTest {
     @PostConstruct
     private void postConstruct() {
         String secretKey = environment.getProperty("jwt.secretKey");
-        jwtHeader = getHeaders(jwtProvider.generateAuthorizationToken(USER1_ID_STRING, "ROLE_USER"));
+//        jwtHeader = getHeaders(jwtProvider.generateAuthorizationToken(USER1_ID_STRING, "ROLE_USER"));
         jwtExpiredHeader = getHeaders(generateCustomAuthorizationToken(USER1_ID_STRING, (new Date(System.currentTimeMillis() - 10000)), secretKey));
         jwtInvalidHeader = getHeaders(generateCustomAuthorizationToken(USER1_ID_STRING, (new Date(System.currentTimeMillis() + AUTHORIZATION_TOKEN_EXPIRATION_TIME)), UUID.randomUUID().toString()));
     }

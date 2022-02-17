@@ -55,8 +55,9 @@ public class JsonUtil {
     }
 
     private static String removePageAttributes(String json) {
-        int openSquareBracketIndex = json.indexOf('[');
-        int closeSquareBracketIndex = json.indexOf(']');
-        return json.substring(openSquareBracketIndex, closeSquareBracketIndex + 1);
+        json = json.replace("{\"content\":", "");
+        int pageableIndex = json.indexOf(",\"pageable\"");
+        json = json.substring(0, pageableIndex);
+        return json;
     }
 }

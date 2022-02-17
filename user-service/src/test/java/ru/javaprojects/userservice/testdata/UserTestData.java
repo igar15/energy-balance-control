@@ -44,8 +44,9 @@ public class UserTestData {
 
     public static final String NEW_PASSWORD = "newPassword";
 
-    public static final String JSON_USER_PAGE = "";
-
+    public static final String JSON_USER_PAGE = "{\"content\":[{\"id\":100002,\"name\":\"Jack London\",\"email\":\"jack@gmail.com\",\"sex\":\"MAN\",\"weight\":83,\"growth\":174,\"age\":38,\"enabled\":false,\"registered\":\"2022-02-17T17:28:15.116+00:00\",\"roles\":[\"USER\"]}," +
+            "{\"id\":100000,\"name\":\"John Smith\",\"email\":\"user@gmail.com\",\"sex\":\"MAN\",\"weight\":90,\"growth\":185,\"age\":34,\"enabled\":true,\"registered\":\"2022-02-17T17:28:15.116+00:00\",\"roles\":[\"USER\"]}]," +
+            "\"pageable\":{\"page\":0,\"size\":2,\"sort\":{\"orders\":[]}},\"total\":3}";
 
     public static User getNew() {
         return new User(null, "new name", "new@test.com", WOMAN, 65, 170, 30, "newPassword", false, Set.of(USER));
