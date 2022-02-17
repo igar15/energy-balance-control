@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.javaprojects.userservice.model.User;
+import ru.javaprojects.userservice.to.AdminUserTo;
 import ru.javaprojects.userservice.to.UserTo;
 
 import java.util.List;
@@ -49,6 +50,14 @@ public class UserTestData {
     }
 
     public static UserTo getUpdatedTo() {
-        return new UserTo(USER_ID, "Updated name", MAN, 95, 186, 35, Set.of(USER));
+        return new UserTo(USER_ID, "Updated name", MAN, 95, 186, 35);
+    }
+
+    public static User getAdminUpdated() {
+        return new User(USER_ID, "Updated name", "updated@test.com", MAN, 95, 186, 35, "password", true, Set.of(USER, ADMIN));
+    }
+
+    public static AdminUserTo getAdminUpdatedTo() {
+        return new AdminUserTo(USER_ID, "Updated name", "updated@test.com", MAN, 95, 186, 35, Set.of(USER, ADMIN));
     }
 }

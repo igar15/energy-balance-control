@@ -3,11 +3,12 @@ package ru.javaprojects.userservice.util;
 import org.slf4j.Logger;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
+import ru.javaprojects.userservice.HasId;
 import ru.javaprojects.userservice.model.User;
-import ru.javaprojects.userservice.to.UserTo;
+import ru.javaprojects.userservice.to.AdminUserTo;
+import ru.javaprojects.userservice.util.exception.ErrorType;
 import ru.javaprojects.userservice.util.exception.IllegalRequestDataException;
 
-import javax.lang.model.type.ErrorType;
 import javax.servlet.http.HttpServletRequest;
 
 public class ValidationUtil {
@@ -20,12 +21,12 @@ public class ValidationUtil {
         }
     }
 
-    public static void assureIdConsistent(UserTo userTo, long id) {
+    public static void assureIdConsistent(HasId bean, long id) {
 //      conservative when you reply, but accept liberally (http://stackoverflow.com/a/32728226/548473)
-        if (userTo.getId() == null) {
-            userTo.setId(id);
-        } else if (userTo.id() != id) {
-            throw new IllegalRequestDataException(userTo + " must be with id=" + id);
+        if (bean.getId() == null) {
+            bean.setId(id);
+        } else if (bean.id() != id) {
+            throw new IllegalRequestDataException(bean + " must be with id=" + id);
         }
     }
 

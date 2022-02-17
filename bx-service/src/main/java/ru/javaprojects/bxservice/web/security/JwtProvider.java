@@ -5,14 +5,10 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -48,21 +44,14 @@ public class JwtProvider {
 
     //-----------DELETE AFTER CREATING AUTHENTICATION SERVICE------------------------<<<
 
-    public List<GrantedAuthority> getAuthorities(String token) {
-        String[] claims = getClaimsFromToken(token);
-        return Arrays.stream(claims).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-    }
-
-    public Authentication getAuthentication(String userId, List<GrantedAuthority> authorities, HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(userId, null, authorities);
-        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        return usernamePasswordAuthenticationToken;
-    }
-
     public String getSubject(String token) {
         JWTVerifier jwtVerifier = getJWTVerifier();
         return jwtVerifier.verify(token).getSubject();
+    }
+
+    public List<GrantedAuthority> getAuthorities(String token) {
+        String[] claims = getClaimsFromToken(token);
+        return Arrays.stream(claims).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     public boolean isTokenValid(String subject, String token) {

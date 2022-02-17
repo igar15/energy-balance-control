@@ -162,6 +162,13 @@ class UserServiceTest {
     }
 
     @Test
+    void updateWithAdminUserTo() {
+        service.update(getAdminUpdatedTo());
+        UserMatcher.assertMatch(service.get(USER_ID), getAdminUpdated());
+        Mockito.verify(messageSender, Mockito.times(1)).sendDateMessage(LocalDate.now(), USER_ID);
+    }
+
+    @Test
     void updateNotFound() {
         UserTo updatedTo  = getUpdatedTo();
         updatedTo.setId(NOT_FOUND);

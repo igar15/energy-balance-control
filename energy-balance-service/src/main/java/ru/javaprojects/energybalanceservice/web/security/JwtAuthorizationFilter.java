@@ -7,9 +7,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.javaprojects.energybalanceservice.util.exception.ErrorInfo;
@@ -54,8 +55,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 String userId = jwtProvider.getSubject(token);
                 if (jwtProvider.isTokenValid(userId, token) && SecurityContextHolder.getContext().getAuthentication() == null) {
                     List<GrantedAuthority> authorities = jwtProvider.getAuthorities(token);
-                    Authentication authentication = jwtProvider.getAuthentication(userId, authorities, request);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                            new UsernamePasswordAuthenticationToken(userId, null, authorities);
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 } else {
                     SecurityContextHolder.clearContext();
                 }

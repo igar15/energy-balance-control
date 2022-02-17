@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 import ru.javaprojects.userservice.messaging.MessageSender;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.repository.UserRepository;
+import ru.javaprojects.userservice.to.AdminUserTo;
 import ru.javaprojects.userservice.to.UserTo;
 import ru.javaprojects.userservice.util.exception.EmailVerificationException;
 import ru.javaprojects.userservice.util.exception.NotFoundException;
@@ -64,6 +65,16 @@ public class UserService {
         User user = get(id);
         repository.delete(user);
         messageSender.sendUserDeletedMessage(user.getEmail(), id);
+    }
+
+    @Transactional
+    public void update(AdminUserTo adminUserTo) {
+        Assert.notNull(adminUserTo, "adminUserTo must not be null");
+        User user = get(adminUserTo.id());
+        boolean userBxDetailsChanged = updateFromTo(user, adminUserTo);
+        if (userBxDetailsChanged) {
+            messageSender.sendDateMessage(LocalDate.now(), adminUserTo.id());
+        }
     }
 
     @Transactional

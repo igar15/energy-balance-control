@@ -1,4 +1,4 @@
-package ru.javaprojects.bxservice.web.security;
+package ru.javaprojects.userservice.web.security;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,8 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.javaprojects.bxservice.util.exception.ErrorInfo;
-import ru.javaprojects.bxservice.web.json.JacksonObjectMapper;
+import ru.javaprojects.userservice.util.exception.ErrorInfo;
+import ru.javaprojects.userservice.web.json.JacksonObjectMapper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static ru.javaprojects.bxservice.util.exception.ErrorType.BAD_TOKEN_ERROR;
-import static ru.javaprojects.bxservice.web.AppExceptionHandler.EXCEPTION_BAD_TOKEN;
+import static ru.javaprojects.userservice.util.exception.ErrorType.BAD_TOKEN_ERROR;
+import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_BAD_TOKEN;
 
 
 @Component

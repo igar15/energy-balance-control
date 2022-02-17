@@ -7,6 +7,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.util.Assert;
+import ru.javaprojects.userservice.HasId;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -17,7 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email", name = "users_unique_email_idx")})
 @Access(AccessType.FIELD)
-public class User {
+public class User implements HasId {
     public static final int START_SEQ = 100000;
 
     @Id
@@ -96,11 +97,6 @@ public class User {
         this.password = password;
         this.enabled = enabled;
         this.roles = roles;
-    }
-
-    public long id() {
-        Assert.notNull(id, "User entity must have id");
-        return id;
     }
 
     public Long getId() {

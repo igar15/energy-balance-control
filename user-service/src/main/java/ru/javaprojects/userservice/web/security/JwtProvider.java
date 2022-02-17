@@ -1,4 +1,4 @@
-package ru.javaprojects.mealservice.web.security;
+package ru.javaprojects.userservice.web.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
+    public static final String AUTHORIZATION_TOKEN_HEADER = "Authorization-Token";
     public static final String JAVA_PROJECTS = "javaprojects.ru";
     public static final String ENERGY_BALANCE_CONTROL_AUDIENCE = "Energy Balance Control System";
     public static final long AUTHORIZATION_TOKEN_EXPIRATION_TIME = 432_000_000; // 5 days
@@ -27,6 +28,17 @@ public class JwtProvider {
 
     public JwtProvider(Environment environment) {
         this.environment = environment;
+    }
+
+    public  String generateAuthorizationToken(String userId, String ... authorities) {
+        return JWT.create()
+                .withIssuer(JAVA_PROJECTS)
+                .withAudience(ENERGY_BALANCE_CONTROL_AUDIENCE)
+                .withIssuedAt(new Date())
+                .withSubject(userId)
+                .withArrayClaim(AUTHORITIES, authorities)
+                .withExpiresAt(new Date(System.currentTimeMillis() + AUTHORIZATION_TOKEN_EXPIRATION_TIME))
+                .sign(Algorithm.HMAC512(Objects.requireNonNull(environment.getProperty("jwt.secretKey"))));
     }
 
     public String getSubject(String token) {
