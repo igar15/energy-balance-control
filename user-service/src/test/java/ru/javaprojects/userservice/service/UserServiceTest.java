@@ -200,14 +200,25 @@ class UserServiceTest {
     }
 
     @Test
-    void enable() {
+    void enableByEmail() {
         service.enable(userDisabled.getEmail());
         assertTrue(service.get(USER_DISABLED_ID).isEnabled());
     }
 
     @Test
-    void enableNotFound() {
+    void enableByEmailNotFound() {
         assertThrows(NotFoundException.class, () -> service.enable(NOT_FOUND_EMAIL));
+    }
+
+    @Test
+    void enableById() {
+        service.enable(userDisabled.getId());
+        assertTrue(service.get(USER_DISABLED_ID).isEnabled());
+    }
+
+    @Test
+    void enableByIdNotFound() {
+        assertThrows(NotFoundException.class, () -> service.enable(NOT_FOUND));
     }
 
     @Test

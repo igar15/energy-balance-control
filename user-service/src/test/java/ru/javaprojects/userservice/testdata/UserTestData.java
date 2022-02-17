@@ -23,6 +23,7 @@ public class UserTestData {
     public static final long ADMIN_ID = START_SEQ + 1;
     public static final String USER_ID_STRING = START_SEQ + "";
     public static final String ADMIN_ID_STRING = (START_SEQ + 1) + "";
+    public static final String USER_DISABLED_ID_STRING = (START_SEQ + 2) + "";
     public static final long USER_DISABLED_ID = START_SEQ + 2;
     public static final long NOT_FOUND = 10;
     public static final String NOT_FOUND_EMAIL = "notfound@test.com";

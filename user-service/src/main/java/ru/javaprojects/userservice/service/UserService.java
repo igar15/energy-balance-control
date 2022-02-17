@@ -107,6 +107,12 @@ public class UserService {
         user.setEnabled(true);
     }
 
+    @Transactional
+    public void enable(long id) {
+        User user = get(id);
+        user.setEnabled(true);
+    }
+
     public void sendEmailVerify(String email) {
         User user = getByEmail(email);
         if (user.isEnabled()) {
