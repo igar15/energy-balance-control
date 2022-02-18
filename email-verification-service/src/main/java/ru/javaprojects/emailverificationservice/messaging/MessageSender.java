@@ -9,7 +9,7 @@ public class MessageSender {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     public void sendEmailVerifiedMessage(String email) {
-        log.info("send email verified message to {}", email);
+        log.info("send email verified message for {}", email);
         //TODO: SEND MESSAGE TO QUEUE TO NOTIFY that email has been verified
     }
 }

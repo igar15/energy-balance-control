@@ -21,7 +21,7 @@ public class MessageReceiver {
         log.info("verify email:{}", email);
         try {
             service.sendVerificationEmail(email);
-        } catch (EmailVerificationException e) {
+        } catch (Exception e) {
             log.info("email verification error: {}", e.getMessage());
         }
     }

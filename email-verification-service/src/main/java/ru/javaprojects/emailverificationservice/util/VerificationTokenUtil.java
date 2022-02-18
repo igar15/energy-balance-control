@@ -23,7 +23,7 @@ public class VerificationTokenUtil {
         }
     }
 
-    public static VerificationToken prepareVerificationToken(VerificationToken verificationToken, String email, Date expiryDate) {
+    public static VerificationToken prepareToken(VerificationToken verificationToken, String email, Date expiryDate) {
         String token = UUID.randomUUID().toString();
         verificationToken.setEmail(email);
         verificationToken.setToken(token);

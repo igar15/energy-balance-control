@@ -5,6 +5,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import ru.javaprojects.emailverificationservice.messaging.MessageSender;
 import ru.javaprojects.emailverificationservice.model.VerificationToken;
 import ru.javaprojects.emailverificationservice.repository.VerificationTokenRepository;
@@ -16,7 +17,7 @@ import static ru.javaprojects.emailverificationservice.util.VerificationTokenUti
 
 @Service
 public class EmailVerificationService {
-
+    private static final String MUST_NOT_BE_NULL = " must not be null";
     private VerificationTokenRepository repository;
     private Environment environment;
     private JavaMailSender mailSender;
@@ -32,16 +33,19 @@ public class EmailVerificationService {
 
     @Transactional
     public void sendVerificationEmail(String email) {
+        Assert.notNull(email, "email" + MUST_NOT_BE_NULL);
         VerificationToken verificationToken = repository.findByEmail(email).orElse(new VerificationToken());
         checkAlreadyVerified(verificationToken);
-        prepareVerificationToken(verificationToken, email, getExpiryDate());
+        prepareToken(verificationToken, email, getExpiryDate());
         repository.save(verificationToken);
         sendEmail(email, verificationToken.getToken());
     }
 
     @Transactional
     public void verifyEmail(String token) {
-        VerificationToken verificationToken = repository.findByToken(token).orElseThrow(() -> new NotFoundException("Not found verification record with token=" + token));
+        Assert.notNull(token, "token" + MUST_NOT_BE_NULL);
+        VerificationToken verificationToken = repository.findByToken(token)
+                .orElseThrow(() -> new NotFoundException("Not found verification record with token=" + token));
         checkAlreadyVerified(verificationToken);
         checkTokenExpired(verificationToken);
         verificationToken.setEmailVerified(true);
@@ -49,6 +53,7 @@ public class EmailVerificationService {
     }
 
     public void delete(String email) {
+        Assert.notNull(email, "email" + MUST_NOT_BE_NULL);
         repository.deleteByEmail(email);
     }
 
