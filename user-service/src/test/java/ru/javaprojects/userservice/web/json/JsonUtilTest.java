@@ -35,12 +35,12 @@ class JsonUtilTest {
     void writeOnlyAccess() {
         String json = JsonUtil.writeValue(user);
         System.out.println(json);
-        assertThat(json, not(containsString("password")));
+        assertThat(json, not(containsString(PASSWORD_PROPERTY_NAME)));
 
-        String jsonWithPassword = JsonUtil.writeAdditionProps(getNewUserTo(), "password", "newPass");
+        String jsonWithPassword = JsonUtil.writeAdditionProps(getNewUserTo(), PASSWORD_PROPERTY_NAME, NEW_PASSWORD);
         System.out.println(jsonWithPassword);
         NewUserTo newUserTo = JsonUtil.readValue(jsonWithPassword, NewUserTo.class);
-        assertEquals(newUserTo.getPassword(), "newPass");
+        assertEquals(newUserTo.getPassword(), NEW_PASSWORD);
     }
 
     @Test

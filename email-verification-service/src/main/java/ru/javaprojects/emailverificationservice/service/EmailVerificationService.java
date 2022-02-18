@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.emailverificationservice.messaging.MessageSender;
 import ru.javaprojects.emailverificationservice.model.VerificationToken;
 import ru.javaprojects.emailverificationservice.repository.VerificationTokenRepository;
+import ru.javaprojects.emailverificationservice.util.exception.NotFoundException;
 
 import java.util.Date;
 

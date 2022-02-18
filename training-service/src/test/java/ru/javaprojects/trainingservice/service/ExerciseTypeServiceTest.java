@@ -46,17 +46,17 @@ class ExerciseTypeServiceTest extends AbstractServiceTest {
     @Test
     void duplicateDescriptionCreate() {
         assertThrows(DataAccessException.class,
-                () -> service.create(new ExerciseTypeTo(null, exerciseType1.getDescription(), "seconds", 1), USER1_ID));
+                () -> service.create(new ExerciseTypeTo(null, exerciseType1.getDescription(), SECONDS_MEASURE, 1), USER1_ID));
     }
 
     @Test
     void duplicateDescriptionCreateWhenDeletedTrue() {
-        assertDoesNotThrow(() -> service.create(new ExerciseTypeTo(null, exerciseTypeDeleted.getDescription(), "seconds", 1), USER1_ID));
+        assertDoesNotThrow(() -> service.create(new ExerciseTypeTo(null, exerciseTypeDeleted.getDescription(), SECONDS_MEASURE, 1), USER1_ID));
     }
 
     @Test
     void duplicateDescriptionCreateDifferentUser() {
-        assertDoesNotThrow(() -> service.create(new ExerciseTypeTo(null, exerciseType1.getDescription(), "seconds", 1), USER2_ID));
+        assertDoesNotThrow(() -> service.create(new ExerciseTypeTo(null, exerciseType1.getDescription(), SECONDS_MEASURE, 1), USER2_ID));
     }
 
     @Test

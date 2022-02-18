@@ -12,8 +12,10 @@ public class UserMatcher {
     private UserMatcher() {
     }
 
+    public static String[] ignoringFields = {"registered", "password"};
+
     public static void assertMatch(User actual, User expected) {
-        assertThat(actual).usingRecursiveComparison().ignoringFields("registered", "password").isEqualTo(expected);
+        assertThat(actual).usingRecursiveComparison().ignoringFields(ignoringFields).isEqualTo(expected);
     }
 
     public static final void assertMatch(Iterable<User> actual, User... expected) {
@@ -21,14 +23,13 @@ public class UserMatcher {
     }
 
     public static void assertMatch(Iterable<User> actual, Iterable<User> expected) {
-        assertThat(actual).usingRecursiveComparison().ignoringFields("registered", "password").isEqualTo(expected);
+        assertThat(actual).usingRecursiveComparison().ignoringFields(ignoringFields).isEqualTo(expected);
     }
 
     public static ResultMatcher contentJson(User expected) {
         return result -> assertMatch(TestUtil.readFromJsonMvcResult(result, User.class), expected);
     }
 
-    @SafeVarargs
     public static final ResultMatcher contentJson(User... expected) {
         return contentJson(List.of(expected));
     }

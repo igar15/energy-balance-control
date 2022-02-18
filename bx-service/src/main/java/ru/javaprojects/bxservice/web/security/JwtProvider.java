@@ -17,11 +17,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
-    public static final String JAVA_PROJECTS = "javaprojects.ru";
-    public static final String ENERGY_BALANCE_CONTROL_AUDIENCE = "Energy Balance Control System";
-    public static final long AUTHORIZATION_TOKEN_EXPIRATION_TIME = 432_000_000; // 5 days
-    public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified";
+    public static final String AUTHORIZATION_TOKEN_HEADER = "Authorization-Token";
     public static final String AUTHORITIES = "authorities";
+    public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified";
 
     private final Environment environment;
 
@@ -29,20 +27,17 @@ public class JwtProvider {
         this.environment = environment;
     }
 
-    //-----------DELETE AFTER CREATING AUTHENTICATION SERVICE------------------------>>>
-
+    //Token needs to pass to meal and training services when call them through feign clients
     public  String generateAuthorizationToken(String userId, String ... authorities) {
         return JWT.create()
-                .withIssuer(JAVA_PROJECTS)
-                .withAudience(ENERGY_BALANCE_CONTROL_AUDIENCE)
+                .withIssuer(environment.getProperty("authorization.token.issuer"))
+                .withAudience(environment.getProperty("authorization.token.audience"))
                 .withIssuedAt(new Date())
                 .withSubject(userId)
                 .withArrayClaim(AUTHORITIES, authorities)
-                .withExpiresAt(new Date(System.currentTimeMillis() + AUTHORIZATION_TOKEN_EXPIRATION_TIME))
+                .withExpiresAt(new Date(System.currentTimeMillis() + Long.parseLong(environment.getProperty("authorization.token.expiration-time"))))
                 .sign(Algorithm.HMAC512(Objects.requireNonNull(environment.getProperty("jwt.secretKey"))));
     }
-
-    //-----------DELETE AFTER CREATING AUTHENTICATION SERVICE------------------------<<<
 
     public String getSubject(String token) {
         JWTVerifier jwtVerifier = getJWTVerifier();

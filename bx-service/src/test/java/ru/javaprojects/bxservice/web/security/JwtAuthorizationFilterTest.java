@@ -23,9 +23,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.bxservice.testdata.BasicExchangeTestData.*;
+import static ru.javaprojects.bxservice.testdata.UserTestData.USER1_ID_STRING;
 import static ru.javaprojects.bxservice.util.exception.ErrorType.BAD_TOKEN_ERROR;
 import static ru.javaprojects.bxservice.web.AppExceptionHandler.EXCEPTION_BAD_TOKEN;
-import static ru.javaprojects.bxservice.web.security.JwtProvider.*;
+import static ru.javaprojects.bxservice.web.security.JwtProvider.AUTHORITIES;
 
 @SpringBootTest
 @ActiveProfiles("dev")
@@ -37,15 +38,10 @@ class JwtAuthorizationFilterTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private JwtProvider jwtProvider;
-
-    @Autowired
     private Environment environment;
 
     private HttpHeaders jwtHeader;
-
     private HttpHeaders jwtExpiredHeader;
-
     private HttpHeaders jwtInvalidHeader;
 
     public ResultMatcher errorType(ErrorType type) {
@@ -59,15 +55,20 @@ class JwtAuthorizationFilterTest {
     @PostConstruct
     private void postConstruct() {
         String secretKey = environment.getProperty("jwt.secretKey");
-        jwtHeader = getHeaders(jwtProvider.generateAuthorizationToken(USER1_ID_STRING, "ROLE_USER"));
-        jwtExpiredHeader = getHeaders(generateCustomAuthorizationToken(USER1_ID_STRING, (new Date(System.currentTimeMillis() - 10000)), secretKey));
-        jwtInvalidHeader = getHeaders(generateCustomAuthorizationToken(USER1_ID_STRING, (new Date(System.currentTimeMillis() + AUTHORIZATION_TOKEN_EXPIRATION_TIME)), UUID.randomUUID().toString()));
+        jwtHeader = getHeaders(generateCustomAuthorizationToken(USER1_ID_STRING,
+                new Date(System.currentTimeMillis() + Long.parseLong(environment.getProperty("authorization.token.expiration-time"))),
+                secretKey, "ROLE_USER"));
+        jwtExpiredHeader = getHeaders(generateCustomAuthorizationToken(USER1_ID_STRING,
+                new Date(System.currentTimeMillis() - 10000), secretKey, "ROLE_USER"));
+        jwtInvalidHeader = getHeaders(generateCustomAuthorizationToken(USER1_ID_STRING,
+                new Date(System.currentTimeMillis() + Long.parseLong(environment.getProperty("authorization.token.expiration-time"))),
+                UUID.randomUUID().toString(), "ROLE_USER"));
     }
 
     @Test
     void getBxCalories() throws Exception {
         ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", DATE)
+                .param(DATE_PARAM, DATE)
                 .headers(jwtHeader))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -78,7 +79,7 @@ class JwtAuthorizationFilterTest {
     @Test
     void getBxCaloriesTokenExpired() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", DATE)
+                .param(DATE_PARAM, DATE)
                 .headers(jwtExpiredHeader))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(BAD_TOKEN_ERROR))
@@ -88,7 +89,7 @@ class JwtAuthorizationFilterTest {
     @Test
     void getBxCaloriesTokenInvalid() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", DATE)
+                .param(DATE_PARAM, DATE)
                 .headers(jwtInvalidHeader))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(BAD_TOKEN_ERROR))
@@ -101,12 +102,13 @@ class JwtAuthorizationFilterTest {
         return httpHeaders;
     }
 
-    private String generateCustomAuthorizationToken(String userId, Date expirationDate, String secretKey) {
+    private String generateCustomAuthorizationToken(String userId, Date expirationDate, String secretKey, String ... authorities) {
         return JWT.create()
-                .withIssuer(JAVA_PROJECTS)
-                .withAudience(ENERGY_BALANCE_CONTROL_AUDIENCE)
+                .withIssuer(environment.getProperty("authorization.token.issuer"))
+                .withAudience(environment.getProperty("authorization.token.audience"))
                 .withIssuedAt(new Date())
                 .withSubject(userId)
+                .withArrayClaim(AUTHORITIES, authorities)
                 .withExpiresAt(expirationDate)
                 .sign(Algorithm.HMAC512(secretKey));
     }

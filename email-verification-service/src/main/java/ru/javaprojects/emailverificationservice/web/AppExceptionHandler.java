@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import ru.javaprojects.emailverificationservice.service.NotFoundException;
 import ru.javaprojects.emailverificationservice.util.ValidationUtil;
 import ru.javaprojects.emailverificationservice.util.exception.EmailVerificationException;
 import ru.javaprojects.emailverificationservice.util.exception.ErrorInfo;
 import ru.javaprojects.emailverificationservice.util.exception.ErrorType;
+import ru.javaprojects.emailverificationservice.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 

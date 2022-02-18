@@ -15,6 +15,7 @@ import static ru.javaprojects.trainingservice.util.ExerciseTypeUtil.updateFromTo
 
 @Service
 public class ExerciseTypeService {
+    private static final String MUST_NOT_BE_NULL = " must not be null";
     private final ExerciseTypeRepository repository;
 
     public ExerciseTypeService(ExerciseTypeRepository repository) {
@@ -26,7 +27,7 @@ public class ExerciseTypeService {
     }
 
     public ExerciseType create(ExerciseTypeTo exerciseTypeTo, long userId) {
-        Assert.notNull(exerciseTypeTo, "exerciseTypeTo must not be null");
+        Assert.notNull(exerciseTypeTo, "exerciseTypeTo" + MUST_NOT_BE_NULL);
         ExerciseType exerciseType = createFromTo(exerciseTypeTo);
         exerciseType.setUserId(userId);
         return repository.save(exerciseType);
@@ -34,7 +35,7 @@ public class ExerciseTypeService {
 
     @Transactional
     public void update(ExerciseTypeTo exerciseTypeTo, long userId) {
-        Assert.notNull(exerciseTypeTo, "exerciseTypeTo must not be null");
+        Assert.notNull(exerciseTypeTo, "exerciseTypeTo" + MUST_NOT_BE_NULL);
         ExerciseType exerciseType = get(exerciseTypeTo.id(), userId);
         updateFromTo(exerciseType, exerciseTypeTo);
     }

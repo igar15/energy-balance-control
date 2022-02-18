@@ -1,4 +1,4 @@
-package ru.javaprojects.trainingservice.testdata;
+package ru.javaprojects.bxservice.testdata;
 
 public class UserTestData {
     public static final long USER1_ID = 200000;

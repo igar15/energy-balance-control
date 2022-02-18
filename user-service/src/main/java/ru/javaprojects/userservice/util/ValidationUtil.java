@@ -5,7 +5,6 @@ import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
 import ru.javaprojects.userservice.HasId;
 import ru.javaprojects.userservice.model.User;
-import ru.javaprojects.userservice.to.AdminUserTo;
 import ru.javaprojects.userservice.util.exception.ErrorType;
 import ru.javaprojects.userservice.util.exception.IllegalRequestDataException;
 

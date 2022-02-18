@@ -21,7 +21,7 @@ public class MessageReceiver {
         try {
             service.deleteAll(userId);
         } catch (Exception e) {
-            log.info("all exercise types and exercises deleting error: {}", e.getMessage());
+            log.info("exercise types deleting error: {}", e.getMessage());
         }
     }
 }

@@ -18,6 +18,8 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.javaprojects.bxservice.testdata.BasicExchangeTestData.*;
+import static ru.javaprojects.bxservice.testdata.UserTestData.USER1_ID;
+import static ru.javaprojects.bxservice.testdata.UserTestData.USER2_ID;
 
 @SpringBootTest
 @ActiveProfiles("dev")

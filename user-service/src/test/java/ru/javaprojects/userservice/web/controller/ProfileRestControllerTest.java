@@ -1,9 +1,7 @@
 package ru.javaprojects.userservice.web.controller;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
@@ -11,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.userservice.TestUtil;
 import ru.javaprojects.userservice.UserMatcher;
 import ru.javaprojects.userservice.model.User;
-import ru.javaprojects.userservice.service.UserService;
 import ru.javaprojects.userservice.to.NewUserTo;
 import ru.javaprojects.userservice.to.UserTo;
 import ru.javaprojects.userservice.util.exception.NotFoundException;
@@ -29,18 +26,11 @@ import static ru.javaprojects.userservice.web.security.JwtProvider.AUTHORIZATION
 class ProfileRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = ProfileRestController.REST_URL + '/';
 
-    @Autowired
-    private UserService service;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-
     @Test
     void login() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL + "login")
-                .param("email", user.getEmail())
-                .param("password", user.getPassword()))
+        perform(MockMvcRequestBuilders.post(REST_URL + LOGIN_ENDPOINT)
+                .param(EMAIL_PARAM, user.getEmail())
+                .param(PASSWORD_PARAM, user.getPassword()))
                 .andExpect(status().isOk())
                 .andExpect(header().exists(AUTHORIZATION_TOKEN_HEADER))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -49,9 +39,9 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void loginFailed() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL + "login")
-                .param("email", user.getEmail())
-                .param("password", "wrongPassword"))
+        perform(MockMvcRequestBuilders.post(REST_URL + LOGIN_ENDPOINT)
+                .param(EMAIL_PARAM, user.getEmail())
+                .param(PASSWORD_PARAM, "wrongPassword"))
                 .andExpect(status().isBadRequest())
                 .andExpect(header().doesNotExist(AUTHORIZATION_TOKEN_HEADER))
                 .andExpect(errorType(BAD_CREDENTIALS_ERROR));
@@ -59,9 +49,9 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void loginDisabled() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL + "login")
-                .param("email", userDisabled.getEmail())
-                .param("password", userDisabled.getPassword()))
+        perform(MockMvcRequestBuilders.post(REST_URL + LOGIN_ENDPOINT)
+                .param(EMAIL_PARAM, userDisabled.getEmail())
+                .param(PASSWORD_PARAM, userDisabled.getPassword()))
                 .andExpect(status().isForbidden())
                 .andExpect(header().doesNotExist(AUTHORIZATION_TOKEN_HEADER))
                 .andExpect(errorType(DISABLED_ERROR))
@@ -70,7 +60,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void register() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.post(REST_URL + "register")
+        ResultActions actions = perform(MockMvcRequestBuilders.post(REST_URL + REGISTER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(getNewUserTo())))
                 .andExpect(status().isCreated());
@@ -86,7 +76,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     void registerInvalid() throws Exception {
         NewUserTo newUserTo = getNewUserTo();
         newUserTo.setName(" ");
-        perform(MockMvcRequestBuilders.post(REST_URL + "register")
+        perform(MockMvcRequestBuilders.post(REST_URL + REGISTER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newUserTo)))
                 .andDo(print())
@@ -99,7 +89,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     void registerDuplicateEmail() throws Exception {
         NewUserTo newUserTo = getNewUserTo();
         newUserTo.setEmail(user.getEmail());
-        perform(MockMvcRequestBuilders.post(REST_URL + "register")
+        perform(MockMvcRequestBuilders.post(REST_URL + REGISTER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newUserTo)))
                 .andExpect(status().isConflict())
@@ -108,9 +98,9 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void registerNotAnonymous() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL + "register")
+        perform(MockMvcRequestBuilders.post(REST_URL + REGISTER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(getNewUserTo())))
                 .andExpect(status().isForbidden())
@@ -119,7 +109,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
@@ -136,7 +126,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void update() throws Exception {
         perform(MockMvcRequestBuilders.put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -147,7 +137,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void updateIdNotConsistent() throws Exception {
         UserTo updatedTo = getUpdatedTo();
         updatedTo.setId(USER_ID + 1);
@@ -170,7 +160,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void updateInvalid() throws Exception {
         UserTo updatedTo = getUpdatedTo();
         updatedTo.setGrowth(10);
@@ -182,7 +172,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL))
                 .andDo(print())
@@ -199,20 +189,20 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void changePassword() throws Exception {
-        perform(MockMvcRequestBuilders.patch(REST_URL + "password")
-                .param("password", NEW_PASSWORD))
+        perform(MockMvcRequestBuilders.patch(REST_URL + CHANGE_PASSWORD_ENDPOINT)
+                .param(PASSWORD_PARAM, NEW_PASSWORD))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertTrue(passwordEncoder.matches(NEW_PASSWORD, service.get(USER_ID).getPassword()));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void changePasswordInvalid() throws Exception {
-        perform(MockMvcRequestBuilders.patch(REST_URL + "password")
-                .param("password", "pass"))
+        perform(MockMvcRequestBuilders.patch(REST_URL + CHANGE_PASSWORD_ENDPOINT)
+                .param(PASSWORD_PARAM, "pass"))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR))
@@ -221,8 +211,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void changePasswordUnAuth() throws Exception {
-        perform(MockMvcRequestBuilders.patch(REST_URL + "password")
-                .param("password", NEW_PASSWORD))
+        perform(MockMvcRequestBuilders.patch(REST_URL + CHANGE_PASSWORD_ENDPOINT)
+                .param(PASSWORD_PARAM, NEW_PASSWORD))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
@@ -231,26 +221,26 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void resetPassword() throws Exception {
-        perform(MockMvcRequestBuilders.put(REST_URL + "password/reset")
-                .param("email", user.getEmail()))
+        perform(MockMvcRequestBuilders.put(REST_URL + PASSWORD_RESET_ENDPOINT)
+                .param(EMAIL_PARAM, user.getEmail()))
                 .andDo(print())
                 .andExpect(status().isAccepted());
     }
 
     @Test
     void resetPasswordNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.put(REST_URL + "password/reset")
-                .param("email", NOT_FOUND_EMAIL))
+        perform(MockMvcRequestBuilders.put(REST_URL + PASSWORD_RESET_ENDPOINT)
+                .param(EMAIL_PARAM, NOT_FOUND_EMAIL))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(DATA_NOT_FOUND));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void resetPasswordNotAnonymous() throws Exception {
-        perform(MockMvcRequestBuilders.put(REST_URL + "password/reset")
-                .param("email", user.getEmail()))
+        perform(MockMvcRequestBuilders.put(REST_URL + PASSWORD_RESET_ENDPOINT)
+                .param(EMAIL_PARAM, user.getEmail()))
                 .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
@@ -259,16 +249,16 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void sendEmailVerify() throws Exception {
-        perform(MockMvcRequestBuilders.put(REST_URL + "/email/verify")
-                .param("email", userDisabled.getEmail()))
+        perform(MockMvcRequestBuilders.put(REST_URL + EMAIL_VERIFY_ENDPOINT)
+                .param(EMAIL_PARAM, userDisabled.getEmail()))
                 .andDo(print())
                 .andExpect(status().isAccepted());
     }
 
     @Test
     void sendEmailVerifyNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.put(REST_URL + "/email/verify")
-                .param("email", NOT_FOUND_EMAIL))
+        perform(MockMvcRequestBuilders.put(REST_URL + EMAIL_VERIFY_ENDPOINT)
+                .param(EMAIL_PARAM, NOT_FOUND_EMAIL))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(DATA_NOT_FOUND));
@@ -276,8 +266,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void sendEmailVerifyAlreadyVerified() throws Exception {
-        perform(MockMvcRequestBuilders.put(REST_URL + "/email/verify")
-                .param("email", user.getEmail()))
+        perform(MockMvcRequestBuilders.put(REST_URL + EMAIL_VERIFY_ENDPOINT)
+                .param(EMAIL_PARAM, user.getEmail()))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR))
@@ -285,10 +275,10 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void sendEmailVerifyNotAnonymous() throws Exception {
-        perform(MockMvcRequestBuilders.put(REST_URL + "/email/verify")
-                .param("email", user.getEmail()))
+        perform(MockMvcRequestBuilders.put(REST_URL + EMAIL_VERIFY_ENDPOINT)
+                .param(EMAIL_PARAM, user.getEmail()))
                 .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))

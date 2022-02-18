@@ -11,7 +11,6 @@ public class JacksonObjectMapper extends ObjectMapper {
     private static final ObjectMapper MAPPER = new JacksonObjectMapper();
 
     private JacksonObjectMapper() {
-//        registerModule(new Hibernate5Module());
         registerModule(new JavaTimeModule());
         configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 

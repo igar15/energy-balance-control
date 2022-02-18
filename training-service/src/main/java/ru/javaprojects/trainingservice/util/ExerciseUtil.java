@@ -2,7 +2,6 @@ package ru.javaprojects.trainingservice.util;
 
 import ru.javaprojects.trainingservice.model.Exercise;
 import ru.javaprojects.trainingservice.to.ExerciseTo;
-import ru.javaprojects.trainingservice.to.ExerciseTypeTo;
 
 public class ExerciseUtil {
     private ExerciseUtil() {

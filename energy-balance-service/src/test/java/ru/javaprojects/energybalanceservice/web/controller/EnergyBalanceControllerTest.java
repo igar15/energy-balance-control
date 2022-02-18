@@ -10,15 +10,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.energybalanceservice.testdata.EnergyBalanceTestData.*;
+import static ru.javaprojects.energybalanceservice.testdata.UserTestData.USER1_ID_STRING;
+import static ru.javaprojects.energybalanceservice.testdata.UserTestData.USER_ROLE;
 import static ru.javaprojects.energybalanceservice.util.exception.ErrorType.UNAUTHORIZED_ERROR;
 
 class EnergyBalanceControllerTest extends AbstractControllerTest {
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void getReport() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", DATE.toString()))
+                .param(DATE_PARAM, DATE.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -26,11 +28,11 @@ class EnergyBalanceControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void getErrorReport() throws Exception {
         Mockito.when(mealServiceClient.getMealCalories(DATE)).thenReturn(-1);
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", DATE.toString()))
+                .param(DATE_PARAM, DATE.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -41,7 +43,7 @@ class EnergyBalanceControllerTest extends AbstractControllerTest {
     @Test
     void getReportUnAuth() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", DATE.toString()))
+                .param(DATE_PARAM, DATE.toString()))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR));

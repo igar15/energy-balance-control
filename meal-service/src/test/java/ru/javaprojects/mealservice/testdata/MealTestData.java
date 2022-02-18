@@ -18,10 +18,6 @@ public class MealTestData {
     public static final long MEAL1_ID = START_SEQ;
     public static final long USER2_MEAL1_ID = START_SEQ + 7;
     public static final long NOT_FOUND = 10;
-    public static final long USER1_ID = 200000;
-    public static final long USER2_ID = 200001;
-    public static final String USER1_ID_STRING = "200000";
-    public static final String USER2_ID_STRING = "200001";
 
     public static final Meal meal1 = new Meal(MEAL1_ID, of(2022, FEBRUARY, 5, 10, 0), "1User Breakfast", 700);
     public static final Meal meal2 = new Meal(MEAL1_ID + 1, of(2022, FEBRUARY, 5, 13, 0), "1User Lunch", 1000);
@@ -42,6 +38,12 @@ public class MealTestData {
     public static final String PAGE_SIZE = "5";
     public static final Pageable PAGEABLE = PageRequest.of(Integer.parseInt(PAGE_NUMBER), Integer.parseInt(PAGE_SIZE));
     public static final Page<Meal> PAGE = new PageImpl<>(List.of(meal7, meal6, meal5, meal4, meal3), PAGEABLE, 7);
+
+    public static final String DATE_PARAM = "date";
+    public static final String PAGE_NUMBER_PARAM = "page";
+    public static final String PAGE_SIZE_PARAM = "size";
+
+    public static final String TOTAL_CALORIES_ENDPOINT = "total-calories";
 
     public static final String JSON_MEAL_PAGE = "{\"content\":[{\"id\":100006,\"dateTime\":\"2022-02-07T00:00:00\",\"description\":\"1User Night Eating\",\"calories\":100}," +
             "{\"id\":100005,\"dateTime\":\"2022-02-06T19:40:00\",\"description\":\"1User Dinner\",\"calories\":600}," +

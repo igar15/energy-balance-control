@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.bxservice.testdata.BasicExchangeTestData.*;
+import static ru.javaprojects.bxservice.testdata.UserTestData.*;
 import static ru.javaprojects.bxservice.util.exception.ErrorType.UNAUTHORIZED_ERROR;
 
 @SpringBootTest
@@ -58,10 +59,10 @@ class BasicExchangeRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void getBxCalories() throws Exception {
         ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", DATE))
+                .param(DATE_PARAM, DATE))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -70,10 +71,10 @@ class BasicExchangeRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void getBxCaloriesWhenBasicExchangeDoesNotExist() throws Exception {
         ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", LocalDate.now().toString()))
+                .param(DATE_PARAM, LocalDate.now().toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -84,7 +85,7 @@ class BasicExchangeRestControllerTest {
     @Test
     void getBxCaloriesUnAuth() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("date", DATE))
+                .param(DATE_PARAM, DATE))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR));

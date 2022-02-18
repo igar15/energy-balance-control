@@ -3,7 +3,8 @@ package ru.javaprojects.emailverificationservice.util;
 import org.junit.jupiter.api.Test;
 import ru.javaprojects.emailverificationservice.util.exception.EmailVerificationException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.javaprojects.emailverificationservice.testdata.VerificationTokenTestData.*;
 
 class VerificationTokenUtilTest {

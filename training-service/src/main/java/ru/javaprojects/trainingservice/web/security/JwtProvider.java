@@ -17,11 +17,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
-    public static final String JAVA_PROJECTS = "javaprojects.ru";
-    public static final String ENERGY_BALANCE_CONTROL_AUDIENCE = "Energy Balance Control System";
-    public static final long AUTHORIZATION_TOKEN_EXPIRATION_TIME = 432_000_000; // 5 days
-    public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified";
     public static final String AUTHORITIES = "authorities";
+    public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified";
 
     private final Environment environment;
 

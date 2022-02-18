@@ -40,6 +40,12 @@ public class ExerciseTestData {
     public static final Pageable PAGEABLE = PageRequest.of(Integer.parseInt(PAGE_NUMBER), Integer.parseInt(PAGE_SIZE));
     public static final Page<Exercise> PAGE = new PageImpl<>(List.of(exercise6, exercise5, exercise4), PAGEABLE, 6);
 
+    public static final String DATE_PARAM = "date";
+    public static final String PAGE_NUMBER_PARAM = "page";
+    public static final String PAGE_SIZE_PARAM = "size";
+
+    public static final String TOTAL_CALORIES_BURNED_ENDPOINT = "total-calories-burned";
+
     public static final String JSON_EXERCISE_PAGE = "{\"content\":[{\"id\":100010,\"dateTime\":\"2022-02-06T20:10:00\",\"amount\":35,\"exerciseType\":{\"id\":100003,\"description\":\"1User Exercise Type Deleted\",\"measure\":\"times\",\"caloriesBurned\":2}}," +
             "{\"id\":100009,\"dateTime\":\"2022-02-06T18:15:00\",\"amount\":20,\"exerciseType\":{\"id\":100002,\"description\":\"1User Exercise Type 3\",\"measure\":\"times\",\"caloriesBurned\":1}}," +
             "{\"id\":100008,\"dateTime\":\"2022-02-06T14:15:00\",\"amount\":50,\"exerciseType\":{\"id\":100000,\"description\":\"1User Exercise Type 1\",\"measure\":\"times\",\"caloriesBurned\":2}}]," +

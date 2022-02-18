@@ -22,7 +22,7 @@ import static ru.javaprojects.userservice.util.exception.ErrorType.ACCESS_DENIED
 import static ru.javaprojects.userservice.util.exception.ErrorType.BAD_TOKEN_ERROR;
 import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_ACCESS_DENIED;
 import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_BAD_TOKEN;
-import static ru.javaprojects.userservice.web.security.JwtProvider.*;
+import static ru.javaprojects.userservice.web.security.JwtProvider.AUTHORITIES;
 
 class JwtAuthorizationFilterTest extends AbstractControllerTest {
     private static final String REST_URL = "/api/users/";
@@ -41,10 +41,13 @@ class JwtAuthorizationFilterTest extends AbstractControllerTest {
     @PostConstruct
     private void postConstruct() {
         String secretKey = environment.getProperty("jwt.secretKey");
-        userJwtHeader = getHeaders(jwtProvider.generateAuthorizationToken(USER_ID_STRING, "ROLE_USER"));
-        adminJwtHeader = getHeaders(jwtProvider.generateAuthorizationToken(ADMIN_ID_STRING, "ROLE_USER", "ROLE_ADMIN"));
-        adminJwtExpiredHeader = getHeaders(generateCustomAuthorizationToken(USER_DISABLED_ID_STRING, (new Date(System.currentTimeMillis() - 10000)), secretKey, "ROLE_USER"));
-        adminJwtInvalidHeader = getHeaders(generateCustomAuthorizationToken(ADMIN_ID_STRING, (new Date(System.currentTimeMillis() + AUTHORIZATION_TOKEN_EXPIRATION_TIME)), UUID.randomUUID().toString(), "ROLE_USER", "ROLE_ADMIN"));
+        userJwtHeader = getHeaders(jwtProvider.generateAuthorizationToken(USER_ID_STRING, USER_ROLE));
+        adminJwtHeader = getHeaders(jwtProvider.generateAuthorizationToken(ADMIN_ID_STRING, USER_ROLE, ADMIN_ROLE));
+        adminJwtExpiredHeader = getHeaders(generateCustomAuthorizationToken(USER_DISABLED_ID_STRING,
+                (new Date(System.currentTimeMillis() - 10000)), secretKey, USER_ROLE));
+        adminJwtInvalidHeader = getHeaders(generateCustomAuthorizationToken(ADMIN_ID_STRING,
+                (new Date(System.currentTimeMillis() + Long.parseLong(environment.getProperty("authorization.token.expiration-time")))),
+                 UUID.randomUUID().toString(), USER_ROLE, ADMIN_ROLE));
     }
 
     @Test
@@ -85,14 +88,14 @@ class JwtAuthorizationFilterTest extends AbstractControllerTest {
 
     private HttpHeaders getHeaders(String token) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+        httpHeaders.add(HttpHeaders.AUTHORIZATION, environment.getProperty("authorization.token.header.prefix") + token);
         return httpHeaders;
     }
 
     private String generateCustomAuthorizationToken(String userId, Date expirationDate, String secretKey, String ... authorities) {
         return JWT.create()
-                .withIssuer(JAVA_PROJECTS)
-                .withAudience(ENERGY_BALANCE_CONTROL_AUDIENCE)
+                .withIssuer(environment.getProperty("authorization.token.issuer"))
+                .withAudience(environment.getProperty("authorization.token.audience"))
                 .withIssuedAt(new Date())
                 .withSubject(userId)
                 .withArrayClaim(AUTHORITIES, authorities)

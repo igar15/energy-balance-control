@@ -27,6 +27,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static ru.javaprojects.userservice.UserMatcher.ignoringFields;
 import static ru.javaprojects.userservice.model.Role.USER;
 import static ru.javaprojects.userservice.model.User.Sex.MAN;
 import static ru.javaprojects.userservice.testdata.UserTestData.*;
@@ -113,21 +114,21 @@ class UserServiceTest {
     @Test
     void getPage() {
         Page<User> userPage = service.getPage(PAGEABLE);
-        assertThat(userPage).usingRecursiveComparison().ignoringFields("registered", "password").isEqualTo(PAGE);
+        assertThat(userPage).usingRecursiveComparison().ignoringFields(ignoringFields).isEqualTo(PAGE);
         UserMatcher.assertMatch(userPage.getContent(), userDisabled, user);
     }
 
     @Test
     void getPageByNameKeyword() {
         Page<User> userPage = service.getPageByKeyword(NAME_KEYWORD, PAGEABLE);
-        assertThat(userPage).usingRecursiveComparison().ignoringFields("registered", "password").isEqualTo(PAGE_BY_NAME_KEYWORD);
+        assertThat(userPage).usingRecursiveComparison().ignoringFields(ignoringFields).isEqualTo(PAGE_BY_NAME_KEYWORD);
         UserMatcher.assertMatch(userPage.getContent(), admin);
     }
 
     @Test
     void getPageByEmailKeyword() {
         Page<User> userPage = service.getPageByKeyword(EMAIL_KEYWORD, PAGEABLE);
-        assertThat(userPage).usingRecursiveComparison().ignoringFields("registered", "password").isEqualTo(PAGE_BY_EMAIL_KEYWORD);
+        assertThat(userPage).usingRecursiveComparison().ignoringFields(ignoringFields).isEqualTo(PAGE_BY_EMAIL_KEYWORD);
         UserMatcher.assertMatch(userPage.getContent(), userDisabled, user);
     }
 

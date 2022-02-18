@@ -1,6 +1,5 @@
 package ru.javaprojects.userservice.to;
 
-import org.springframework.util.Assert;
 import ru.javaprojects.userservice.HasId;
 import ru.javaprojects.userservice.model.User.Sex;
 

@@ -21,6 +21,7 @@ import static ru.javaprojects.userservice.util.UserUtil.updateFromTo;
 
 @Service
 public class UserService {
+    private static final String MUST_NOT_BE_NULL = " must not be null";
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private MessageSender messageSender;
@@ -32,7 +33,7 @@ public class UserService {
     }
 
     public User create(User user) {
-        Assert.notNull(user, "user must not be null");
+        Assert.notNull(user, "user" + MUST_NOT_BE_NULL);
         prepareToSave(user, passwordEncoder);
         repository.save(user);
         if (!user.isEnabled()) {
@@ -46,18 +47,18 @@ public class UserService {
     }
 
     public User getByEmail(String email) {
-        Assert.notNull(email, "email must not be null");
+        Assert.notNull(email, "email" + MUST_NOT_BE_NULL);
         return repository.findByEmail(email).orElseThrow(() -> new NotFoundException("Not found user with email=" + email));
     }
 
     public Page<User> getPage(Pageable pageable) {
-        Assert.notNull(pageable, "pageable must not be null");
+        Assert.notNull(pageable, "pageable" + MUST_NOT_BE_NULL);
         return repository.findAllByOrderByNameAscEmail(pageable);
     }
 
     public Page<User> getPageByKeyword(String keyword, Pageable pageable) {
-        Assert.notNull(keyword, "keyword must not be null");
-        Assert.notNull(pageable, "pageable must not be null");
+        Assert.notNull(keyword, "keyword" + MUST_NOT_BE_NULL);
+        Assert.notNull(pageable, "pageable" + MUST_NOT_BE_NULL);
         return repository.findAllByNameContainsIgnoreCaseOrEmailContainsIgnoreCaseOrderByNameAscEmail(keyword, keyword, pageable);
     }
 
@@ -69,7 +70,7 @@ public class UserService {
 
     @Transactional
     public void update(AdminUserTo adminUserTo) {
-        Assert.notNull(adminUserTo, "adminUserTo must not be null");
+        Assert.notNull(adminUserTo, "adminUserTo" + MUST_NOT_BE_NULL);
         User user = get(adminUserTo.id());
         boolean userBxDetailsChanged = updateFromTo(user, adminUserTo);
         if (userBxDetailsChanged) {
@@ -79,7 +80,7 @@ public class UserService {
 
     @Transactional
     public void update(UserTo userTo) {
-        Assert.notNull(userTo, "userTo must not be null");
+        Assert.notNull(userTo, "userTo" + MUST_NOT_BE_NULL);
         User user = get(userTo.id());
         boolean userBxDetailsChanged = updateFromTo(user, userTo);
         if (userBxDetailsChanged) {
@@ -89,14 +90,14 @@ public class UserService {
 
     @Transactional
     public void changePassword(long id, String password) {
-        Assert.notNull(password, "password must not be null");
+        Assert.notNull(password, "password" + MUST_NOT_BE_NULL);
         User user = get(id);
         user.setPassword(passwordEncoder.encode(password));
     }
 
     @Transactional
     public void changePassword(String email, String password) {
-        Assert.notNull(password, "password must not be null");
+        Assert.notNull(password, "password" + MUST_NOT_BE_NULL);
         User user = getByEmail(email);
         user.setPassword(passwordEncoder.encode(password));
     }

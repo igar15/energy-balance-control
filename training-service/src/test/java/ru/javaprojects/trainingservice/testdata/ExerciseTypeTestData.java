@@ -21,6 +21,8 @@ public class ExerciseTypeTestData {
     public static final String INVALID_DESCRIPTION = " ";
     public static final Integer INVALID_CALORIES_BURNED = 0;
 
+    public static final String SECONDS_MEASURE = "seconds";
+
     public static ExerciseType getNew() {
         return new ExerciseType(null, "new exercise type", "times", 3, false);
     }

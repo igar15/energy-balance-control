@@ -14,9 +14,9 @@ import ru.javaprojects.emailverificationservice.messaging.MessageSender;
 import ru.javaprojects.emailverificationservice.model.VerificationToken;
 import ru.javaprojects.emailverificationservice.repository.VerificationTokenRepository;
 import ru.javaprojects.emailverificationservice.util.exception.EmailVerificationException;
+import ru.javaprojects.emailverificationservice.util.exception.NotFoundException;
 
 import javax.annotation.PostConstruct;
-
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;

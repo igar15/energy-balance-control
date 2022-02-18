@@ -5,10 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import ru.javaprojects.mealservice.messaging.MessageSender;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.repository.MealRepository;
 import ru.javaprojects.mealservice.to.MealTo;
-import ru.javaprojects.mealservice.messaging.MessageSender;
 import ru.javaprojects.mealservice.util.exception.NotFoundException;
 
 import java.time.LocalDate;
@@ -20,6 +20,7 @@ import static ru.javaprojects.mealservice.util.MealUtil.updateFromTo;
 
 @Service
 public class MealService {
+    private static final String MUST_NOT_BE_NULL = " must not be null";
     private final MealRepository repository;
     private MessageSender messageSender;
 
@@ -29,7 +30,7 @@ public class MealService {
     }
 
     public Meal create(MealTo mealTo, long userId) {
-        Assert.notNull(mealTo, "mealTo must not be null");
+        Assert.notNull(mealTo, "mealTo" + MUST_NOT_BE_NULL);
         boolean dateExists = checkDateAlreadyExists(mealTo.getDateTime(), userId);
         Meal meal = createFromTo(mealTo);
         meal.setUserId(userId);
@@ -42,7 +43,7 @@ public class MealService {
 
     @Transactional
     public void update(MealTo mealTo, long userId) {
-        Assert.notNull(mealTo, "mealTo must not be null");
+        Assert.notNull(mealTo, "mealTo" + MUST_NOT_BE_NULL);
         Meal meal = get(mealTo.id(), userId);
         updateFromTo(meal, mealTo);
     }
@@ -58,12 +59,12 @@ public class MealService {
     }
 
     public Page<Meal> getPage(Pageable pageable, long userId) {
-        Assert.notNull(pageable, "pageable must not be null");
+        Assert.notNull(pageable, "pageable" + MUST_NOT_BE_NULL);
         return repository.findAllByUserIdOrderByDateTimeDesc(pageable, userId);
     }
 
     public int getTotalCalories(LocalDate date, long userId) {
-        Assert.notNull(date, "date must not be null");
+        Assert.notNull(date, "date" + MUST_NOT_BE_NULL);
         return repository.getTotalCalories(date.atStartOfDay(), date.plusDays(1).atStartOfDay(), userId).orElse(0);
     }
 

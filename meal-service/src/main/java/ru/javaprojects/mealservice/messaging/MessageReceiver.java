@@ -21,7 +21,7 @@ public class MessageReceiver {
         try {
             service.deleteAll(userId);
         } catch (Exception e) {
-            log.info("all meals deleting error: {}", e.getMessage());
+            log.info("meals deleting error: {}", e.getMessage());
         }
     }
 }

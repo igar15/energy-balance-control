@@ -6,7 +6,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.util.Assert;
 import ru.javaprojects.userservice.HasId;
 
 import javax.persistence.*;

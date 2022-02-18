@@ -26,6 +26,7 @@ import static ru.javaprojects.trainingservice.testdata.ExerciseTestData.*;
 import static ru.javaprojects.trainingservice.testdata.UserTestData.*;
 import static ru.javaprojects.trainingservice.util.exception.ErrorType.*;
 import static ru.javaprojects.trainingservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_DATE_TIME;
+import static ru.javaprojects.trainingservice.web.AppExceptionHandler.EXCEPTION_NOT_AUTHORIZED;
 
 class ExerciseControllerTest extends AbstractControllerTest {
     private static final String REST_URL = ExerciseController.REST_URL + '/';
@@ -34,11 +35,11 @@ class ExerciseControllerTest extends AbstractControllerTest {
     private ExerciseRepository repository;
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void getPage() throws Exception {
         ResultActions actions = perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("page", PAGE_NUMBER)
-                .param("size", PAGE_SIZE))
+                .param(PAGE_NUMBER_PARAM, PAGE_NUMBER)
+                .param(PAGE_SIZE_PARAM, PAGE_SIZE))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -49,20 +50,20 @@ class ExerciseControllerTest extends AbstractControllerTest {
     @Test
     void getPageUnAuth() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("page", PAGE_NUMBER)
-                .param("size", PAGE_SIZE))
+                .param(PAGE_NUMBER_PARAM, PAGE_NUMBER)
+                .param(PAGE_SIZE_PARAM, PAGE_SIZE))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR));
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void create() throws Exception {
-        ExerciseTo newTo = getNewTo();
         ResultActions actions = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newTo)))
+                .content(JsonUtil.writeValue(getNewTo())))
                 .andExpect(status().isCreated());
         Exercise created = TestUtil.readFromJson(actions, Exercise.class);
         long newId = created.id();
@@ -74,16 +75,16 @@ class ExerciseControllerTest extends AbstractControllerTest {
 
     @Test
     void createUnAuth() throws Exception {
-        ExerciseTo newTo = getNewTo();
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newTo)))
+                .content(JsonUtil.writeValue(getNewTo())))
                 .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR));
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void createInvalid() throws Exception {
         ExerciseTo newTo = getNewTo();
         newTo.setDateTime(null);
@@ -96,7 +97,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     @Transactional(propagation = Propagation.NEVER)
     void createDuplicate() throws Exception {
         ExerciseTo newTo = getNewTo();
@@ -111,28 +112,28 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void update() throws Exception {
-        ExerciseTo updatedTo = getUpdatedTo();
         perform(MockMvcRequestBuilders.put(REST_URL + EXERCISE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updatedTo)))
+                .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andExpect(status().isNoContent());
         EXERCISE_MATCHER.assertMatch(repository.findByIdAndExerciseType_UserId(EXERCISE1_ID, USER1_ID).get(), getUpdated());
     }
 
     @Test
     void updateUnAuth() throws Exception {
-        ExerciseTo updatedTo = getUpdatedTo();
         perform(MockMvcRequestBuilders.put(REST_URL + EXERCISE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updatedTo)))
+                .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR));
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED))
+                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void updateIdNotConsistent() throws Exception {
         ExerciseTo updatedTo = getUpdatedTo();
         updatedTo.setId(EXERCISE1_ID + 1);
@@ -144,7 +145,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void updateNotFound() throws Exception {
         ExerciseTo updatedTo = getUpdatedTo();
         updatedTo.setId(NOT_FOUND);
@@ -156,18 +157,17 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER2_ID_STRING)
+    @WithMockCustomUser(userId = USER2_ID_STRING, userRoles = {USER_ROLE})
     void updateNotOwn() throws Exception {
-        ExerciseTo updatedTo = getUpdatedTo();
         perform(MockMvcRequestBuilders.put(REST_URL + EXERCISE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updatedTo)))
+                .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(DATA_NOT_FOUND));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     @Transactional(propagation = Propagation.NEVER)
     void updateDuplicate() throws Exception {
         ExerciseTo updatedTo = getUpdatedTo();
@@ -182,7 +182,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void updateInvalid() throws Exception {
         ExerciseTo updatedTo = getUpdatedTo();
         updatedTo.setAmount(INVALID_AMOUNT);
@@ -194,7 +194,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + EXERCISE1_ID))
                 .andDo(print())
@@ -204,7 +204,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void deleteNotFound() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND))
                 .andDo(print())
@@ -213,7 +213,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER2_ID_STRING)
+    @WithMockCustomUser(userId = USER2_ID_STRING, userRoles = {USER_ROLE})
     void deleteNotOwn() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + EXERCISE1_ID))
                 .andDo(print())
@@ -226,14 +226,15 @@ class ExerciseControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(REST_URL + EXERCISE1_ID))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR));
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void getTotalCaloriesBurned() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(REST_URL + "total-calories-burned")
-                .param("date", DATE))
+        ResultActions actions = perform(MockMvcRequestBuilders.get(REST_URL + TOTAL_CALORIES_BURNED_ENDPOINT)
+                .param(DATE_PARAM, DATE))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -242,10 +243,10 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void getTotalCaloriesBurnedWhenNoExercises() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(REST_URL + "total-calories-burned")
-                .param("date", LocalDate.now().toString()))
+        ResultActions actions = perform(MockMvcRequestBuilders.get(REST_URL + TOTAL_CALORIES_BURNED_ENDPOINT)
+                .param(DATE_PARAM, LocalDate.now().toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -255,10 +256,11 @@ class ExerciseControllerTest extends AbstractControllerTest {
 
     @Test
     void getTotalCaloriesBurnedUnAuth() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "total-calories-burned")
-                .param("date", DATE))
+        perform(MockMvcRequestBuilders.get(REST_URL + TOTAL_CALORIES_BURNED_ENDPOINT)
+                .param(DATE_PARAM, DATE))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR));
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
     }
 }

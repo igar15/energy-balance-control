@@ -1,4 +1,4 @@
-package ru.javaprojects.emailverificationservice.service;
+package ru.javaprojects.emailverificationservice.util.exception;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {

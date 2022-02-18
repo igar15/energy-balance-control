@@ -29,6 +29,8 @@ import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.javaprojects.mealservice.testdata.MealTestData.*;
+import static ru.javaprojects.mealservice.testdata.UserTestData.USER1_ID;
+import static ru.javaprojects.mealservice.testdata.UserTestData.USER2_ID;
 
 @SpringBootTest
 @ActiveProfiles("dev")

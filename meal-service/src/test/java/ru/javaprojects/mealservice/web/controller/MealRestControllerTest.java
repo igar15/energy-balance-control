@@ -29,8 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.mealservice.testdata.MealTestData.*;
+import static ru.javaprojects.mealservice.testdata.UserTestData.*;
 import static ru.javaprojects.mealservice.util.exception.ErrorType.*;
 import static ru.javaprojects.mealservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_DATE_TIME;
+import static ru.javaprojects.mealservice.web.AppExceptionHandler.EXCEPTION_NOT_AUTHORIZED;
 
 @SpringBootTest
 @Transactional
@@ -54,11 +56,11 @@ class MealRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void getPage() throws Exception {
         ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("page", PAGE_NUMBER)
-                .param("size", PAGE_SIZE))
+                .param(PAGE_NUMBER_PARAM, PAGE_NUMBER)
+                .param(PAGE_SIZE_PARAM, PAGE_SIZE))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -69,19 +71,19 @@ class MealRestControllerTest {
     @Test
     void getPageUnAuth() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
-                .param("page", PAGE_NUMBER)
-                .param("size", PAGE_SIZE))
+                .param(PAGE_NUMBER_PARAM, PAGE_NUMBER)
+                .param(PAGE_SIZE_PARAM, PAGE_SIZE))
                 .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR));
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void create() throws Exception {
-        MealTo newMealTo = getNewTo();
         ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newMealTo)))
+                .content(JsonUtil.writeValue(getNewTo())))
                 .andExpect(status().isCreated());
         Meal created = TestUtil.readFromJson(actions, Meal.class);
         long newId = created.id();
@@ -93,16 +95,16 @@ class MealRestControllerTest {
 
     @Test
     void createUnAuth() throws Exception {
-        MealTo newMealTo = getNewTo();
         mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newMealTo)))
+                .content(JsonUtil.writeValue(getNewTo())))
                 .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR));
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void createInvalid() throws Exception {
         MealTo newMealTo = getNewTo();
         newMealTo.setDescription(INVALID_MEAL_DESCRIPTION);
@@ -115,7 +117,7 @@ class MealRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     @Transactional(propagation = Propagation.NEVER)
     void createDuplicate() throws Exception {
         MealTo newMealTo = getNewTo();
@@ -130,18 +132,17 @@ class MealRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void update() throws Exception {
-        MealTo updatedTo = getUpdatedTo();
         mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updatedTo)))
+                .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andExpect(status().isNoContent());
         MealMatcher.assertMatch(repository.findByIdAndUserId(MEAL1_ID, USER1_ID).get(), getUpdated());
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void updateIdNotConsistent() throws Exception {
         MealTo updatedTo = getUpdatedTo();
         updatedTo.setId(MEAL1_ID + 1);
@@ -153,7 +154,7 @@ class MealRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void updateNotFound() throws Exception {
         MealTo updatedTo = getUpdatedTo();
         updatedTo.setId(NOT_FOUND);
@@ -165,28 +166,27 @@ class MealRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER2_ID_STRING)
+    @WithMockCustomUser(userId = USER2_ID_STRING, userRoles = {USER_ROLE})
     void updateNotOwn() throws Exception {
-        MealTo updatedTo = getUpdatedTo();
         mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updatedTo)))
+                .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(DATA_NOT_FOUND));
     }
 
     @Test
     void updateUnAuth() throws Exception {
-        MealTo updatedTo = getUpdatedTo();
         mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updatedTo)))
+                .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR));
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void updateInvalid() throws Exception {
         MealTo updatedTo = getUpdatedTo();
         updatedTo.setCalories(INVALID_MEAL_CALORIES);
@@ -198,7 +198,7 @@ class MealRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     @Transactional(propagation = Propagation.NEVER)
     void updateDuplicate() throws Exception {
         MealTo updatedTo = getUpdatedTo();
@@ -213,7 +213,7 @@ class MealRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void delete() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(REST_URL + MEAL1_ID))
                 .andDo(print())
@@ -222,7 +222,7 @@ class MealRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void deleteNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND))
                 .andDo(print())
@@ -231,7 +231,7 @@ class MealRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER2_ID_STRING)
+    @WithMockCustomUser(userId = USER2_ID_STRING, userRoles = {USER_ROLE})
     void deleteNotOwn() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(REST_URL + MEAL1_ID))
                 .andDo(print())
@@ -244,14 +244,15 @@ class MealRestControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete(REST_URL + MEAL1_ID))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR));
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void getTotalCalories() throws Exception {
-        ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "total-calories")
-                .param("date", DATE))
+        ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + TOTAL_CALORIES_ENDPOINT)
+                .param(DATE_PARAM, DATE))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -260,10 +261,10 @@ class MealRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING)
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
     void getTotalCaloriesWhenNoMeals() throws Exception {
-        ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "total-calories")
-                .param("date", LocalDate.now().toString()))
+        ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + TOTAL_CALORIES_ENDPOINT)
+                .param(DATE_PARAM, LocalDate.now().toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -273,10 +274,11 @@ class MealRestControllerTest {
 
     @Test
     void getTotalCaloriesUnAuth() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "total-calories")
-                .param("date", DATE))
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + TOTAL_CALORIES_ENDPOINT)
+                .param(DATE_PARAM, DATE))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR));
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
     }
 }
