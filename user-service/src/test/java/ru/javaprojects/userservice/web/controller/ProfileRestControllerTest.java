@@ -108,7 +108,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING)
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
     void registerNotAnonymous() throws Exception {
         perform(MockMvcRequestBuilders.post(REST_URL + "register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -119,7 +119,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING)
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
@@ -136,7 +136,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING)
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
     void update() throws Exception {
         perform(MockMvcRequestBuilders.put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -147,7 +147,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING)
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
     void updateIdNotConsistent() throws Exception {
         UserTo updatedTo = getUpdatedTo();
         updatedTo.setId(USER_ID + 1);
@@ -170,7 +170,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING)
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
     void updateInvalid() throws Exception {
         UserTo updatedTo = getUpdatedTo();
         updatedTo.setGrowth(10);
@@ -182,7 +182,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING)
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL))
                 .andDo(print())
@@ -199,7 +199,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING)
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
     void changePassword() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL + "password")
                 .param("password", NEW_PASSWORD))
@@ -209,7 +209,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING)
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
     void changePasswordInvalid() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL + "password")
                 .param("password", "pass"))
@@ -247,7 +247,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING)
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
     void resetPasswordNotAnonymous() throws Exception {
         perform(MockMvcRequestBuilders.put(REST_URL + "password/reset")
                 .param("email", user.getEmail()))
@@ -285,7 +285,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER_ID_STRING)
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {"ROLE_USER"})
     void sendEmailVerifyNotAnonymous() throws Exception {
         perform(MockMvcRequestBuilders.put(REST_URL + "/email/verify")
                 .param("email", user.getEmail()))
