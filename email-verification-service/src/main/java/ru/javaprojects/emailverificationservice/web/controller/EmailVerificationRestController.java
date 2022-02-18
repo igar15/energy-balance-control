@@ -10,7 +10,7 @@ import ru.javaprojects.emailverificationservice.service.EmailVerificationService
 @RestController
 @RequestMapping(value = EmailVerificationRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class EmailVerificationRestController {
-    static final String REST_URL = "/api/email-verify";
+    static final String REST_URL = "/api/email/verify";
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final EmailVerificationService service;
 
