@@ -85,7 +85,7 @@ class EmailVerificationServiceTest {
     }
 
     @Test
-    void verifyEmailWhenTokenExpired() {
+    void verifyEmailTokenExpired() {
         assertThrows(EmailVerificationException.class, () -> service.verifyEmail(expiredToken.getToken()));
         Mockito.verify(messageSender, Mockito.times(0)).sendEmailVerifiedMessage(Mockito.anyString());
     }

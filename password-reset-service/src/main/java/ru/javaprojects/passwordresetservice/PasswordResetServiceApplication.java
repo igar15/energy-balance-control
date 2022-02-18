@@ -1,7 +1,10 @@
 package ru.javaprojects.passwordresetservice;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import ru.javaprojects.passwordresetservice.web.json.JacksonObjectMapper;
 
 @SpringBootApplication
 public class PasswordResetServiceApplication {
@@ -10,4 +13,8 @@ public class PasswordResetServiceApplication {
         SpringApplication.run(PasswordResetServiceApplication.class, args);
     }
 
+    @Bean
+    public ObjectMapper objectMapper() {
+        return JacksonObjectMapper.getMapper();
+    }
 }

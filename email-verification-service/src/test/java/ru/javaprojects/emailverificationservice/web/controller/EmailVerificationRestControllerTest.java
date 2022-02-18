@@ -35,7 +35,6 @@ import static ru.javaprojects.emailverificationservice.util.exception.ErrorType.
 @ActiveProfiles("dev")
 @AutoConfigureMockMvc
 class EmailVerificationRestControllerTest {
-
     private static final String REST_URL = EmailVerificationRestController.REST_URL + '/';
 
     @Autowired
