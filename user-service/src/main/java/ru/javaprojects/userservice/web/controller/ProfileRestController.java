@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaprojects.energybalancecontrolshared.web.security.JwtProvider;
 import ru.javaprojects.energybalancecontrolshared.web.security.SecurityUtil;
+import ru.javaprojects.userservice.model.Role;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.service.UserService;
 import ru.javaprojects.userservice.to.NewUserTo;
@@ -51,7 +52,8 @@ public class ProfileRestController {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email.toLowerCase(), password));
         User loggedUser = ((AuthorizedUser) authentication.getPrincipal()).getUser();
         HttpHeaders jwtHeader = new HttpHeaders();
-        jwtHeader.add(AUTHORIZATION_TOKEN_HEADER, jwtProvider.generateAuthorizationToken(String.valueOf(loggedUser.getId())));
+        jwtHeader.add(AUTHORIZATION_TOKEN_HEADER, jwtProvider.generateAuthorizationToken(String.valueOf(loggedUser.getId()),
+                                                    loggedUser.getRoles().stream().map(Role::getAuthority).toArray(String[]::new)));
         return new ResponseEntity<>(loggedUser, jwtHeader, HttpStatus.OK);
     }
 

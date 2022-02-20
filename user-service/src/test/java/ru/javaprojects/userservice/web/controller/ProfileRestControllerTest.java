@@ -1,7 +1,10 @@
 package ru.javaprojects.userservice.web.controller;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
@@ -10,17 +13,20 @@ import ru.javaprojects.energybalancecontrolshared.test.TestUtil;
 import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
 import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.energybalancecontrolshared.web.json.JsonUtil;
+import ru.javaprojects.energybalancecontrolshared.web.security.JwtProvider;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.to.NewUserTo;
 import ru.javaprojects.userservice.to.UserTo;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
 import static ru.javaprojects.energybalancecontrolshared.web.security.JwtProvider.AUTHORIZATION_TOKEN_HEADER;
 import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.*;
+import static ru.javaprojects.userservice.model.Role.USER;
 import static ru.javaprojects.userservice.testdata.UserTestData.*;
 import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_EMAIL;
 import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_INVALID_PASSWORD;
@@ -28,15 +34,23 @@ import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_INVA
 class ProfileRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = ProfileRestController.REST_URL + '/';
 
+    @Autowired
+    private JwtProvider jwtProvider;
+
     @Test
     void login() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL + LOGIN_ENDPOINT)
+        ResultActions actions = perform(MockMvcRequestBuilders.post(REST_URL + LOGIN_ENDPOINT)
                 .param(EMAIL_PARAM, user.getEmail())
                 .param(PASSWORD_PARAM, user.getPassword()))
                 .andExpect(status().isOk())
                 .andExpect(header().exists(AUTHORIZATION_TOKEN_HEADER))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(USER_MATCHER.contentJson(user));
+        String token = actions.andReturn().getResponse().getHeader(AUTHORIZATION_TOKEN_HEADER);
+        String userId = jwtProvider.getSubject(token);
+        List<GrantedAuthority> userAuthorities = jwtProvider.getAuthorities(token);
+        assertEquals(USER_ID_STRING, userId);
+        assertEquals(List.of(new SimpleGrantedAuthority(USER.getAuthority())), userAuthorities);
     }
 
     @Test
