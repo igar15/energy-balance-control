@@ -9,6 +9,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import ru.javaprojects.energybalancecontrolshared.util.ValidationUtil;
@@ -33,6 +34,7 @@ import static ru.javaprojects.userservice.testdata.UserTestData.*;
 @SpringBootTest
 @ActiveProfiles("dev")
 @Sql(scripts = "classpath:data.sql", config = @SqlConfig(encoding = "UTF-8"))
+@TestPropertySource(locations = "classpath:test.properties")
 class UserServiceTest {
 
     @Autowired

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import ru.javaprojects.energybalancecontrolshared.web.json.JacksonObjectMapper;
@@ -13,6 +14,7 @@ import ru.javaprojects.energybalancecontrolshared.web.security.RestAccessDeniedH
 import ru.javaprojects.energybalancecontrolshared.web.security.RestAuthenticationEntryPoint;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class EnergyBalanceServiceApplication {
 
     @Autowired

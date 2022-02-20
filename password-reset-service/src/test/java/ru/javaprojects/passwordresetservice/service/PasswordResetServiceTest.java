@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
@@ -25,6 +26,7 @@ import static ru.javaprojects.passwordresetservice.testdata.PasswordResetTokenTe
 @SpringBootTest
 @ActiveProfiles("dev")
 @Sql(scripts = "classpath:data.sql", config = @SqlConfig(encoding = "UTF-8"))
+@TestPropertySource(locations = "classpath:test.properties")
 class PasswordResetServiceTest {
 
     @Autowired

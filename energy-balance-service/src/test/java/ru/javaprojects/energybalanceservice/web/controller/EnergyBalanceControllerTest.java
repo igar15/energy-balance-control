@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -32,6 +33,7 @@ import static ru.javaprojects.energybalanceservice.testdata.UserTestData.USER_RO
 @SpringBootTest
 @ActiveProfiles("dev")
 @AutoConfigureMockMvc
+@TestPropertySource(locations = "classpath:test.properties")
 class EnergyBalanceControllerTest {
     private static final String REST_URL = EnergyBalanceController.REST_URL;
 

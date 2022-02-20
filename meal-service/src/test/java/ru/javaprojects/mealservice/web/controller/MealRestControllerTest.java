@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -38,6 +39,7 @@ import static ru.javaprojects.mealservice.web.AppExceptionHandler.EXCEPTION_DUPL
 @Transactional
 @ActiveProfiles("dev")
 @AutoConfigureMockMvc
+@TestPropertySource(locations = "classpath:test.properties")
 class MealRestControllerTest {
     private static final String REST_URL = MealRestController.REST_URL + '/';
 

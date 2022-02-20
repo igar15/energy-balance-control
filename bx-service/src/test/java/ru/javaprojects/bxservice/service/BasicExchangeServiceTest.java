@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import ru.javaprojects.bxservice.model.BasicExchange;
@@ -24,6 +25,7 @@ import static ru.javaprojects.bxservice.testdata.UserTestData.USER2_ID;
 @SpringBootTest
 @ActiveProfiles("dev")
 @Sql(scripts = "classpath:data.sql", config = @SqlConfig(encoding = "UTF-8"))
+@TestPropertySource(locations = "classpath:test.properties")
 class BasicExchangeServiceTest {
 
     @Autowired

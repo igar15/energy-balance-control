@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,6 +32,7 @@ import static ru.javaprojects.passwordresetservice.web.AppExceptionHandler.EXCEP
 @Transactional
 @ActiveProfiles("dev")
 @AutoConfigureMockMvc
+@TestPropertySource(locations = "classpath:test.properties")
 class PasswordResetRestControllerTest {
     private static final String REST_URL = PasswordResetRestController.REST_URL + '/';
 
