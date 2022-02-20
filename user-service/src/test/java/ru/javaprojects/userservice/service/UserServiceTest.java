@@ -11,13 +11,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import ru.javaprojects.userservice.UserMatcher;
+import ru.javaprojects.energybalancecontrolshared.util.ValidationUtil;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.userservice.messaging.MessageSender;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.to.UserTo;
-import ru.javaprojects.userservice.util.ValidationUtil;
 import ru.javaprojects.userservice.util.exception.EmailVerificationException;
-import ru.javaprojects.userservice.util.exception.NotFoundException;
 
 import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolationException;
@@ -27,7 +26,6 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.javaprojects.userservice.UserMatcher.ignoringFields;
 import static ru.javaprojects.userservice.model.Role.USER;
 import static ru.javaprojects.userservice.model.User.Sex.MAN;
 import static ru.javaprojects.userservice.testdata.UserTestData.*;
@@ -57,8 +55,8 @@ class UserServiceTest {
         long newId = created.id();
         User newUser = getNew();
         newUser.setId(newId);
-        UserMatcher.assertMatch(created, newUser);
-        UserMatcher.assertMatch(service.get(newId), newUser);
+        USER_MATCHER.assertMatch(created, newUser);
+        USER_MATCHER.assertMatch(service.get(newId), newUser);
         Mockito.verify(messageSender, Mockito.times(1)).sendEmailVerifyMessage(created.getEmail());
     }
 
@@ -92,7 +90,7 @@ class UserServiceTest {
     @Test
     void get() {
         User user = service.get(ADMIN_ID);
-        UserMatcher.assertMatch(user, admin);
+        USER_MATCHER.assertMatch(user, admin);
     }
 
     @Test
@@ -103,7 +101,7 @@ class UserServiceTest {
     @Test
     void getByEmail() {
         User user = service.getByEmail(admin.getEmail());
-        UserMatcher.assertMatch(user, admin);
+        USER_MATCHER.assertMatch(user, admin);
     }
 
     @Test
@@ -115,21 +113,21 @@ class UserServiceTest {
     void getPage() {
         Page<User> userPage = service.getPage(PAGEABLE);
         assertThat(userPage).usingRecursiveComparison().ignoringFields(ignoringFields).isEqualTo(PAGE);
-        UserMatcher.assertMatch(userPage.getContent(), userDisabled, user);
+        USER_MATCHER.assertMatch(userPage.getContent(), userDisabled, user);
     }
 
     @Test
     void getPageByNameKeyword() {
         Page<User> userPage = service.getPageByKeyword(NAME_KEYWORD, PAGEABLE);
         assertThat(userPage).usingRecursiveComparison().ignoringFields(ignoringFields).isEqualTo(PAGE_BY_NAME_KEYWORD);
-        UserMatcher.assertMatch(userPage.getContent(), admin);
+        USER_MATCHER.assertMatch(userPage.getContent(), admin);
     }
 
     @Test
     void getPageByEmailKeyword() {
         Page<User> userPage = service.getPageByKeyword(EMAIL_KEYWORD, PAGEABLE);
         assertThat(userPage).usingRecursiveComparison().ignoringFields(ignoringFields).isEqualTo(PAGE_BY_EMAIL_KEYWORD);
-        UserMatcher.assertMatch(userPage.getContent(), userDisabled, user);
+        USER_MATCHER.assertMatch(userPage.getContent(), userDisabled, user);
     }
 
     @Test
@@ -148,7 +146,7 @@ class UserServiceTest {
     @Test
     void updateWithSendingDateMessage() {
         service.update(getUpdatedTo());
-        UserMatcher.assertMatch(service.get(USER_ID), getUpdated());
+        USER_MATCHER.assertMatch(service.get(USER_ID), getUpdated());
         Mockito.verify(messageSender, Mockito.times(1)).sendDateMessage(LocalDate.now(), USER_ID);
     }
 
@@ -165,7 +163,7 @@ class UserServiceTest {
     @Test
     void updateWithAdminUserTo() {
         service.update(getAdminUpdatedTo());
-        UserMatcher.assertMatch(service.get(USER_ID), getAdminUpdated());
+        USER_MATCHER.assertMatch(service.get(USER_ID), getAdminUpdated());
         Mockito.verify(messageSender, Mockito.times(1)).sendDateMessage(LocalDate.now(), USER_ID);
     }
 

@@ -1,14 +1,14 @@
 package ru.javaprojects.mealservice.to;
 
 import org.hibernate.validator.constraints.Range;
-import org.springframework.util.Assert;
+import ru.javaprojects.energybalancecontrolshared.util.HasId;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
-public class MealTo {
+public class MealTo implements HasId {
     private Long id;
 
     @NotNull
@@ -30,11 +30,6 @@ public class MealTo {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
-    }
-
-    public long id() {
-        Assert.notNull(id, "MealTo must have id");
-        return id;
     }
 
     public Long getId() {

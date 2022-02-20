@@ -5,12 +5,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.trainingservice.messaging.MessageSender;
 import ru.javaprojects.trainingservice.model.Exercise;
 import ru.javaprojects.trainingservice.testdata.ExerciseTypeTestData;
 import ru.javaprojects.trainingservice.to.ExerciseTo;
 import ru.javaprojects.trainingservice.util.exception.DateTimeUniqueException;
-import ru.javaprojects.trainingservice.util.exception.NotFoundException;
 
 import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolationException;
@@ -136,9 +136,9 @@ class ExerciseServiceTest extends AbstractServiceTest {
         Page<Exercise> exercisePage = service.getPage(PAGEABLE, USER1_ID);
         assertThat(exercisePage).usingRecursiveComparison().ignoringFields("exerciseType").isEqualTo(PAGE);
         List<Exercise> exercises = exercisePage.getContent();
-        assertThat(exercises.get(0).getExerciseType()).usingRecursiveComparison().ignoringFields("userId").isEqualTo(exerciseTypeDeleted);
-        assertThat(exercises.get(1).getExerciseType()).usingRecursiveComparison().ignoringFields("userId").isEqualTo(exerciseType3);
-        assertThat(exercises.get(2).getExerciseType()).usingRecursiveComparison().ignoringFields("userId").isEqualTo(exerciseType1);
+        EXERCISE_TYPE_MATCHER.assertMatch(exercises.get(0).getExerciseType(), exerciseTypeDeleted);
+        EXERCISE_TYPE_MATCHER.assertMatch(exercises.get(1).getExerciseType(), exerciseType3);
+        EXERCISE_TYPE_MATCHER.assertMatch(exercises.get(2).getExerciseType(), exerciseType1);
     }
 
     @Test

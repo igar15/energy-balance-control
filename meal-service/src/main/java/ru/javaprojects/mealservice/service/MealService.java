@@ -5,11 +5,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.mealservice.messaging.MessageSender;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.repository.MealRepository;
 import ru.javaprojects.mealservice.to.MealTo;
-import ru.javaprojects.mealservice.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -6,12 +6,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaprojects.userservice.TestUtil;
-import ru.javaprojects.userservice.UserMatcher;
+import ru.javaprojects.energybalancecontrolshared.test.TestUtil;
+import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
+import ru.javaprojects.energybalancecontrolshared.web.json.JsonUtil;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.to.AdminUserTo;
-import ru.javaprojects.userservice.util.exception.NotFoundException;
-import ru.javaprojects.userservice.web.json.JsonUtil;
 
 import java.util.List;
 
@@ -20,9 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.ACCESS_DENIED;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
 import static ru.javaprojects.userservice.testdata.UserTestData.*;
-import static ru.javaprojects.userservice.util.exception.ErrorType.*;
-import static ru.javaprojects.userservice.web.AppExceptionHandler.*;
+import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_EMAIL;
+import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_INVALID_PASSWORD;
 
 class AdminRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = AdminRestController.REST_URL + '/';
@@ -37,7 +40,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         List<User> users = JsonUtil.readContentFromPage(actions.andReturn().getResponse().getContentAsString(), User.class);
-        UserMatcher.assertMatch(users, userDisabled, user);
+        USER_MATCHER.assertMatch(users, userDisabled, user);
     }
 
     @Test
@@ -48,7 +51,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -60,7 +63,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_ACCESS_DENIED));
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 
     @Test
@@ -71,7 +74,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         List<User> users = JsonUtil.readContentFromPage(actions.andReturn().getResponse().getContentAsString(), User.class);
-        UserMatcher.assertMatch(users, admin);
+        USER_MATCHER.assertMatch(users, admin);
     }
 
     @Test
@@ -80,7 +83,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .param(KEYWORD_PARAM, NAME_KEYWORD))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -90,7 +93,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .param(KEYWORD_PARAM, NAME_KEYWORD))
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_ACCESS_DENIED));
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 
     @Test
@@ -100,7 +103,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(UserMatcher.contentJson(user));
+                .andExpect(USER_MATCHER.contentJson(user));
     }
 
     @Test
@@ -117,7 +120,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + USER_ID))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -126,7 +129,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + ADMIN_ID))
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_ACCESS_DENIED));
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 
     @Test
@@ -140,8 +143,8 @@ class AdminRestControllerTest extends AbstractControllerTest {
         long newId = created.id();
         User newUser = getNew();
         newUser.setId(newId);
-        UserMatcher.assertMatch(created, newUser);
-        UserMatcher.assertMatch(service.get(newId), newUser);
+        USER_MATCHER.assertMatch(created, newUser);
+        USER_MATCHER.assertMatch(service.get(newId), newUser);
     }
 
     @Test
@@ -151,7 +154,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeAdditionProps(getNew(), PASSWORD_PROPERTY_NAME, getNew().getPassword())))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -162,7 +165,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeAdditionProps(getNew(), PASSWORD_PROPERTY_NAME, getNew().getPassword())))
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_ACCESS_DENIED));
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 
     @Test
@@ -198,7 +201,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(getAdminUpdatedTo())))
                 .andExpect(status().isNoContent());
-        UserMatcher.assertMatch(service.get(USER_ID), getAdminUpdated());
+        USER_MATCHER.assertMatch(service.get(USER_ID), getAdminUpdated());
     }
 
     @Test
@@ -232,7 +235,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(getAdminUpdatedTo())))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -243,7 +246,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(getAdminUpdatedTo())))
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_ACCESS_DENIED));
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 
     @Test
@@ -296,7 +299,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -306,7 +309,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_ACCESS_DENIED));
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 
     @Test
@@ -333,7 +336,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -343,7 +346,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_ACCESS_DENIED));
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 
     @Test
@@ -384,7 +387,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -395,6 +398,15 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_ACCESS_DENIED));
+                .andExpect(detailMessage(ACCESS_DENIED));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = ADMIN_ID_STRING, userRoles = {ADMIN_ROLE})
+    void wrongRequest() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(errorType(WRONG_REQUEST));
     }
 }

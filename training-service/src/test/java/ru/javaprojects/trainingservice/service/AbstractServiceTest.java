@@ -4,7 +4,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import ru.javaprojects.trainingservice.util.ValidationUtil;
+import ru.javaprojects.energybalancecontrolshared.util.ValidationUtil;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

@@ -5,13 +5,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.trainingservice.messaging.MessageSender;
 import ru.javaprojects.trainingservice.model.Exercise;
 import ru.javaprojects.trainingservice.model.ExerciseType;
 import ru.javaprojects.trainingservice.repository.ExerciseRepository;
 import ru.javaprojects.trainingservice.to.ExerciseTo;
 import ru.javaprojects.trainingservice.util.exception.DateTimeUniqueException;
-import ru.javaprojects.trainingservice.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

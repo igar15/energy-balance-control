@@ -16,7 +16,7 @@ import ru.javaprojects.emailverificationservice.messaging.MessageSender;
 import ru.javaprojects.emailverificationservice.model.VerificationToken;
 import ru.javaprojects.emailverificationservice.repository.VerificationTokenRepository;
 import ru.javaprojects.emailverificationservice.service.EmailVerificationService;
-import ru.javaprojects.emailverificationservice.util.exception.ErrorType;
+import ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
@@ -27,8 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.emailverificationservice.testdata.VerificationTokenTestData.*;
-import static ru.javaprojects.emailverificationservice.util.exception.ErrorType.DATA_NOT_FOUND;
-import static ru.javaprojects.emailverificationservice.util.exception.ErrorType.VALIDATION_ERROR;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
 
 @SpringBootTest
 @Transactional
@@ -52,11 +51,11 @@ class EmailVerificationRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    public ResultMatcher errorType(ErrorType type) {
+    private ResultMatcher errorType(ErrorType type) {
         return jsonPath("$.type").value(type.name());
     }
 
-    public ResultMatcher detailMessage(String code) {
+    private ResultMatcher detailMessage(String code) {
         return jsonPath("$.details").value(code);
     }
 
@@ -108,5 +107,13 @@ class EmailVerificationRestControllerTest {
                 .andExpect(errorType(VALIDATION_ERROR))
                 .andExpect(detailMessage("Email already verified:" + alreadyVerifiedToken.getEmail()));
         Mockito.verify(messageSender, Mockito.times(0)).sendEmailVerifiedMessage(Mockito.anyString());
+    }
+
+    @Test
+    void wrongRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(errorType(WRONG_REQUEST));
     }
 }

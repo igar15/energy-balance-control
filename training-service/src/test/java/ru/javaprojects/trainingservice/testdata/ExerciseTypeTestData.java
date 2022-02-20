@@ -1,6 +1,6 @@
 package ru.javaprojects.trainingservice.testdata;
 
-import ru.javaprojects.trainingservice.TestMatcher;
+import ru.javaprojects.energybalancecontrolshared.test.TestMatcher;
 import ru.javaprojects.trainingservice.model.ExerciseType;
 import ru.javaprojects.trainingservice.to.ExerciseTypeTo;
 

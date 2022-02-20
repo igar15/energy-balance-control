@@ -12,14 +12,14 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaprojects.mealservice.MealMatcher;
-import ru.javaprojects.mealservice.TestUtil;
+import ru.javaprojects.energybalancecontrolshared.test.TestUtil;
+import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
+import ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
+import ru.javaprojects.energybalancecontrolshared.web.json.JsonUtil;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.repository.MealRepository;
 import ru.javaprojects.mealservice.to.MealTo;
-import ru.javaprojects.mealservice.util.exception.ErrorType;
-import ru.javaprojects.mealservice.util.exception.NotFoundException;
-import ru.javaprojects.mealservice.web.json.JsonUtil;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,11 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
 import static ru.javaprojects.mealservice.testdata.MealTestData.*;
 import static ru.javaprojects.mealservice.testdata.UserTestData.*;
-import static ru.javaprojects.mealservice.util.exception.ErrorType.*;
 import static ru.javaprojects.mealservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_DATE_TIME;
-import static ru.javaprojects.mealservice.web.AppExceptionHandler.EXCEPTION_NOT_AUTHORIZED;
 
 @SpringBootTest
 @Transactional
@@ -65,7 +65,7 @@ class MealRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         List<Meal> meals = JsonUtil.readContentFromPage(actions.andReturn().getResponse().getContentAsString(), Meal.class);
-        MealMatcher.assertMatch(meals, meal7, meal6, meal5, meal4, meal3);
+        MEAL_MATCHER.assertMatch(meals, meal7, meal6, meal5, meal4, meal3);
     }
 
     @Test
@@ -75,7 +75,7 @@ class MealRestControllerTest {
                 .param(PAGE_SIZE_PARAM, PAGE_SIZE))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -89,8 +89,8 @@ class MealRestControllerTest {
         long newId = created.id();
         Meal newMeal = getNew();
         newMeal.setId(newId);
-        MealMatcher.assertMatch(created, newMeal);
-        MealMatcher.assertMatch(repository.findByIdAndUserId(newId, USER1_ID).get(), newMeal);
+        MEAL_MATCHER.assertMatch(created, newMeal);
+        MEAL_MATCHER.assertMatch(repository.findByIdAndUserId(newId, USER1_ID).get(), newMeal);
     }
 
     @Test
@@ -100,7 +100,7 @@ class MealRestControllerTest {
                 .content(JsonUtil.writeValue(getNewTo())))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -138,7 +138,7 @@ class MealRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andExpect(status().isNoContent());
-        MealMatcher.assertMatch(repository.findByIdAndUserId(MEAL1_ID, USER1_ID).get(), getUpdated());
+        MEAL_MATCHER.assertMatch(repository.findByIdAndUserId(MEAL1_ID, USER1_ID).get(), getUpdated());
     }
 
     @Test
@@ -182,7 +182,7 @@ class MealRestControllerTest {
                 .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -245,7 +245,7 @@ class MealRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -279,6 +279,15 @@ class MealRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    void wrongRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(errorType(WRONG_REQUEST));
     }
 }

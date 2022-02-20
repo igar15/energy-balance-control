@@ -6,13 +6,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.userservice.messaging.MessageSender;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.repository.UserRepository;
 import ru.javaprojects.userservice.to.AdminUserTo;
 import ru.javaprojects.userservice.to.UserTo;
 import ru.javaprojects.userservice.util.exception.EmailVerificationException;
-import ru.javaprojects.userservice.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 

@@ -8,16 +8,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import ru.javaprojects.energybalancecontrolshared.web.security.SecurityUtil;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.service.MealService;
 import ru.javaprojects.mealservice.to.MealTo;
-import ru.javaprojects.mealservice.web.security.SecurityUtil;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
 
-import static ru.javaprojects.mealservice.util.ValidationUtil.assureIdConsistent;
-import static ru.javaprojects.mealservice.util.ValidationUtil.checkNew;
+import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.assureIdConsistent;
+import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.checkNew;
+
 
 @RestController
 @RequestMapping(value = MealRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)

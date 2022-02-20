@@ -12,9 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType;
 import ru.javaprojects.passwordresetservice.messaging.MessageSender;
 import ru.javaprojects.passwordresetservice.service.PasswordResetService;
-import ru.javaprojects.passwordresetservice.util.exception.ErrorType;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
@@ -23,9 +23,8 @@ import java.lang.reflect.Method;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
 import static ru.javaprojects.passwordresetservice.testdata.PasswordResetTokenTestData.*;
-import static ru.javaprojects.passwordresetservice.util.exception.ErrorType.DATA_NOT_FOUND;
-import static ru.javaprojects.passwordresetservice.util.exception.ErrorType.VALIDATION_ERROR;
 import static ru.javaprojects.passwordresetservice.web.AppExceptionHandler.EXCEPTION_INVALID_PASSWORD;
 
 @SpringBootTest
@@ -131,5 +130,13 @@ class PasswordResetRestControllerTest {
                 .andExpect(errorType(VALIDATION_ERROR))
                 .andExpect(detailMessage(EXCEPTION_INVALID_PASSWORD));
         Mockito.verify(messageSender, Mockito.times(0)).sendChangePasswordMessage(Mockito.anyString(), Mockito.anyString());
+    }
+
+    @Test
+    void wrongRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(errorType(WRONG_REQUEST));
     }
 }

@@ -12,21 +12,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.javaprojects.energybalancecontrolshared.web.security.JwtProvider;
+import ru.javaprojects.energybalancecontrolshared.web.security.SecurityUtil;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.service.UserService;
 import ru.javaprojects.userservice.to.NewUserTo;
 import ru.javaprojects.userservice.to.UserTo;
 import ru.javaprojects.userservice.web.security.AuthorizedUser;
-import ru.javaprojects.userservice.web.security.JwtProvider;
-import ru.javaprojects.userservice.web.security.SecurityUtil;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.net.URI;
 
+import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.assureIdConsistent;
+import static ru.javaprojects.energybalancecontrolshared.web.security.JwtProvider.AUTHORIZATION_TOKEN_HEADER;
 import static ru.javaprojects.userservice.util.UserUtil.createNewFromTo;
-import static ru.javaprojects.userservice.util.ValidationUtil.assureIdConsistent;
-import static ru.javaprojects.userservice.web.security.JwtProvider.AUTHORIZATION_TOKEN_HEADER;
 
 @RestController
 @RequestMapping(value = ProfileRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -10,13 +10,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import ru.javaprojects.mealservice.MealMatcher;
+import ru.javaprojects.energybalancecontrolshared.util.ValidationUtil;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.mealservice.messaging.MessageSender;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.repository.MealRepository;
 import ru.javaprojects.mealservice.to.MealTo;
-import ru.javaprojects.mealservice.util.ValidationUtil;
-import ru.javaprojects.mealservice.util.exception.NotFoundException;
 
 import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolationException;
@@ -57,7 +56,7 @@ class MealServiceTest {
         long newId = created.id();
         Meal newMeal = getNew();
         newMeal.setId(newId);
-        MealMatcher.assertMatch(created, newMeal);
+        MEAL_MATCHER.assertMatch(created, newMeal);
         Mockito.verify(messageSender, Mockito.times(1)).sendDateCreatedMessage(getNewTo().getDateTime().toLocalDate(), USER1_ID);
 
     }
@@ -91,7 +90,7 @@ class MealServiceTest {
     @Test
     void update() {
         service.update(getUpdatedTo(), USER1_ID);
-        MealMatcher.assertMatch(service.get(MEAL1_ID, USER1_ID), getUpdated());
+        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER1_ID), getUpdated());
     }
 
     @Test
@@ -149,7 +148,7 @@ class MealServiceTest {
     void getPage() {
         Page<Meal> mealPage = service.getPage(PAGEABLE, USER1_ID);
         assertThat(mealPage).usingRecursiveComparison().ignoringFields("userId").isEqualTo(PAGE);
-        MealMatcher.assertMatch(mealPage.getContent(), meal7, meal6, meal5, meal4, meal3);
+        MEAL_MATCHER.assertMatch(mealPage.getContent(), meal7, meal6, meal5, meal4, meal3);
     }
 
     @Test
@@ -167,7 +166,7 @@ class MealServiceTest {
     @Test
     void get() {
         Meal meal = service.get(MEAL1_ID, USER1_ID);
-        MealMatcher.assertMatch(meal, meal1);
+        MEAL_MATCHER.assertMatch(meal, meal1);
     }
 
     @Test

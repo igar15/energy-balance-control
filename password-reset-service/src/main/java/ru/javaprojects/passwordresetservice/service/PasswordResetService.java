@@ -6,10 +6,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.passwordresetservice.messaging.MessageSender;
 import ru.javaprojects.passwordresetservice.model.PasswordResetToken;
 import ru.javaprojects.passwordresetservice.repository.PasswordResetTokenRepository;
-import ru.javaprojects.passwordresetservice.util.exception.NotFoundException;
 
 import java.util.Date;
 

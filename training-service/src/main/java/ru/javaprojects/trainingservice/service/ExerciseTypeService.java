@@ -3,10 +3,10 @@ package ru.javaprojects.trainingservice.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.trainingservice.model.ExerciseType;
 import ru.javaprojects.trainingservice.repository.ExerciseTypeRepository;
 import ru.javaprojects.trainingservice.to.ExerciseTypeTo;
-import ru.javaprojects.trainingservice.util.exception.NotFoundException;
 
 import java.util.List;
 

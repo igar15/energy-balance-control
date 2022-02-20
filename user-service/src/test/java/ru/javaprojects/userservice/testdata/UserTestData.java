@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import ru.javaprojects.energybalancecontrolshared.test.TestMatcher;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.to.AdminUserTo;
 import ru.javaprojects.userservice.to.NewUserTo;
@@ -19,12 +20,14 @@ import static ru.javaprojects.userservice.model.User.Sex.MAN;
 import static ru.javaprojects.userservice.model.User.Sex.WOMAN;
 
 public class UserTestData {
+    public static final String[] ignoringFields = {"registered", "password"};
+    public static final TestMatcher<User> USER_MATCHER = TestMatcher.usingIgnoringFieldsComparator(User.class, ignoringFields);
+
     public static final long USER_ID = START_SEQ;
     public static final long ADMIN_ID = START_SEQ + 1;
     public static final long USER_DISABLED_ID = START_SEQ + 2;
     public static final String USER_ID_STRING = START_SEQ + "";
     public static final String ADMIN_ID_STRING = (START_SEQ + 1) + "";
-    public static final String USER_DISABLED_ID_STRING = (START_SEQ + 2) + "";
     public static final String USER_ROLE = "ROLE_USER";
     public static final String ADMIN_ROLE = "ROLE_ADMIN";
     public static final long NOT_FOUND = 10;
@@ -60,10 +63,6 @@ public class UserTestData {
     public static final String PAGE_NUMBER_PARAM = "page";
     public static final String PAGE_SIZE_PARAM = "size";
     public static final String KEYWORD_PARAM = "keyword";
-
-    public static final String JSON_USER_PAGE = "{\"content\":[{\"id\":100002,\"name\":\"Jack London\",\"email\":\"jack@gmail.com\",\"sex\":\"MAN\",\"weight\":83,\"growth\":174,\"age\":38,\"enabled\":false,\"registered\":\"2022-02-17T17:28:15.116+00:00\",\"roles\":[\"USER\"]}," +
-            "{\"id\":100000,\"name\":\"John Smith\",\"email\":\"user@gmail.com\",\"sex\":\"MAN\",\"weight\":90,\"growth\":185,\"age\":34,\"enabled\":true,\"registered\":\"2022-02-17T17:28:15.116+00:00\",\"roles\":[\"USER\"]}]," +
-            "\"pageable\":{\"page\":0,\"size\":2,\"sort\":{\"orders\":[]}},\"total\":3}";
 
     public static User getNew() {
         return new User(null, "new name", "new@test.com", WOMAN, 65, 170, 30, "newPassword", false, Set.of(USER));

@@ -10,10 +10,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.passwordresetservice.messaging.MessageSender;
 import ru.javaprojects.passwordresetservice.model.PasswordResetToken;
 import ru.javaprojects.passwordresetservice.repository.PasswordResetTokenRepository;
-import ru.javaprojects.passwordresetservice.util.exception.NotFoundException;
 import ru.javaprojects.passwordresetservice.util.exception.PasswordResetException;
 
 import javax.annotation.PostConstruct;

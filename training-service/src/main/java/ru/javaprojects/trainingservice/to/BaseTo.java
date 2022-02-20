@@ -1,8 +1,8 @@
 package ru.javaprojects.trainingservice.to;
 
-import org.springframework.util.Assert;
+import ru.javaprojects.energybalancecontrolshared.util.HasId;
 
-public abstract class BaseTo {
+public abstract class BaseTo implements HasId {
     protected Long id;
 
     public BaseTo() {
@@ -10,11 +10,6 @@ public abstract class BaseTo {
 
     public BaseTo(Long id) {
         this.id = id;
-    }
-
-    public long id() {
-        Assert.notNull(id, "To must have id");
-        return id;
     }
 
     public Long getId() {

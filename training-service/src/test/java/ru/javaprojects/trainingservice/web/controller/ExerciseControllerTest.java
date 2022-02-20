@@ -7,12 +7,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaprojects.trainingservice.TestUtil;
+import ru.javaprojects.energybalancecontrolshared.test.TestUtil;
+import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
+import ru.javaprojects.energybalancecontrolshared.web.json.JsonUtil;
 import ru.javaprojects.trainingservice.model.Exercise;
 import ru.javaprojects.trainingservice.repository.ExerciseRepository;
 import ru.javaprojects.trainingservice.to.ExerciseTo;
-import ru.javaprojects.trainingservice.util.exception.NotFoundException;
-import ru.javaprojects.trainingservice.web.json.JsonUtil;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
 import static ru.javaprojects.trainingservice.testdata.ExerciseTestData.*;
 import static ru.javaprojects.trainingservice.testdata.UserTestData.*;
-import static ru.javaprojects.trainingservice.util.exception.ErrorType.*;
 import static ru.javaprojects.trainingservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_DATE_TIME;
-import static ru.javaprojects.trainingservice.web.AppExceptionHandler.EXCEPTION_NOT_AUTHORIZED;
 
 class ExerciseControllerTest extends AbstractControllerTest {
     private static final String REST_URL = ExerciseController.REST_URL + '/';
@@ -55,7 +56,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -80,7 +81,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(getNewTo())))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -128,8 +129,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -227,7 +227,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -261,6 +261,15 @@ class ExerciseControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    void wrongRequest() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(errorType(WRONG_REQUEST));
     }
 }

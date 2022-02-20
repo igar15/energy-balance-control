@@ -6,22 +6,24 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaprojects.userservice.TestUtil;
-import ru.javaprojects.userservice.UserMatcher;
+import ru.javaprojects.energybalancecontrolshared.test.TestUtil;
+import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
+import ru.javaprojects.energybalancecontrolshared.web.json.JsonUtil;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.to.NewUserTo;
 import ru.javaprojects.userservice.to.UserTo;
-import ru.javaprojects.userservice.util.exception.NotFoundException;
-import ru.javaprojects.userservice.web.json.JsonUtil;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
+import static ru.javaprojects.energybalancecontrolshared.web.security.JwtProvider.AUTHORIZATION_TOKEN_HEADER;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.*;
 import static ru.javaprojects.userservice.testdata.UserTestData.*;
-import static ru.javaprojects.userservice.util.exception.ErrorType.*;
-import static ru.javaprojects.userservice.web.AppExceptionHandler.*;
-import static ru.javaprojects.userservice.web.security.JwtProvider.AUTHORIZATION_TOKEN_HEADER;
+import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_EMAIL;
+import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_INVALID_PASSWORD;
 
 class ProfileRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = ProfileRestController.REST_URL + '/';
@@ -34,7 +36,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().exists(AUTHORIZATION_TOKEN_HEADER))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(UserMatcher.contentJson(user));
+                .andExpect(USER_MATCHER.contentJson(user));
     }
 
     @Test
@@ -55,7 +57,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(header().doesNotExist(AUTHORIZATION_TOKEN_HEADER))
                 .andExpect(errorType(DISABLED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_DISABLED));
+                .andExpect(detailMessage(DISABLED));
     }
 
     @Test
@@ -68,8 +70,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         long newId = created.id();
         User newUser = getNewForRegister();
         newUser.setId(newId);
-        UserMatcher.assertMatch(created, newUser);
-        UserMatcher.assertMatch(service.get(newId), newUser);
+        USER_MATCHER.assertMatch(created, newUser);
+        USER_MATCHER.assertMatch(service.get(newId), newUser);
     }
 
     @Test
@@ -105,7 +107,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(getNewUserTo())))
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_ACCESS_DENIED));
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 
     @Test
@@ -114,7 +116,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(UserMatcher.contentJson(user));
+                .andExpect(USER_MATCHER.contentJson(user));
     }
 
     @Test
@@ -122,7 +124,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -133,7 +135,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        UserMatcher.assertMatch(service.get(USER_ID), getUpdated());
+        USER_MATCHER.assertMatch(service.get(USER_ID), getUpdated());
     }
 
     @Test
@@ -156,7 +158,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -185,7 +187,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(REST_URL))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -216,7 +218,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -244,7 +246,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_ACCESS_DENIED));
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 
     @Test
@@ -282,6 +284,6 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_ACCESS_DENIED));
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 }

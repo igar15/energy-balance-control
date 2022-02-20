@@ -1,6 +1,6 @@
 package ru.javaprojects.userservice.to;
 
-import ru.javaprojects.userservice.HasId;
+import ru.javaprojects.energybalancecontrolshared.util.HasId;
 import ru.javaprojects.userservice.model.User.Sex;
 
 public class UserTo extends BaseUserTo implements HasId {

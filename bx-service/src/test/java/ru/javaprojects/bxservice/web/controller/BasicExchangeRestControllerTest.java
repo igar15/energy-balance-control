@@ -15,7 +15,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.bxservice.service.BasicExchangeService;
 import ru.javaprojects.bxservice.service.client.UserServiceClient;
-import ru.javaprojects.bxservice.util.exception.ErrorType;
+import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
+import ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
@@ -27,7 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.bxservice.testdata.BasicExchangeTestData.*;
 import static ru.javaprojects.bxservice.testdata.UserTestData.*;
-import static ru.javaprojects.bxservice.util.exception.ErrorType.UNAUTHORIZED_ERROR;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.UNAUTHORIZED_ERROR;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.WRONG_REQUEST;
 
 @SpringBootTest
 @Transactional
@@ -45,7 +47,7 @@ class BasicExchangeRestControllerTest {
     @Mock
     private UserServiceClient userServiceClient;
 
-    public ResultMatcher errorType(ErrorType type) {
+    private ResultMatcher errorType(ErrorType type) {
         return jsonPath("$.type").value(type.name());
     }
 
@@ -89,5 +91,14 @@ class BasicExchangeRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    void wrongRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(errorType(WRONG_REQUEST));
     }
 }

@@ -3,11 +3,11 @@ package ru.javaprojects.trainingservice.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.trainingservice.model.ExerciseType;
 import ru.javaprojects.trainingservice.repository.ExerciseRepository;
 import ru.javaprojects.trainingservice.repository.ExerciseTypeRepository;
 import ru.javaprojects.trainingservice.to.ExerciseTypeTo;
-import ru.javaprojects.trainingservice.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.List;

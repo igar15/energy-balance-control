@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaprojects.trainingservice.util.exception.ErrorType;
+import ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -26,11 +26,11 @@ public abstract class AbstractControllerTest {
         return mockMvc.perform(builder);
     }
 
-    public ResultMatcher errorType(ErrorType type) {
+    protected ResultMatcher errorType(ErrorType type) {
         return jsonPath("$.type").value(type.name());
     }
 
-    public ResultMatcher detailMessage(String code) {
+    protected ResultMatcher detailMessage(String code) {
         return jsonPath("$.details").value(code);
     }
 }

@@ -1,15 +1,16 @@
 package ru.javaprojects.energybalanceservice.testdata;
 
+import ru.javaprojects.energybalancecontrolshared.test.TestMatcher;
 import ru.javaprojects.energybalanceservice.model.EnergyBalanceReport;
-import ru.javaprojects.energybalanceservice.util.EnergyBalanceUtil;
 
 import java.time.LocalDate;
-import java.time.Month;
 
 import static java.time.Month.FEBRUARY;
 import static ru.javaprojects.energybalanceservice.util.EnergyBalanceUtil.*;
 
 public class EnergyBalanceTestData {
+    public static final TestMatcher<EnergyBalanceReport> ENERGY_BALANCE_REPORT_MATCHER = TestMatcher.usingIgnoringFieldsComparator(EnergyBalanceReport.class);
+
     public static final Integer MEAL_CALORIES = 2100;
     public static final Integer TRAINING_CALORIES = 190;
     public static final Integer BX_CALORIES = 1891;

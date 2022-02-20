@@ -7,21 +7,22 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaprojects.trainingservice.TestUtil;
+import ru.javaprojects.energybalancecontrolshared.test.TestUtil;
+import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
+import ru.javaprojects.energybalancecontrolshared.web.json.JsonUtil;
 import ru.javaprojects.trainingservice.model.ExerciseType;
 import ru.javaprojects.trainingservice.repository.ExerciseTypeRepository;
 import ru.javaprojects.trainingservice.to.ExerciseTypeTo;
-import ru.javaprojects.trainingservice.web.json.JsonUtil;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
 import static ru.javaprojects.trainingservice.testdata.ExerciseTypeTestData.*;
 import static ru.javaprojects.trainingservice.testdata.UserTestData.*;
-import static ru.javaprojects.trainingservice.util.exception.ErrorType.*;
 import static ru.javaprojects.trainingservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_DESCRIPTION;
-import static ru.javaprojects.trainingservice.web.AppExceptionHandler.EXCEPTION_NOT_AUTHORIZED;
 
 class ExerciseTypeControllerTest extends AbstractControllerTest {
     private static final String REST_URL = ExerciseTypeController.REST_URL + '/';
@@ -44,7 +45,7 @@ class ExerciseTypeControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -69,7 +70,7 @@ class ExerciseTypeControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(getNewTo())))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -117,7 +118,7 @@ class ExerciseTypeControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 
     @Test
@@ -216,6 +217,6 @@ class ExerciseTypeControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(EXCEPTION_NOT_AUTHORIZED));
+                .andExpect(detailMessage(NOT_AUTHORIZED));
     }
 }

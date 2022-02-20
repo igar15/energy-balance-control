@@ -8,16 +8,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import ru.javaprojects.energybalancecontrolshared.web.security.SecurityUtil;
 import ru.javaprojects.trainingservice.model.Exercise;
 import ru.javaprojects.trainingservice.service.ExerciseService;
 import ru.javaprojects.trainingservice.to.ExerciseTo;
-import ru.javaprojects.trainingservice.web.security.SecurityUtil;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
 
-import static ru.javaprojects.trainingservice.util.ValidationUtil.assureIdConsistent;
-import static ru.javaprojects.trainingservice.util.ValidationUtil.checkNew;
+import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.assureIdConsistent;
+import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.checkNew;
 
 @RestController
 @RequestMapping(value = ExerciseController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -6,7 +6,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
-import ru.javaprojects.userservice.HasId;
+import ru.javaprojects.energybalancecontrolshared.util.HasId;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;

@@ -5,16 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import ru.javaprojects.energybalancecontrolshared.web.security.SecurityUtil;
 import ru.javaprojects.trainingservice.model.ExerciseType;
 import ru.javaprojects.trainingservice.service.ExerciseTypeService;
 import ru.javaprojects.trainingservice.to.ExerciseTypeTo;
-import ru.javaprojects.trainingservice.web.security.SecurityUtil;
 
 import javax.validation.Valid;
 import java.util.List;
 
-import static ru.javaprojects.trainingservice.util.ValidationUtil.assureIdConsistent;
-import static ru.javaprojects.trainingservice.util.ValidationUtil.checkNew;
+import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.assureIdConsistent;
+import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.checkNew;
 
 @RestController
 @RequestMapping(value = ExerciseTypeController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)

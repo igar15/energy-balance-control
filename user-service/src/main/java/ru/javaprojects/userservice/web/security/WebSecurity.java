@@ -7,32 +7,28 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
+import ru.javaprojects.energybalancecontrolshared.web.security.BasicWebSecurity;
+import ru.javaprojects.energybalancecontrolshared.web.security.JwtAuthorizationFilter;
+import ru.javaprojects.energybalancecontrolshared.web.security.RestAccessDeniedHandler;
+import ru.javaprojects.energybalancecontrolshared.web.security.RestAuthenticationEntryPoint;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.service.UserService;
-import ru.javaprojects.userservice.util.exception.NotFoundException;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
-public class WebSecurity extends WebSecurityConfigurerAdapter {
+public class WebSecurity extends BasicWebSecurity {
 
-    private final JwtAuthorizationFilter jwtAuthorizationFilter;
-    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-    private final RestAccessDeniedHandler restAccessDeniedHandler;
     private final UserService service;
     private final PasswordEncoder passwordEncoder;
 
     public WebSecurity(JwtAuthorizationFilter jwtAuthorizationFilter, RestAuthenticationEntryPoint restAuthenticationEntryPoint,
                        RestAccessDeniedHandler restAccessDeniedHandler, UserService service, PasswordEncoder passwordEncoder) {
-        this.jwtAuthorizationFilter = jwtAuthorizationFilter;
-        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
-        this.restAccessDeniedHandler = restAccessDeniedHandler;
+        super(jwtAuthorizationFilter, restAuthenticationEntryPoint, restAccessDeniedHandler);
         this.service = service;
         this.passwordEncoder = passwordEncoder;
     }
@@ -60,22 +56,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder);
     }
 
-    // TODO ADD CORS
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/api/profile/login").permitAll()
-                .antMatchers("/api/profile/register").anonymous()
-                .antMatchers("/api/profile/password/reset").anonymous()
-                .antMatchers("/api/profile/email/verify").anonymous()
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling().accessDeniedHandler(restAccessDeniedHandler)
-                .authenticationEntryPoint(restAuthenticationEntryPoint);
+    protected void configureAuthorizeRequests(HttpSecurity http) throws Exception {
+       http
+               .authorizeRequests()
+               .antMatchers("/api/profile/login").permitAll()
+               .antMatchers("/api/profile/register").anonymous()
+               .antMatchers("/api/profile/password/reset").anonymous()
+               .antMatchers("/api/profile/email/verify").anonymous()
+               .anyRequest().authenticated();
     }
 }

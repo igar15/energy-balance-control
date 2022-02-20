@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import ru.javaprojects.trainingservice.TestMatcher;
+import ru.javaprojects.energybalancecontrolshared.test.TestMatcher;
 import ru.javaprojects.trainingservice.model.Exercise;
 import ru.javaprojects.trainingservice.to.ExerciseTo;
 
@@ -45,11 +45,6 @@ public class ExerciseTestData {
     public static final String PAGE_SIZE_PARAM = "size";
 
     public static final String TOTAL_CALORIES_BURNED_ENDPOINT = "total-calories-burned";
-
-    public static final String JSON_EXERCISE_PAGE = "{\"content\":[{\"id\":100010,\"dateTime\":\"2022-02-06T20:10:00\",\"amount\":35,\"exerciseType\":{\"id\":100003,\"description\":\"1User Exercise Type Deleted\",\"measure\":\"times\",\"caloriesBurned\":2}}," +
-            "{\"id\":100009,\"dateTime\":\"2022-02-06T18:15:00\",\"amount\":20,\"exerciseType\":{\"id\":100002,\"description\":\"1User Exercise Type 3\",\"measure\":\"times\",\"caloriesBurned\":1}}," +
-            "{\"id\":100008,\"dateTime\":\"2022-02-06T14:15:00\",\"amount\":50,\"exerciseType\":{\"id\":100000,\"description\":\"1User Exercise Type 1\",\"measure\":\"times\",\"caloriesBurned\":2}}]," +
-            "\"pageable\":{\"page\":0,\"size\":3,\"sort\":{\"orders\":[]}},\"total\":6}";
 
     public static Exercise getNew() {
         return new Exercise(null, of(2022, FEBRUARY, 4, 7, 0), 50);

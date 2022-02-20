@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.javaprojects.energybalancecontrolshared.web.security.SecurityUtil;
 import ru.javaprojects.energybalanceservice.model.EnergyBalanceReport;
 import ru.javaprojects.energybalanceservice.service.EnergyBalanceService;
-import ru.javaprojects.energybalanceservice.web.security.SecurityUtil;
 
 import java.time.LocalDate;
 
