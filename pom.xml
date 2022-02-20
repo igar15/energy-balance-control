@@ -12,6 +12,7 @@
 		<module>email-verification-service</module>
 		<module>user-service</module>
 		<module>password-reset-service</module>
+		<module>eureka-server</module>
 	</modules>
 
 	<parent>
