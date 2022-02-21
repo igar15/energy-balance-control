@@ -22,9 +22,9 @@ public class PasswordResetRestController {
         this.service = service;
     }
 
-    @GetMapping("/{token}")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public void checkToken(@PathVariable String token) {
+    public void checkToken(@RequestParam String token) {
         log.info("check token {}", token);
         service.checkToken(token);
     }

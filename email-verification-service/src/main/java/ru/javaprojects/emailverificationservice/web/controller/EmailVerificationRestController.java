@@ -18,9 +18,9 @@ public class EmailVerificationRestController {
         this.service = service;
     }
 
-    @PostMapping("/{token}")
+    @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void verifyEmail(@PathVariable String token) {
+    public void verifyEmail(@RequestParam String token) {
         log.info("verify email with token {}", token);
         service.verifyEmail(token);
     }

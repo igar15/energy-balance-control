@@ -22,7 +22,6 @@ import ru.javaprojects.userservice.service.UserService;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class WebSecurity extends BasicWebSecurity {
-
     private final UserService service;
     private final PasswordEncoder passwordEncoder;
 
@@ -58,12 +57,12 @@ public class WebSecurity extends BasicWebSecurity {
 
     @Override
     protected void configureAuthorizeRequests(HttpSecurity http) throws Exception {
-       http
-               .authorizeRequests()
-               .antMatchers("/api/profile/login").permitAll()
-               .antMatchers("/api/profile/register").anonymous()
-               .antMatchers("/api/profile/password/reset").anonymous()
-               .antMatchers("/api/profile/email/verify").anonymous()
-               .anyRequest().authenticated();
+        http
+                .authorizeRequests()
+                .antMatchers("/api/profile/login").access("permitAll() and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
+                .antMatchers("/api/profile/register").access("isAnonymous() and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
+                .antMatchers("/api/profile/password/reset").access("isAnonymous() and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
+                .antMatchers("/api/profile/email/verify").access("isAnonymous() and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
+                .anyRequest().access("isAuthenticated() and hasIpAddress(@environment.getProperty('gateway-server.ip'))");
     }
 }

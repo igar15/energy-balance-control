@@ -73,7 +73,8 @@ class EmailVerificationRestControllerTest {
 
     @Test
     void verifyEmail() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL + notExpiredNotVerifiedToken.getToken()))
+        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+                .param(TOKEN_PARAM, notExpiredNotVerifiedToken.getToken()))
                 .andDo(print())
                 .andExpect(status().isOk());
         Mockito.verify(messageSender, Mockito.times(1)).sendEmailVerifiedMessage(notExpiredNotVerifiedToken.getEmail());
@@ -83,7 +84,8 @@ class EmailVerificationRestControllerTest {
 
     @Test
     void verifyEmailNotFoundToken() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL + NOT_FOUND_TOKEN))
+        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+                .param(TOKEN_PARAM, NOT_FOUND_TOKEN))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(DATA_NOT_FOUND))
@@ -93,7 +95,8 @@ class EmailVerificationRestControllerTest {
 
     @Test
     void verifyEmailWhenTokenExpired() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL + expiredToken.getToken()))
+        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+                .param(TOKEN_PARAM, expiredToken.getToken()))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR))
@@ -103,7 +106,8 @@ class EmailVerificationRestControllerTest {
 
     @Test
     void verifyEmailWhenAlreadyVerified() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL + alreadyVerifiedToken.getToken()))
+        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+                .param(TOKEN_PARAM, alreadyVerifiedToken.getToken()))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR))

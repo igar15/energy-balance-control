@@ -69,14 +69,16 @@ class PasswordResetRestControllerTest {
 
     @Test
     void checkToken() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + notExpiredToken.getToken()))
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
+                .param(TOKEN_PARAM, notExpiredToken.getToken()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
     void checkTokenNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + NOT_FOUND_TOKEN))
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
+                .param(TOKEN_PARAM, NOT_FOUND_TOKEN))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(DATA_NOT_FOUND));
@@ -84,7 +86,8 @@ class PasswordResetRestControllerTest {
 
     @Test
     void checkTokenExpired() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + expiredToken.getToken()))
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
+                .param(TOKEN_PARAM, expiredToken.getToken()))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR));

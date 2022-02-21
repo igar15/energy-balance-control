@@ -17,6 +17,8 @@ public class VerificationTokenTestData {
 
     public static final String NEW_USER_EMAIL = "john@test.com";
 
+    public static final String TOKEN_PARAM = "token";
+
     private static Date parseDate(String date) {
         try {
             return dateFormat.parse(date);
