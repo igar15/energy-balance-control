@@ -17,6 +17,7 @@ import ru.javaprojects.emailverificationservice.messaging.MessageSender;
 import ru.javaprojects.emailverificationservice.model.VerificationToken;
 import ru.javaprojects.emailverificationservice.repository.VerificationTokenRepository;
 import ru.javaprojects.emailverificationservice.service.EmailVerificationService;
+import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
 import ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType;
 
 import javax.annotation.PostConstruct;
@@ -27,8 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaprojects.emailverificationservice.testdata.UserTestData.*;
 import static ru.javaprojects.emailverificationservice.testdata.VerificationTokenTestData.*;
 import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.ACCESS_DENIED;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
 
 @SpringBootTest
 @Transactional
@@ -121,5 +125,32 @@ class EmailVerificationRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(errorType(WRONG_REQUEST));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = ADMIN_ID_STRING, userRoles = {ADMIN_ROLE})
+    void actuator() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void actuatorUnAuth() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(NOT_AUTHORIZED));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
+    void actuatorNotAdmin() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(errorType(ACCESS_DENIED_ERROR))
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 }
