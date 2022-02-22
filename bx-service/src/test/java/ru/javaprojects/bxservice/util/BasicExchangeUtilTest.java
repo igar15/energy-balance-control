@@ -9,7 +9,7 @@ class BasicExchangeUtilTest {
 
     @Test
     void calculateBxCalories() {
-        assertEquals(USER1_BX_CALORIES, BasicExchangeUtil.calculateBxCalories(user1BxDetails));
-        assertEquals(USER2_BX_CALORIES, BasicExchangeUtil.calculateBxCalories(user2BxDetails));
+        assertEquals(USER_BX_CALORIES, BasicExchangeUtil.calculateBxCalories(userBxDetails));
+        assertEquals(ADMIN_BX_CALORIES, BasicExchangeUtil.calculateBxCalories(adminBxDetails));
     }
 }

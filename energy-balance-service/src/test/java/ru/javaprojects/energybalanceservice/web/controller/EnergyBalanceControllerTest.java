@@ -24,11 +24,11 @@ import java.lang.reflect.Field;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.UNAUTHORIZED_ERROR;
-import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.WRONG_REQUEST;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.*;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.ACCESS_DENIED;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
 import static ru.javaprojects.energybalanceservice.testdata.EnergyBalanceTestData.*;
-import static ru.javaprojects.energybalanceservice.testdata.UserTestData.USER1_ID_STRING;
-import static ru.javaprojects.energybalanceservice.testdata.UserTestData.USER_ROLE;
 
 @SpringBootTest
 @ActiveProfiles("dev")
@@ -77,7 +77,7 @@ class EnergyBalanceControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void getReport() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
                 .param(DATE_PARAM, DATE.toString()))
@@ -88,7 +88,7 @@ class EnergyBalanceControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void getErrorReport() throws Exception {
         Mockito.when(mealServiceClient.getMealCalories(DATE)).thenReturn(-1);
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
@@ -110,11 +110,38 @@ class EnergyBalanceControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void wrongRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(errorType(WRONG_REQUEST));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = ADMIN_ID_STRING, userRoles = {ADMIN_ROLE})
+    void actuator() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void actuatorUnAuth() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(NOT_AUTHORIZED));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
+    void actuatorNotAdmin() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(errorType(ACCESS_DENIED_ERROR))
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 }

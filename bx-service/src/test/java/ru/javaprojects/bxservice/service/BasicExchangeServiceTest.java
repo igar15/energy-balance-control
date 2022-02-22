@@ -19,8 +19,8 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.javaprojects.bxservice.testdata.BasicExchangeTestData.*;
-import static ru.javaprojects.bxservice.testdata.UserTestData.USER1_ID;
-import static ru.javaprojects.bxservice.testdata.UserTestData.USER2_ID;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.ADMIN_ID;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.USER_ID;
 
 @SpringBootTest
 @ActiveProfiles("dev")
@@ -39,67 +39,67 @@ class BasicExchangeServiceTest {
 
     @PostConstruct
     private void setupUserServiceClient() {
-        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(user1BxDetails);
-        Mockito.when(userServiceClient.getUserBxDetails(USER2_ID)).thenReturn(user2BxDetails);
+        Mockito.when(userServiceClient.getUserBxDetails(USER_ID)).thenReturn(userBxDetails);
+        Mockito.when(userServiceClient.getUserBxDetails(ADMIN_ID)).thenReturn(adminBxDetails);
         service.setUserServiceClient(userServiceClient);
     }
 
     @Test
     void getCalories() {
-        Integer bxCalories = service.getBxCalories(FEBRUARY_6_2022, USER1_ID);
-        assertEquals(USER1_BX_CALORIES, bxCalories);
+        Integer bxCalories = service.getBxCalories(FEBRUARY_6_2022, USER_ID);
+        assertEquals(USER_BX_CALORIES, bxCalories);
     }
 
     @Test
     void getCaloriesWhenBasicExchangeDoesNotExist() {
-        Integer bxCalories = service.getBxCalories(LocalDate.now(), USER1_ID);
-        assertEquals(USER1_BX_CALORIES, bxCalories);
-        assertTrue(repository.findByUserIdAndDate(USER1_ID, LocalDate.now()).isPresent());
+        Integer bxCalories = service.getBxCalories(LocalDate.now(), USER_ID);
+        assertEquals(USER_BX_CALORIES, bxCalories);
+        assertTrue(repository.findByUserIdAndDate(USER_ID, LocalDate.now()).isPresent());
     }
 
     @Test
     void create() {
-        service.create(LocalDate.now(), USER1_ID);
-        BasicExchange basicExchange = repository.findByUserIdAndDate(USER1_ID, LocalDate.now()).get();
+        service.create(LocalDate.now(), USER_ID);
+        BasicExchange basicExchange = repository.findByUserIdAndDate(USER_ID, LocalDate.now()).get();
         assertEquals(LocalDate.now(), basicExchange.getDate());
-        assertEquals(USER1_BX_CALORIES, basicExchange.getCalories());
+        assertEquals(USER_BX_CALORIES, basicExchange.getCalories());
     }
 
     @Test
     void duplicateDateCreate() {
-        assertThrows(DataAccessException.class, () -> service.create(FEBRUARY_6_2022, USER1_ID));
+        assertThrows(DataAccessException.class, () -> service.create(FEBRUARY_6_2022, USER_ID));
     }
 
     @Test
     void duplicateDateCreateDifferentUser() {
-        assertDoesNotThrow(() -> service.create(FEBRUARY_7_2022, USER2_ID));
+        assertDoesNotThrow(() -> service.create(FEBRUARY_7_2022, ADMIN_ID));
     }
 
     @Test
     void updateBasicExchanges() {
-        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(updatedUser1BxDetails);
-        service.updateBasicExchanges(FEBRUARY_6_2022, USER1_ID);
-        assertEquals(USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_5_2022).get().getCalories());
-        assertEquals(UPDATED_USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_6_2022).get().getCalories());
-        assertEquals(UPDATED_USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_7_2022).get().getCalories());
-        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(user1BxDetails);
+        Mockito.when(userServiceClient.getUserBxDetails(USER_ID)).thenReturn(updatedUserBxDetails);
+        service.updateBasicExchanges(FEBRUARY_6_2022, USER_ID);
+        assertEquals(USER_BX_CALORIES, repository.findByUserIdAndDate(USER_ID, FEBRUARY_5_2022).get().getCalories());
+        assertEquals(UPDATED_USER_BX_CALORIES, repository.findByUserIdAndDate(USER_ID, FEBRUARY_6_2022).get().getCalories());
+        assertEquals(UPDATED_USER_BX_CALORIES, repository.findByUserIdAndDate(USER_ID, FEBRUARY_7_2022).get().getCalories());
+        Mockito.when(userServiceClient.getUserBxDetails(USER_ID)).thenReturn(userBxDetails);
     }
 
     @Test
     void updateBasicExchangesWhenBasicExchangesNotFound() {
-        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(updatedUser1BxDetails);
-        service.updateBasicExchanges(LocalDate.now(), USER1_ID);
-        assertTrue(repository.findAllByUserIdAndDateGreaterThanEqual(USER1_ID, LocalDate.now()).isEmpty());
-        assertEquals(USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_5_2022).get().getCalories());
-        assertEquals(USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_6_2022).get().getCalories());
-        assertEquals(USER1_BX_CALORIES, repository.findByUserIdAndDate(USER1_ID, FEBRUARY_7_2022).get().getCalories());
-        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(user1BxDetails);
+        Mockito.when(userServiceClient.getUserBxDetails(USER_ID)).thenReturn(updatedUserBxDetails);
+        service.updateBasicExchanges(LocalDate.now(), USER_ID);
+        assertTrue(repository.findAllByUserIdAndDateGreaterThanEqual(USER_ID, LocalDate.now()).isEmpty());
+        assertEquals(USER_BX_CALORIES, repository.findByUserIdAndDate(USER_ID, FEBRUARY_5_2022).get().getCalories());
+        assertEquals(USER_BX_CALORIES, repository.findByUserIdAndDate(USER_ID, FEBRUARY_6_2022).get().getCalories());
+        assertEquals(USER_BX_CALORIES, repository.findByUserIdAndDate(USER_ID, FEBRUARY_7_2022).get().getCalories());
+        Mockito.when(userServiceClient.getUserBxDetails(USER_ID)).thenReturn(userBxDetails);
     }
 
     @Test
     void deleteAll() {
-        service.deleteAll(USER1_ID);
-        assertTrue(repository.findAllByUserId(USER1_ID).isEmpty());
-        assertFalse(repository.findAllByUserId(USER2_ID).isEmpty());
+        service.deleteAll(USER_ID);
+        assertTrue(repository.findAllByUserId(USER_ID).isEmpty());
+        assertFalse(repository.findAllByUserId(ADMIN_ID).isEmpty());
     }
 }

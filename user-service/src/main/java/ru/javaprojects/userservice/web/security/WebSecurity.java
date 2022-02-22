@@ -63,6 +63,7 @@ public class WebSecurity extends BasicWebSecurity {
                 .antMatchers("/api/profile/register").access("isAnonymous() and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
                 .antMatchers("/api/profile/password/reset").access("isAnonymous() and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
                 .antMatchers("/api/profile/email/verify").access("isAnonymous() and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
+                .antMatchers("/actuator/*").access("hasRole('ADMIN') and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
                 .anyRequest().access("isAuthenticated() and hasIpAddress(@environment.getProperty('gateway-server.ip'))");
     }
 }

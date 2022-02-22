@@ -14,15 +14,15 @@ public class BasicExchangeTestData {
     public static final LocalDate FEBRUARY_6_2022 = of(2022, FEBRUARY, 6);
     public static final LocalDate FEBRUARY_7_2022 = of(2022, FEBRUARY, 7);
 
-    public static final int USER1_BX_CALORIES = 1891;
-    public static final int UPDATED_USER1_BX_CALORIES = 1866;
-    public static final int USER2_BX_CALORIES = 1308;
+    public static final int USER_BX_CALORIES = 1891;
+    public static final int UPDATED_USER_BX_CALORIES = 1866;
+    public static final int ADMIN_BX_CALORIES = 1308;
 
     public static final String DATE = "2022-02-06";
 
     public static final String DATE_PARAM = "date";
 
-    public static final UserBxDetails user1BxDetails = new UserBxDetails(MAN, 90, 185, 34);
-    public static final UserBxDetails updatedUser1BxDetails = new UserBxDetails(MAN, 88, 185, 35);
-    public static final UserBxDetails user2BxDetails = new UserBxDetails(WOMAN, 60, 163, 30);
+    public static final UserBxDetails userBxDetails = new UserBxDetails(MAN, 90, 185, 34);
+    public static final UserBxDetails updatedUserBxDetails = new UserBxDetails(MAN, 88, 185, 35);
+    public static final UserBxDetails adminBxDetails = new UserBxDetails(WOMAN, 60, 163, 30);
 }

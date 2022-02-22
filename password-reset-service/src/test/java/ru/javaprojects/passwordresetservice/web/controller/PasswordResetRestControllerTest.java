@@ -25,11 +25,11 @@ import java.lang.reflect.Method;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.*;
 import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
 import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.ACCESS_DENIED;
 import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
 import static ru.javaprojects.passwordresetservice.testdata.PasswordResetTokenTestData.*;
-import static ru.javaprojects.passwordresetservice.testdata.UserTestData.*;
 import static ru.javaprojects.passwordresetservice.web.AppExceptionHandler.EXCEPTION_INVALID_PASSWORD;
 
 @SpringBootTest

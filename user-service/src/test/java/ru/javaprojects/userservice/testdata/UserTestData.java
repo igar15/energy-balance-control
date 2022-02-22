@@ -13,6 +13,8 @@ import ru.javaprojects.userservice.to.UserTo;
 import java.util.List;
 import java.util.Set;
 
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.ADMIN_ID;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.USER_ID;
 import static ru.javaprojects.userservice.model.Role.ADMIN;
 import static ru.javaprojects.userservice.model.Role.USER;
 import static ru.javaprojects.userservice.model.User.START_SEQ;
@@ -23,14 +25,7 @@ public class UserTestData {
     public static final String[] ignoringFields = {"registered", "password"};
     public static final TestMatcher<User> USER_MATCHER = TestMatcher.usingIgnoringFieldsComparator(User.class, ignoringFields);
 
-    public static final long USER_ID = START_SEQ;
-    public static final long ADMIN_ID = START_SEQ + 1;
     public static final long USER_DISABLED_ID = START_SEQ + 2;
-    public static final String USER_ID_STRING = START_SEQ + "";
-    public static final String ADMIN_ID_STRING = (START_SEQ + 1) + "";
-    public static final String USER_ROLE = "ROLE_USER";
-    public static final String ADMIN_ROLE = "ROLE_ADMIN";
-    public static final long NOT_FOUND = 10;
     public static final String NOT_FOUND_EMAIL = "notfound@test.com";
 
     public static final User user = new User(USER_ID, "John Smith", "user@gmail.com", MAN, 90, 185, 34, "password", true, Set.of(USER));

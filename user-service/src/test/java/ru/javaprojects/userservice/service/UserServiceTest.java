@@ -27,6 +27,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.*;
 import static ru.javaprojects.userservice.model.Role.USER;
 import static ru.javaprojects.userservice.model.User.Sex.MAN;
 import static ru.javaprojects.userservice.testdata.UserTestData.*;

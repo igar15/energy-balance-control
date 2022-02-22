@@ -28,9 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.bxservice.testdata.BasicExchangeTestData.*;
-import static ru.javaprojects.bxservice.testdata.UserTestData.*;
-import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.UNAUTHORIZED_ERROR;
-import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.WRONG_REQUEST;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.*;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.ACCESS_DENIED;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
 
 @SpringBootTest
 @Transactional
@@ -53,17 +54,21 @@ class BasicExchangeRestControllerTest {
         return jsonPath("$.type").value(type.name());
     }
 
+    private ResultMatcher detailMessage(String code) {
+        return jsonPath("$.details").value(code);
+    }
+
     @PostConstruct
     private void setupUserServiceClient() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Mockito.when(userServiceClient.getUserBxDetails(USER1_ID)).thenReturn(user1BxDetails);
-        Mockito.when(userServiceClient.getUserBxDetails(USER2_ID)).thenReturn(user2BxDetails);
+        Mockito.when(userServiceClient.getUserBxDetails(USER_ID)).thenReturn(userBxDetails);
+        Mockito.when(userServiceClient.getUserBxDetails(ADMIN_ID)).thenReturn(adminBxDetails);
         Method userServiceClientSetter = service.getClass().getDeclaredMethod("setUserServiceClient",  UserServiceClient.class);
         userServiceClientSetter.setAccessible(true);
         userServiceClientSetter.invoke(service, userServiceClient);
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void getBxCalories() throws Exception {
         ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
                 .param(DATE_PARAM, DATE))
@@ -71,11 +76,11 @@ class BasicExchangeRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         String bxCalories = actions.andReturn().getResponse().getContentAsString();
-        assertEquals(USER1_BX_CALORIES, Integer.parseInt(bxCalories));
+        assertEquals(USER_BX_CALORIES, Integer.parseInt(bxCalories));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void getBxCaloriesWhenBasicExchangeDoesNotExist() throws Exception {
         ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
                 .param(DATE_PARAM, LocalDate.now().toString()))
@@ -83,7 +88,7 @@ class BasicExchangeRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         String bxCalories = actions.andReturn().getResponse().getContentAsString();
-        assertEquals(USER1_BX_CALORIES, Integer.parseInt(bxCalories));
+        assertEquals(USER_BX_CALORIES, Integer.parseInt(bxCalories));
     }
 
     @Test
@@ -96,11 +101,38 @@ class BasicExchangeRestControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void wrongRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(errorType(WRONG_REQUEST));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = ADMIN_ID_STRING, userRoles = {ADMIN_ROLE})
+    void actuator() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void actuatorUnAuth() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(NOT_AUTHORIZED));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
+    void actuatorNotAdmin() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(errorType(ACCESS_DENIED_ERROR))
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 }

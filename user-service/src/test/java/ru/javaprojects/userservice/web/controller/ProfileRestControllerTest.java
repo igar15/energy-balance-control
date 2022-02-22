@@ -23,6 +23,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.*;
 import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
 import static ru.javaprojects.energybalancecontrolshared.web.security.JwtProvider.AUTHORIZATION_TOKEN_HEADER;
 import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.*;

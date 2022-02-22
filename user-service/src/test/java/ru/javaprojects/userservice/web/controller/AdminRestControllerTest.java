@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.*;
 import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
 import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.ACCESS_DENIED;
 import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
@@ -408,5 +409,32 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(errorType(WRONG_REQUEST));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = ADMIN_ID_STRING, userRoles = {ADMIN_ROLE})
+    void actuator() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void actuatorUnAuth() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(NOT_AUTHORIZED));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
+    void actuatorNotAdmin() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(errorType(ACCESS_DENIED_ERROR))
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 }

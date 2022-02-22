@@ -23,10 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.*;
 import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.ACCESS_DENIED;
 import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
 import static ru.javaprojects.trainingservice.testdata.ExerciseTestData.*;
-import static ru.javaprojects.trainingservice.testdata.UserTestData.*;
 import static ru.javaprojects.trainingservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_DATE_TIME;
 
 class ExerciseControllerTest extends AbstractControllerTest {
@@ -36,7 +37,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     private ExerciseRepository repository;
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void getPage() throws Exception {
         ResultActions actions = perform(MockMvcRequestBuilders.get(REST_URL)
                 .param(PAGE_NUMBER_PARAM, PAGE_NUMBER)
@@ -60,7 +61,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void create() throws Exception {
         ResultActions actions = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -71,7 +72,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
         Exercise newExercise = getNew();
         newExercise.setId(newId);
         EXERCISE_MATCHER.assertMatch(created, newExercise);
-        EXERCISE_MATCHER.assertMatch(repository.findByIdAndExerciseType_UserId(newId, USER1_ID).get(), newExercise);
+        EXERCISE_MATCHER.assertMatch(repository.findByIdAndExerciseType_UserId(newId, USER_ID).get(), newExercise);
     }
 
     @Test
@@ -85,7 +86,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void createInvalid() throws Exception {
         ExerciseTo newTo = getNewTo();
         newTo.setDateTime(null);
@@ -98,7 +99,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     @Transactional(propagation = Propagation.NEVER)
     void createDuplicate() throws Exception {
         ExerciseTo newTo = getNewTo();
@@ -113,13 +114,13 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void update() throws Exception {
         perform(MockMvcRequestBuilders.put(REST_URL + EXERCISE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(getUpdatedTo())))
                 .andExpect(status().isNoContent());
-        EXERCISE_MATCHER.assertMatch(repository.findByIdAndExerciseType_UserId(EXERCISE1_ID, USER1_ID).get(), getUpdated());
+        EXERCISE_MATCHER.assertMatch(repository.findByIdAndExerciseType_UserId(EXERCISE1_ID, USER_ID).get(), getUpdated());
     }
 
     @Test
@@ -133,7 +134,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void updateIdNotConsistent() throws Exception {
         ExerciseTo updatedTo = getUpdatedTo();
         updatedTo.setId(EXERCISE1_ID + 1);
@@ -145,7 +146,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void updateNotFound() throws Exception {
         ExerciseTo updatedTo = getUpdatedTo();
         updatedTo.setId(NOT_FOUND);
@@ -157,7 +158,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER2_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = ADMIN_ID_STRING, userRoles = {USER_ROLE})
     void updateNotOwn() throws Exception {
         perform(MockMvcRequestBuilders.put(REST_URL + EXERCISE1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -167,7 +168,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     @Transactional(propagation = Propagation.NEVER)
     void updateDuplicate() throws Exception {
         ExerciseTo updatedTo = getUpdatedTo();
@@ -182,7 +183,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void updateInvalid() throws Exception {
         ExerciseTo updatedTo = getUpdatedTo();
         updatedTo.setAmount(INVALID_AMOUNT);
@@ -194,17 +195,17 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + EXERCISE1_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> repository.findByIdAndExerciseType_UserId(EXERCISE1_ID, USER1_ID)
+        assertThrows(NotFoundException.class, () -> repository.findByIdAndExerciseType_UserId(EXERCISE1_ID, USER_ID)
                 .orElseThrow(() -> new NotFoundException("Not found exercise with id=" + EXERCISE1_ID)));
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void deleteNotFound() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + NOT_FOUND))
                 .andDo(print())
@@ -213,7 +214,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER2_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = ADMIN_ID_STRING, userRoles = {USER_ROLE})
     void deleteNotOwn() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + EXERCISE1_ID))
                 .andDo(print())
@@ -231,7 +232,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void getTotalCaloriesBurned() throws Exception {
         ResultActions actions = perform(MockMvcRequestBuilders.get(REST_URL + TOTAL_CALORIES_BURNED_ENDPOINT)
                 .param(DATE_PARAM, DATE))
@@ -243,7 +244,7 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void getTotalCaloriesBurnedWhenNoExercises() throws Exception {
         ResultActions actions = perform(MockMvcRequestBuilders.get(REST_URL + TOTAL_CALORIES_BURNED_ENDPOINT)
                 .param(DATE_PARAM, LocalDate.now().toString()))
@@ -265,11 +266,38 @@ class ExerciseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockCustomUser(userId = USER1_ID_STRING, userRoles = {USER_ROLE})
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void wrongRequest() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(errorType(WRONG_REQUEST));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = ADMIN_ID_STRING, userRoles = {ADMIN_ROLE})
+    void actuator() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void actuatorUnAuth() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(NOT_AUTHORIZED));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
+    void actuatorNotAdmin() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(errorType(ACCESS_DENIED_ERROR))
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 }

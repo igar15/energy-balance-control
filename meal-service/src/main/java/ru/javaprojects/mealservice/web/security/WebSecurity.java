@@ -1,6 +1,7 @@
 package ru.javaprojects.mealservice.web.security;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import ru.javaprojects.energybalancecontrolshared.web.security.BasicWebSecurity;
 import ru.javaprojects.energybalancecontrolshared.web.security.JwtAuthorizationFilter;
@@ -14,5 +15,13 @@ public class WebSecurity extends BasicWebSecurity {
                        RestAuthenticationEntryPoint restAuthenticationEntryPoint,
                        RestAccessDeniedHandler restAccessDeniedHandler) {
         super(jwtAuthorizationFilter, restAuthenticationEntryPoint, restAccessDeniedHandler);
+    }
+
+    @Override
+    protected void configureAuthorizeRequests(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .antMatchers("/actuator/*").access("hasRole('ADMIN') and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
+                .anyRequest().access("isAuthenticated() and hasIpAddress(@environment.getProperty('gateway-server.ip'))");
     }
 }

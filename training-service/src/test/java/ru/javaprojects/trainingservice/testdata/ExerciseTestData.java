@@ -19,8 +19,7 @@ public class ExerciseTestData {
     public static final TestMatcher<Exercise> EXERCISE_MATCHER = TestMatcher.usingIgnoringFieldsComparator(Exercise.class, "exerciseType");
 
     public static final long EXERCISE1_ID = START_SEQ + 5;
-    public static final long USER2_EXERCISE1_ID = START_SEQ + 11;
-    public static final long NOT_FOUND = 10;
+    public static final long ADMIN_EXERCISE1_ID = START_SEQ + 11;
 
     public static final Exercise exercise1 = new Exercise(EXERCISE1_ID, of(2022, FEBRUARY, 5, 11, 20), 30);
     public static final Exercise exercise2 = new Exercise(EXERCISE1_ID + 1, of(2022, FEBRUARY, 5, 13, 50), 100);

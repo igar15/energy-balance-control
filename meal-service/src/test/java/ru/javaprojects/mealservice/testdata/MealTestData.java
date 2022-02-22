@@ -19,8 +19,7 @@ public class MealTestData {
     public static final TestMatcher<Meal> MEAL_MATCHER = TestMatcher.usingIgnoringFieldsComparator(Meal.class, "userId");
 
     public static final long MEAL1_ID = START_SEQ;
-    public static final long USER2_MEAL1_ID = START_SEQ + 7;
-    public static final long NOT_FOUND = 10;
+    public static final long ADMIN_MEAL1_ID = START_SEQ + 7;
 
     public static final Meal meal1 = new Meal(MEAL1_ID, of(2022, FEBRUARY, 5, 10, 0), "1User Breakfast", 700);
     public static final Meal meal2 = new Meal(MEAL1_ID + 1, of(2022, FEBRUARY, 5, 13, 0), "1User Lunch", 1000);
