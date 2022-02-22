@@ -21,6 +21,8 @@ public class PasswordResetTokenTestData {
     public static final String TOKEN_PARAM = "token";
     public static final String PASSWORD_PARAM = "password";
 
+    public static final String ACTUATOR_PATH = "/actuator/beans";
+
     private static Date parseDate(String date) {
         try {
             return dateFormat.parse(date);

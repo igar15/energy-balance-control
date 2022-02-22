@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
 import ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType;
 import ru.javaprojects.passwordresetservice.messaging.MessageSender;
 import ru.javaprojects.passwordresetservice.service.PasswordResetService;
@@ -25,7 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.ACCESS_DENIED;
+import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
 import static ru.javaprojects.passwordresetservice.testdata.PasswordResetTokenTestData.*;
+import static ru.javaprojects.passwordresetservice.testdata.UserTestData.*;
 import static ru.javaprojects.passwordresetservice.web.AppExceptionHandler.EXCEPTION_INVALID_PASSWORD;
 
 @SpringBootTest
@@ -143,5 +147,32 @@ class PasswordResetRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(errorType(WRONG_REQUEST));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = ADMIN_ID_STRING, userRoles = {ADMIN_ROLE})
+    void actuator() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void actuatorUnAuth() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(NOT_AUTHORIZED));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
+    void actuatorNotAdmin() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(errorType(ACCESS_DENIED_ERROR))
+                .andExpect(detailMessage(ACCESS_DENIED));
     }
 }
