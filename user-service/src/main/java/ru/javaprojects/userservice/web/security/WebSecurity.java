@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
-import ru.javaprojects.energybalancecontrolshared.web.security.BasicWebSecurity;
 import ru.javaprojects.energybalancecontrolshared.web.security.JwtAuthorizationFilter;
+import ru.javaprojects.energybalancecontrolshared.web.security.JwtWebSecurity;
 import ru.javaprojects.energybalancecontrolshared.web.security.RestAccessDeniedHandler;
 import ru.javaprojects.energybalancecontrolshared.web.security.RestAuthenticationEntryPoint;
 import ru.javaprojects.userservice.model.User;
@@ -21,7 +21,7 @@ import ru.javaprojects.userservice.service.UserService;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
-public class WebSecurity extends BasicWebSecurity {
+public class WebSecurity extends JwtWebSecurity {
     private final UserService service;
     private final PasswordEncoder passwordEncoder;
 
