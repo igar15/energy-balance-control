@@ -16,10 +16,12 @@ import ru.javaprojects.energybalancecontrolshared.web.json.JsonUtil;
 import ru.javaprojects.energybalancecontrolshared.web.security.JwtProvider;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.to.NewUserTo;
+import ru.javaprojects.userservice.to.UserBxDetails;
 import ru.javaprojects.userservice.to.UserTo;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -137,6 +139,24 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @Test
     void getUnAuth() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL))
+                .andExpect(status().isUnauthorized())
+                .andExpect(errorType(UNAUTHORIZED_ERROR))
+                .andExpect(detailMessage(NOT_AUTHORIZED));
+    }
+
+    @Test
+    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
+    void getBxDetails() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(REST_URL + "bx-details"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        UserBxDetails userBxDetails = TestUtil.readFromJson(actions, UserBxDetails.class);
+        assertThat(userBxDetails).usingRecursiveComparison().isEqualTo(USER_BX_DETAILS);
+    }
+
+    @Test
+    void getBxDetailsUnAuth() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "bx-details"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(errorType(UNAUTHORIZED_ERROR))
                 .andExpect(detailMessage(NOT_AUTHORIZED));

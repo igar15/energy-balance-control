@@ -8,6 +8,7 @@ import ru.javaprojects.energybalancecontrolshared.test.TestMatcher;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.to.AdminUserTo;
 import ru.javaprojects.userservice.to.NewUserTo;
+import ru.javaprojects.userservice.to.UserBxDetails;
 import ru.javaprojects.userservice.to.UserTo;
 
 import java.util.List;
@@ -31,6 +32,8 @@ public class UserTestData {
     public static final User user = new User(USER_ID, "John Smith", "user@gmail.com", MAN, 90, 185, 34, "password", true, Set.of(USER));
     public static final User admin = new User(ADMIN_ID, "Viktor Wran", "admin@gmail.com", MAN, 85, 178, 41, "admin", true, Set.of(USER, ADMIN));
     public static final User userDisabled = new User(USER_DISABLED_ID, "Jack London", "jack@gmail.com", MAN, 83, 174, 38, "password", false, Set.of(USER));
+
+    public static final UserBxDetails USER_BX_DETAILS = new UserBxDetails(user.getSex(), user.getWeight(), user.getGrowth(), user.getAge());
 
     public static final String PAGE_NUMBER = "0";
     public static final String PAGE_SIZE = "2";

@@ -18,11 +18,11 @@ import static ru.javaprojects.bxservice.util.BasicExchangeUtil.calculateBxCalori
 public class BasicExchangeService {
     private static final String DATE_MUST_NOT_BE_NULL = "date must not be null";
     private final BasicExchangeRepository repository;
-    //TODO Autowired real FeignClient
-    private UserServiceClient userServiceClient = (userId, token) -> new UserBxDetails(MAN, 90, 185, 34);
+    private UserServiceClient userServiceClient;
 
-    public BasicExchangeService(BasicExchangeRepository repository) {
+    public BasicExchangeService(BasicExchangeRepository repository, UserServiceClient userServiceClient) {
         this.repository = repository;
+        this.userServiceClient = userServiceClient;
     }
 
     public Integer getBxCalories(LocalDate date, long userId) {

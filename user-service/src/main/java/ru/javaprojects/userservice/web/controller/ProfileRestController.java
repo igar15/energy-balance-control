@@ -18,6 +18,7 @@ import ru.javaprojects.userservice.model.Role;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.service.UserService;
 import ru.javaprojects.userservice.to.NewUserTo;
+import ru.javaprojects.userservice.to.UserBxDetails;
 import ru.javaprojects.userservice.to.UserTo;
 import ru.javaprojects.userservice.web.security.AuthorizedUser;
 
@@ -71,6 +72,13 @@ public class ProfileRestController {
         long userId = SecurityUtil.authUserId();
         log.info("get {}", userId);
         return service.get(userId);
+    }
+
+    @GetMapping("/bx-details")
+    public UserBxDetails getBxDetails() {
+        long userId = SecurityUtil.authUserId();
+        log.info("getBxDetails {}", userId);
+        return service.getBxDetails(userId);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

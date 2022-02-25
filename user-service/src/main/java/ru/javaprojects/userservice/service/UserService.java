@@ -11,7 +11,9 @@ import ru.javaprojects.userservice.messaging.MessageSender;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.repository.UserRepository;
 import ru.javaprojects.userservice.to.AdminUserTo;
+import ru.javaprojects.userservice.to.UserBxDetails;
 import ru.javaprojects.userservice.to.UserTo;
+import ru.javaprojects.userservice.util.UserUtil;
 import ru.javaprojects.userservice.util.exception.EmailVerificationException;
 
 import java.time.LocalDate;
@@ -44,6 +46,10 @@ public class UserService {
 
     public User get(long id) {
         return repository.findById(id).orElseThrow(() -> new NotFoundException("Not found user with id=" + id));
+    }
+
+    public UserBxDetails getBxDetails(long id) {
+        return UserUtil.getBxDetails(get(id));
     }
 
     public User getByEmail(String email) {

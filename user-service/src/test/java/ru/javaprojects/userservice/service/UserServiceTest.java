@@ -16,6 +16,7 @@ import ru.javaprojects.energybalancecontrolshared.util.ValidationUtil;
 import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.userservice.messaging.MessageSender;
 import ru.javaprojects.userservice.model.User;
+import ru.javaprojects.userservice.to.UserBxDetails;
 import ru.javaprojects.userservice.to.UserTo;
 import ru.javaprojects.userservice.util.exception.EmailVerificationException;
 
@@ -105,6 +106,17 @@ class UserServiceTest {
     void getByEmail() {
         User user = service.getByEmail(admin.getEmail());
         USER_MATCHER.assertMatch(user, admin);
+    }
+
+    @Test
+    void getBxDetails() {
+        UserBxDetails userBxDetails = service.getBxDetails(USER_ID);
+        assertThat(userBxDetails).usingRecursiveComparison().isEqualTo(USER_BX_DETAILS);
+    }
+
+    @Test
+    void getBxDetailsNotFound() {
+        assertThrows(NotFoundException.class, () -> service.getBxDetails(NOT_FOUND));
     }
 
     @Test

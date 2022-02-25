@@ -6,6 +6,7 @@ import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.to.AdminUserTo;
 import ru.javaprojects.userservice.to.BaseUserTo;
 import ru.javaprojects.userservice.to.NewUserTo;
+import ru.javaprojects.userservice.to.UserBxDetails;
 
 import java.util.Set;
 
@@ -41,6 +42,10 @@ public class UserUtil {
         user.setEmail(adminUserTo.getEmail());
         user.setRoles(adminUserTo.getRoles());
         return updateFromTo(user, (BaseUserTo) adminUserTo);
+    }
+
+    public static UserBxDetails getBxDetails(User user) {
+        return new UserBxDetails(user.getSex(), user.getWeight(), user.getGrowth(), user.getAge());
     }
 
     static boolean isUserDetailsChanged(User user, BaseUserTo userTo) {
