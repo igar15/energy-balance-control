@@ -11,11 +11,16 @@ import ru.javaprojects.energybalanceservice.util.EnergyBalanceUtil;
 import java.time.LocalDate;
 @Service
 public class EnergyBalanceService {
+    private final MealServiceClient mealServiceClient;
+    private final TrainingServiceClient trainingServiceClient;
+    private final BxServiceClient bxServiceClient;
 
-    //TODO Autowired real FeignClients
-    private MealServiceClient mealServiceClient = (date) -> 1900;
-    private TrainingServiceClient trainingServiceClient = (date) -> 150;
-    private BxServiceClient bxServiceClient = (date) -> 1700;
+    public EnergyBalanceService(MealServiceClient mealServiceClient, TrainingServiceClient trainingServiceClient,
+                                BxServiceClient bxServiceClient) {
+        this.mealServiceClient = mealServiceClient;
+        this.trainingServiceClient = trainingServiceClient;
+        this.bxServiceClient = bxServiceClient;
+    }
 
     public EnergyBalanceReport getReport(LocalDate date) {
         Assert.notNull(date, "date must not be null");
