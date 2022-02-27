@@ -1,17 +1,25 @@
 package ru.javaprojects.bxservice.service.client;
 
+import feign.FeignException;
+import feign.FeignException.ServiceUnavailable;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import ru.javaprojects.bxservice.util.exception.UserServiceConnectionException;
 import ru.javaprojects.energybalancecontrolshared.web.security.JwtProvider;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Component
 public class UserServiceClient {
@@ -53,8 +61,15 @@ public class UserServiceClient {
 
     @FeignClient(name = "user-service")
     public interface UserServiceFeignClient {
+        Logger logger = LoggerFactory.getLogger(UserServiceFeignClient.class);
 
         @GetMapping("/api/profile/bx-details")
+        @CircuitBreaker(name = "user-service-get-bx-details", fallbackMethod = "throwFailedConnectionException")
         UserBxDetails getUserBxDetails(@RequestHeader(AUTHORIZATION) String authorizationHeader);
+
+        default UserBxDetails throwFailedConnectionException(Exception exception) {
+            logger.error("failed to get user bx details from user-service:" + exception.getLocalizedMessage());
+            throw new UserServiceConnectionException("Failed to connect to user-service. Try again later");
+        }
     }
 }
