@@ -4,16 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.javaprojects.energybalancecontrolshared.test.AbstractControllerTest;
 import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
-import ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType;
 import ru.javaprojects.energybalanceservice.service.EnergyBalanceService;
 import ru.javaprojects.energybalanceservice.service.client.BxServiceClient;
 import ru.javaprojects.energybalanceservice.service.client.MealServiceClient;
@@ -23,22 +17,16 @@ import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.javaprojects.energybalancecontrolshared.test.TestData.*;
-import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
-import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.ACCESS_DENIED;
-import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.USER_ID_STRING;
+import static ru.javaprojects.energybalancecontrolshared.test.TestData.USER_ROLE;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.UNAUTHORIZED_ERROR;
+import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.WRONG_REQUEST;
 import static ru.javaprojects.energybalanceservice.testdata.EnergyBalanceTestData.*;
 
-@SpringBootTest
-@ActiveProfiles("dev")
-@AutoConfigureMockMvc
-@TestPropertySource(locations = "classpath:test.properties")
-class EnergyBalanceControllerTest {
-    private static final String REST_URL = EnergyBalanceController.REST_URL;
-
-    @Autowired
-    private MockMvc mockMvc;
+class EnergyBalanceRestControllerTest extends AbstractControllerTest {
+    private static final String REST_URL = EnergyBalanceRestController.REST_URL;
 
     @Autowired
     private EnergyBalanceService service;
@@ -51,14 +39,6 @@ class EnergyBalanceControllerTest {
 
     @Mock
     private BxServiceClient bxServiceClient;
-
-    private ResultMatcher errorType(ErrorType type) {
-        return jsonPath("$.type").value(type.name());
-    }
-
-    private ResultMatcher detailMessage(String code) {
-        return jsonPath("$.details").value(code);
-    }
 
     @PostConstruct
     private void setupServiceClients() throws IllegalAccessException, NoSuchFieldException {
@@ -79,7 +59,7 @@ class EnergyBalanceControllerTest {
     @Test
     @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void getReport() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
+        perform(MockMvcRequestBuilders.get(REST_URL)
                 .param(DATE_PARAM, DATE.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -91,7 +71,7 @@ class EnergyBalanceControllerTest {
     @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void getErrorReport() throws Exception {
         Mockito.when(mealServiceClient.getMealCalories(DATE)).thenReturn(-1);
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
+        perform(MockMvcRequestBuilders.get(REST_URL)
                 .param(DATE_PARAM, DATE.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -102,7 +82,7 @@ class EnergyBalanceControllerTest {
 
     @Test
     void getReportUnAuth() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL)
+        perform(MockMvcRequestBuilders.get(REST_URL)
                 .param(DATE_PARAM, DATE.toString()))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
@@ -112,36 +92,9 @@ class EnergyBalanceControllerTest {
     @Test
     @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
     void wrongRequest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
+        perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(errorType(WRONG_REQUEST));
-    }
-
-    @Test
-    @WithMockCustomUser(userId = ADMIN_ID_STRING, userRoles = {ADMIN_ROLE})
-    void actuator() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void actuatorUnAuth() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
-                .andDo(print())
-                .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(NOT_AUTHORIZED));
-    }
-
-    @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
-    void actuatorNotAdmin() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
-                .andDo(print())
-                .andExpect(status().isForbidden())
-                .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(ACCESS_DENIED));
     }
 }

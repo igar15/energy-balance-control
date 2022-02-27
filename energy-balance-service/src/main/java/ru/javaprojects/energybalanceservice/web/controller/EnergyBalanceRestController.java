@@ -15,13 +15,13 @@ import ru.javaprojects.energybalanceservice.service.EnergyBalanceService;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping(value = EnergyBalanceController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class EnergyBalanceController {
+@RequestMapping(value = EnergyBalanceRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class EnergyBalanceRestController {
     static final String REST_URL = "/api/energy-balance";
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final EnergyBalanceService service;
 
-    public EnergyBalanceController(EnergyBalanceService service) {
+    public EnergyBalanceRestController(EnergyBalanceService service) {
         this.service = service;
     }
 

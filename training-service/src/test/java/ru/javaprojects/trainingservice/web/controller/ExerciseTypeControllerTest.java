@@ -7,6 +7,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javaprojects.energybalancecontrolshared.test.AbstractControllerTest;
 import ru.javaprojects.energybalancecontrolshared.test.TestUtil;
 import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
 import ru.javaprojects.energybalancecontrolshared.web.json.JsonUtil;
@@ -24,6 +25,7 @@ import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityCo
 import static ru.javaprojects.trainingservice.testdata.ExerciseTypeTestData.*;
 import static ru.javaprojects.trainingservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_DESCRIPTION;
 
+@Transactional
 class ExerciseTypeControllerTest extends AbstractControllerTest {
     private static final String REST_URL = ExerciseTypeController.REST_URL + '/';
 

@@ -4,21 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.emailverificationservice.messaging.MessageSender;
 import ru.javaprojects.emailverificationservice.model.VerificationToken;
 import ru.javaprojects.emailverificationservice.repository.VerificationTokenRepository;
 import ru.javaprojects.emailverificationservice.service.EmailVerificationService;
-import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
-import ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType;
+import ru.javaprojects.energybalancecontrolshared.test.AbstractControllerTest;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
@@ -26,20 +19,12 @@ import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.emailverificationservice.testdata.VerificationTokenTestData.*;
-import static ru.javaprojects.energybalancecontrolshared.test.TestData.*;
 import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorType.*;
-import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.ACCESS_DENIED;
-import static ru.javaprojects.energybalancecontrolshared.web.security.SecurityConstants.NOT_AUTHORIZED;
 
-@SpringBootTest
 @Transactional
-@ActiveProfiles("dev")
-@AutoConfigureMockMvc
-@TestPropertySource(locations = "classpath:test.properties")
-class EmailVerificationRestControllerTest {
+class EmailVerificationRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = EmailVerificationRestController.REST_URL + '/';
 
     @Autowired
@@ -54,17 +39,6 @@ class EmailVerificationRestControllerTest {
     @Mock
     private MessageSender messageSender;
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    private ResultMatcher errorType(ErrorType type) {
-        return jsonPath("$.type").value(type.name());
-    }
-
-    private ResultMatcher detailMessage(String code) {
-        return jsonPath("$.details").value(code);
-    }
-
     @PostConstruct
     void setupEmailVerificationService() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Method mailSenderSetter = service.getClass().getDeclaredMethod("setMailSender", JavaMailSender.class);
@@ -77,7 +51,7 @@ class EmailVerificationRestControllerTest {
 
     @Test
     void verifyEmail() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+        perform(MockMvcRequestBuilders.post(REST_URL)
                 .param(TOKEN_PARAM, notExpiredNotVerifiedToken.getToken()))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -88,7 +62,7 @@ class EmailVerificationRestControllerTest {
 
     @Test
     void verifyEmailNotFoundToken() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+        perform(MockMvcRequestBuilders.post(REST_URL)
                 .param(TOKEN_PARAM, NOT_FOUND_TOKEN))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
@@ -99,7 +73,7 @@ class EmailVerificationRestControllerTest {
 
     @Test
     void verifyEmailWhenTokenExpired() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+        perform(MockMvcRequestBuilders.post(REST_URL)
                 .param(TOKEN_PARAM, expiredToken.getToken()))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
@@ -110,7 +84,7 @@ class EmailVerificationRestControllerTest {
 
     @Test
     void verifyEmailWhenAlreadyVerified() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+        perform(MockMvcRequestBuilders.post(REST_URL)
                 .param(TOKEN_PARAM, alreadyVerifiedToken.getToken()))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
@@ -121,36 +95,9 @@ class EmailVerificationRestControllerTest {
 
     @Test
     void wrongRequest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
+        perform(MockMvcRequestBuilders.get(REST_URL + "AAA/BBB/CCC"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(errorType(WRONG_REQUEST));
-    }
-
-    @Test
-    @WithMockCustomUser(userId = ADMIN_ID_STRING, userRoles = {ADMIN_ROLE})
-    void actuator() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void actuatorUnAuth() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
-                .andDo(print())
-                .andExpect(status().isUnauthorized())
-                .andExpect(errorType(UNAUTHORIZED_ERROR))
-                .andExpect(detailMessage(NOT_AUTHORIZED));
-    }
-
-    @Test
-    @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
-    void actuatorNotAdmin() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(ACTUATOR_PATH))
-                .andDo(print())
-                .andExpect(status().isForbidden())
-                .andExpect(errorType(ACCESS_DENIED_ERROR))
-                .andExpect(detailMessage(ACCESS_DENIED));
     }
 }

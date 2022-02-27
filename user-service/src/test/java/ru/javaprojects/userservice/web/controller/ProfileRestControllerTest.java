@@ -5,16 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javaprojects.energybalancecontrolshared.test.AbstractControllerTest;
 import ru.javaprojects.energybalancecontrolshared.test.TestUtil;
 import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
 import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.energybalancecontrolshared.web.json.JsonUtil;
 import ru.javaprojects.energybalancecontrolshared.web.security.JwtProvider;
 import ru.javaprojects.userservice.model.User;
+import ru.javaprojects.userservice.service.UserService;
 import ru.javaprojects.userservice.to.NewUserTo;
 import ru.javaprojects.userservice.to.UserBxDetails;
 import ru.javaprojects.userservice.to.UserTo;
@@ -34,8 +37,15 @@ import static ru.javaprojects.userservice.testdata.UserTestData.*;
 import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_DUPLICATE_EMAIL;
 import static ru.javaprojects.userservice.web.AppExceptionHandler.EXCEPTION_INVALID_PASSWORD;
 
+@Transactional
 class ProfileRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = ProfileRestController.REST_URL + '/';
+
+    @Autowired
+    protected UserService service;
+
+    @Autowired
+    protected PasswordEncoder passwordEncoder;
 
     @Autowired
     private JwtProvider jwtProvider;
