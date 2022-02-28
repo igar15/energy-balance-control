@@ -24,4 +24,16 @@ public class MessageReceiver {
             log.info("user enabling error: {}", e.getMessage());
         }
     }
+
+    public void receivePasswordChangedMessage() {
+        //TODO: RECEIVE MESSAGE FROM QUEUE TO CHANGE PASSWORD
+        String email = "";
+        String password = "";
+        log.info("change password for user:{}", email);
+        try {
+            service.changePassword(email, password);
+        } catch (Exception e) {
+            log.info("user change password error: {}", e.getMessage());
+        }
+    }
 }
