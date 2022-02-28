@@ -21,12 +21,14 @@ public class MessageSender {
 
     public void sendEmailVerifyMessage(String email) {
         log.info("send email verify message for email={}", email);
-        //TODO: SEND MESSAGE TO QUEUE TO NOTIFY that email needs to be verified
+        String routingKey = "email.verify.message";
+        rabbitTemplate.convertAndSend(exchange.getName(), routingKey, email);
     }
 
     public void sendPasswordResetMessage(String email) {
         log.info("send password reset message for email={}", email);
-        //TODO: SEND MESSAGE TO QUEUE TO RESET PASSWORD FOR USER
+        String routingKey = "password.reset.message";
+        rabbitTemplate.convertAndSend(exchange.getName(), routingKey, email);
     }
 
     public void sendDateMessage(LocalDate date, long userId) {

@@ -62,11 +62,25 @@ public class EmailVerificationServiceApplication {
     }
 
     @Bean
+    public Queue emailVerifyQueue() {
+        return new Queue("emailVerifyQueue");
+    }
+
+    @Bean
     public Binding userDeletedBinding() {
         return BindingBuilder
                 .bind(userDeletedQueue())
                 .to(eventExchange())
                 .with("user.deleted.message")
+                .noargs();
+    }
+
+    @Bean
+    public Binding emailVerifyBinding() {
+        return BindingBuilder
+                .bind(emailVerifyQueue())
+                .to(eventExchange())
+                .with("email.verify.message")
                 .noargs();
     }
 

@@ -62,11 +62,25 @@ public class PasswordResetServiceApplication {
     }
 
     @Bean
+    public Queue passwordResetQueue() {
+        return new Queue("passwordResetQueue");
+    }
+
+    @Bean
     public Binding userDeletedBinding() {
         return BindingBuilder
                 .bind(userDeletedQueue())
                 .to(eventExchange())
                 .with("user.deleted.message")
+                .noargs();
+    }
+
+    @Bean
+    public Binding passwordResetBinding() {
+        return BindingBuilder
+                .bind(passwordResetQueue())
+                .to(eventExchange())
+                .with("password.reset.message")
                 .noargs();
     }
 

@@ -15,9 +15,8 @@ public class MessageReceiver {
         this.service = service;
     }
 
-    public void receivePasswordResetMessage() {
-        //TODO: RECEIVE MESSAGE FROM QUEUE TO RESET USER PASSWORD
-        String email = "";
+    @RabbitListener(queues = "passwordResetQueue")
+    public void receivePasswordResetMessage(String email) {
         log.info("reset password for email:{}", email);
         try {
             service.sendPasswordResetEmail(email);
