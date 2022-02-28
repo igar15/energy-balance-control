@@ -1,6 +1,8 @@
 package ru.javaprojects.bxservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -49,5 +51,29 @@ public class BxServiceApplication {
     @Bean
     public RestAuthenticationEntryPoint restAuthenticationEntryPoint() {
         return new RestAuthenticationEntryPoint();
+    }
+
+    @Bean
+    public Exchange eventExchange() {
+        return new TopicExchange("eventExchange");
+    }
+
+    @Bean
+    public Queue queue() {
+        return new Queue("dateQueue");
+    }
+
+    @Bean
+    public Binding binding(Queue queue, Exchange eventExchange) {
+        return BindingBuilder
+                .bind(queue)
+                .to(eventExchange)
+                .with("date.created")
+                .noargs();
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
+        return new Jackson2JsonMessageConverter(objectMapper());
     }
 }
