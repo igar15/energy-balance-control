@@ -77,7 +77,7 @@ public class ProfileRestController {
     @GetMapping("/bx-details")
     public UserBxDetails getBxDetails() {
         long userId = SecurityUtil.authUserId();
-        log.info("getBxDetails {}", userId);
+        log.info("getBxDetails for user {}", userId);
         return service.getBxDetails(userId);
     }
 

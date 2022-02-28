@@ -51,7 +51,7 @@ class ExerciseServiceTest extends AbstractServiceTest {
         Exercise newExercise = getNew();
         newExercise.setId(newId);
         EXERCISE_MATCHER.assertMatch(created, newExercise);
-        Mockito.verify(messageSender, Mockito.times(1)).sendDateCreatedMessage(getNewTo().getDateTime().toLocalDate(), USER_ID);
+        Mockito.verify(messageSender, Mockito.times(1)).sendDateMessage(getNewTo().getDateTime().toLocalDate(), USER_ID);
     }
 
     @Test
@@ -59,7 +59,7 @@ class ExerciseServiceTest extends AbstractServiceTest {
         ExerciseTo newTo = getNewTo();
         newTo.setDateTime(of(exercise1.getDateTime().toLocalDate(), LocalTime.of(6, 0)));
         service.create(newTo, USER_ID);
-        Mockito.verify(messageSender, Mockito.times(0)).sendDateCreatedMessage(Mockito.any(LocalDate.class), Mockito.anyLong());
+        Mockito.verify(messageSender, Mockito.times(0)).sendDateMessage(Mockito.any(LocalDate.class), Mockito.anyLong());
     }
 
     @Test

@@ -17,31 +17,29 @@ public class MessageReceiver {
     }
 
     @RabbitListener(queues = "dateQueue")
-    public void receiveDateMessage(DateMessage message) {
-        //TODO: RECEIVE MESSAGE FROM QUEUE TO CREATE BX FOR CURRENT DATE
-        log.info("Receive date message: {}", message);
-//        DateMessage dateMessage = new DateMessage();
-//        if (dateMessage.isUserBxDetailsChanged()) {
-//            log.info("update basic exchanges for {} from date {}", dateMessage.getUserId(), dateMessage.getDate());
-//            service.updateBasicExchanges(dateMessage.getDate(), dateMessage.getUserId());
-//        } else {
-//            log.info("create basic exchange for {} for date {}", dateMessage.getUserId(), dateMessage.getDate());
-//            try {
-//                service.create(dateMessage.getDate(), dateMessage.getUserId());
-//            } catch (DataAccessException e) {
-//                log.info("basic exchange for {} for date {} already exists", dateMessage.getUserId(), dateMessage.getDate());
-//            }
-//        }
+    public void receiveDateMessage(DateMessage dateMessage) {
+        log.info("receive {}", dateMessage);
+        if (dateMessage.isUserBxDetailsChanged()) {
+            log.info("update basic exchanges for {} from date {}", dateMessage.getUserId(), dateMessage.getDate());
+            service.updateBasicExchanges(dateMessage.getDate(), dateMessage.getUserId());
+        } else {
+            log.info("create basic exchange for {} for date {}", dateMessage.getUserId(), dateMessage.getDate());
+            try {
+                service.create(dateMessage.getDate(), dateMessage.getUserId());
+            } catch (DataAccessException e) {
+                log.info("basic exchange for {} for date {} already exists", dateMessage.getUserId(), dateMessage.getDate());
+            }
+        }
     }
 
-    public void receiveUserDeletedMessage() {
-        //TODO: RECEIVE MESSAGE FROM QUEUE TO DELETE ALL BASIC EXCHANGES FOR DELETED USER
-        long userId = 200000;
-        log.info("delete all basic exchanges for user {}", userId);
+    @RabbitListener(queues = "bxServiceUserDeletedQueue")
+    public void receiveUserDeletedMessage(UserDeletedMessage userDeletedMessage) {
+        log.info("receive {}", userDeletedMessage);
+        log.info("delete all basic exchanges for user {}", userDeletedMessage.getUserId());
         try {
-            service.deleteAll(userId);
+            service.deleteAll(userDeletedMessage.getUserId());
         } catch (Exception e) {
-            log.info("all basic exchanges deleting error: {}", e.getMessage());
+            log.info("basic exchanges deleting error: {}", e.getMessage());
         }
     }
 }

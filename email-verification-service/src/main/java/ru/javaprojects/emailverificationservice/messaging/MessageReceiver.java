@@ -2,6 +2,7 @@ package ru.javaprojects.emailverificationservice.messaging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import ru.javaprojects.emailverificationservice.service.EmailVerificationService;
 import ru.javaprojects.emailverificationservice.util.exception.EmailVerificationException;
@@ -26,12 +27,12 @@ public class MessageReceiver {
         }
     }
 
-    public void receiveUserDeletedMessage() {
-        //TODO: RECEIVE MESSAGE FROM QUEUE TO DELETE VERIFICATION EMAIL TOKEN FOR DELETED USER
-        String email = "user1@test.com";
-        log.info("delete email verification token:{}", email);
+    @RabbitListener(queues = "emailVerificationServiceUserDeletedQueue")
+    public void receiveUserDeletedMessage(UserDeletedMessage userDeletedMessage) {
+        log.info("receive {}", userDeletedMessage);
+        log.info("delete email verification token for user {}", userDeletedMessage.getEmail());
         try {
-            service.delete(email);
+            service.delete(userDeletedMessage.getEmail());
         } catch (Exception e) {
             log.info("email verification token deleting error: {}", e.getMessage());
         }

@@ -58,7 +58,7 @@ class MealServiceTest {
         Meal newMeal = getNew();
         newMeal.setId(newId);
         MEAL_MATCHER.assertMatch(created, newMeal);
-        Mockito.verify(messageSender, Mockito.times(1)).sendDateCreatedMessage(getNewTo().getDateTime().toLocalDate(), USER_ID);
+        Mockito.verify(messageSender, Mockito.times(1)).sendDateMessage(getNewTo().getDateTime().toLocalDate(), USER_ID);
 
     }
 
@@ -67,7 +67,7 @@ class MealServiceTest {
         MealTo newTo = getNewTo();
         newTo.setDateTime(of(meal1.getDateTime().toLocalDate(), LocalTime.of(6, 0)));
         service.create(newTo, USER_ID);
-        Mockito.verify(messageSender, Mockito.times(0)).sendDateCreatedMessage(Mockito.any(LocalDate.class), Mockito.anyLong());
+        Mockito.verify(messageSender, Mockito.times(0)).sendDateMessage(Mockito.any(LocalDate.class), Mockito.anyLong());
     }
 
     @Test

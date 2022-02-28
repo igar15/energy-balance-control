@@ -83,7 +83,7 @@ public class MealService {
 
     private void sendMessageDateCreated(LocalDateTime dateTime, long userId) {
         if (Objects.nonNull(dateTime)) {
-            messageSender.sendDateCreatedMessage(dateTime.toLocalDate(), userId);
+            messageSender.sendDateMessage(dateTime.toLocalDate(), userId);
         }
     }
 

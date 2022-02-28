@@ -19,12 +19,10 @@ public class MessageSender {
         this.exchange = exchange;
     }
 
-    public void sendDateCreatedMessage(LocalDate date, long userId) {
-        log.info("send date message for user={}, date={}", userId, date);
-        //TODO: SEND MESSAGE TO QUEUE TO CREATE BX FOR CURRENT DATE
+    public void sendDateMessage(LocalDate date, long userId) {
         DateMessage dateMessage = new DateMessage(userId, date, false);
-        String routingKey = "date.created";
-        String message = "Date created for user:" + userId + " date:" + date;
+        log.info("send {}", dateMessage);
+        String routingKey = "date.message";
         rabbitTemplate.convertAndSend(exchange.getName(), routingKey, dateMessage);
     }
 }

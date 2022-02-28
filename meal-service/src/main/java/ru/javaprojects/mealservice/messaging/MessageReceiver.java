@@ -2,6 +2,7 @@ package ru.javaprojects.mealservice.messaging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import ru.javaprojects.mealservice.service.MealService;
 
@@ -14,12 +15,12 @@ public class MessageReceiver {
         this.service = service;
     }
 
-    public void receiveUserDeletedMessage() {
-        //TODO: RECEIVE MESSAGE FROM QUEUE TO DELETE ALL MEALS FOR DELETED USER
-        long userId = 200000;
-        log.info("delete all meals for user {}", userId);
+    @RabbitListener(queues = "mealServiceUserDeletedQueue")
+    public void receiveUserDeletedMessage(UserDeletedMessage userDeletedMessage) {
+        log.info("receive {}", userDeletedMessage);
+        log.info("delete all meals for user {}", userDeletedMessage.getUserId());
         try {
-            service.deleteAll(userId);
+            service.deleteAll(userDeletedMessage.getUserId());
         } catch (Exception e) {
             log.info("meals deleting error: {}", e.getMessage());
         }

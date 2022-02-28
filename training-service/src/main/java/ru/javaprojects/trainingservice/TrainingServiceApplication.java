@@ -1,6 +1,9 @@
 package ru.javaprojects.trainingservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,7 +29,7 @@ public class TrainingServiceApplication {
 
     @Bean
     public ObjectMapper objectMapper() {
-        return JacksonObjectMapper.getMapper();
+        return JacksonObjectMapper.getMapper().registerModule(new Hibernate5Module());
     }
 
     @Bean
@@ -47,5 +50,29 @@ public class TrainingServiceApplication {
     @Bean
     public RestAuthenticationEntryPoint restAuthenticationEntryPoint() {
         return new RestAuthenticationEntryPoint();
+    }
+
+    @Bean
+    public Exchange eventExchange() {
+        return new TopicExchange("ebcExchange");
+    }
+
+    @Bean
+    public Queue userDeletedQueue() {
+        return new Queue("trainingServiceUserDeletedQueue");
+    }
+
+    @Bean
+    public Binding userDeletedBinding() {
+        return BindingBuilder
+                .bind(userDeletedQueue())
+                .to(eventExchange())
+                .with("user.deleted.message")
+                .noargs();
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
+        return new Jackson2JsonMessageConverter(objectMapper());
     }
 }

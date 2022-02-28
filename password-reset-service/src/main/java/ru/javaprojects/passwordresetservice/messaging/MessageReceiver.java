@@ -2,6 +2,7 @@ package ru.javaprojects.passwordresetservice.messaging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import ru.javaprojects.passwordresetservice.service.PasswordResetService;
 
@@ -25,14 +26,14 @@ public class MessageReceiver {
         }
     }
 
-    public void receiveUserDeletedMessage() {
-        //TODO: RECEIVE MESSAGE FROM QUEUE TO DELETE PASSWORD RESET TOKEN FOR DELETED USER
-        String email = "user1@test.com";
-        log.info("delete password reset token:{}", email);
+    @RabbitListener(queues = "passwordResetServiceUserDeletedQueue")
+    public void receiveUserDeletedMessage(UserDeletedMessage userDeletedMessage) {
+        log.info("receive {}", userDeletedMessage);
+        log.info("delete password reset token for:{}", userDeletedMessage.getEmail());
         try {
-            service.delete(email);
+            service.delete(userDeletedMessage.getEmail());
         } catch (Exception e) {
-            log.info("password reset token deleting error: {}", e.getMessage());
+            log.info("password reset token deleting error:{}", e.getMessage());
         }
     }
 }

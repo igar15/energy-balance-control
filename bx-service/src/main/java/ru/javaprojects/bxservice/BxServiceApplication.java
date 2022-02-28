@@ -55,20 +55,34 @@ public class BxServiceApplication {
 
     @Bean
     public Exchange eventExchange() {
-        return new TopicExchange("eventExchange");
+        return new TopicExchange("ebcExchange");
     }
 
     @Bean
-    public Queue queue() {
+    public Queue dateQueue() {
         return new Queue("dateQueue");
     }
 
     @Bean
-    public Binding binding(Queue queue, Exchange eventExchange) {
+    public Queue userDeletedQueue() {
+        return new Queue("bxServiceUserDeletedQueue");
+    }
+
+    @Bean
+    public Binding dateBinding() {
         return BindingBuilder
-                .bind(queue)
-                .to(eventExchange)
-                .with("date.created")
+                .bind(dateQueue())
+                .to(eventExchange())
+                .with("date.message")
+                .noargs();
+    }
+
+    @Bean
+    public Binding userDeletedBinding() {
+        return BindingBuilder
+                .bind(userDeletedQueue())
+                .to(eventExchange())
+                .with("user.deleted.message")
                 .noargs();
     }
 
