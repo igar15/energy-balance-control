@@ -53,7 +53,7 @@ public class PasswordResetService {
         Assert.notNull(password, "password" + MUST_NOT_BE_NULL);
         PasswordResetToken passwordResetToken = checkToken(token);
         repository.delete(passwordResetToken);
-        messageSender.sendChangePasswordMessage(passwordResetToken.getEmail(), password);
+        messageSender.sendPasswordChangedMessage(passwordResetToken.getEmail(), password);
     }
 
     public void delete(String email) {

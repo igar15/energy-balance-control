@@ -2,6 +2,7 @@ package ru.javaprojects.userservice.messaging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import ru.javaprojects.userservice.service.UserService;
 
@@ -14,10 +15,9 @@ public class MessageReceiver {
         this.service = service;
     }
 
-    public void receiveEmailVerifiedMessage() {
-        //TODO: RECEIVE MESSAGE FROM QUEUE TO ENABLE USER
-        String email = "";
-        log.info("email has been verified, enable user:{}", email);
+    @RabbitListener(queues = "emailConfirmedQueue")
+    public void receiveEmailConfirmedMessage(String email) {
+        log.info("email has been confirmed, enable user:{}", email);
         try {
             service.enable(email);
         } catch (Exception e) {
@@ -25,15 +25,13 @@ public class MessageReceiver {
         }
     }
 
-    public void receivePasswordChangedMessage() {
-        //TODO: RECEIVE MESSAGE FROM QUEUE TO CHANGE PASSWORD
-        String email = "";
-        String password = "";
-        log.info("change password for user:{}", email);
+    @RabbitListener(queues = "passwordChangedQueue")
+    public void receivePasswordChangedMessage(PasswordChangedMessage passwordChangedMessage) {
+        log.info("change password for user:{}", passwordChangedMessage.getEmail());
         try {
-            service.changePassword(email, password);
+            service.changePassword(passwordChangedMessage.getEmail(), passwordChangedMessage.getPassword());
         } catch (Exception e) {
-            log.info("user change password error: {}", e.getMessage());
+            log.info("change password error: {}", e.getMessage());
         }
     }
 }

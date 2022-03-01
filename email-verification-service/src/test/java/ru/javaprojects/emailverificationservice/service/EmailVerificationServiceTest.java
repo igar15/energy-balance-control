@@ -75,7 +75,7 @@ class EmailVerificationServiceTest {
     @Test
     void verifyEmail() {
         service.verifyEmail(notExpiredNotVerifiedToken.getToken());
-        Mockito.verify(messageSender, Mockito.times(1)).sendEmailVerifiedMessage(notExpiredNotVerifiedToken.getEmail());
+        Mockito.verify(messageSender, Mockito.times(1)).sendEmailConfirmedMessage(notExpiredNotVerifiedToken.getEmail());
         VerificationToken verificationToken = repository.findByEmail(notExpiredNotVerifiedToken.getEmail()).get();
         assertTrue(verificationToken.isEmailVerified());
     }
@@ -83,19 +83,19 @@ class EmailVerificationServiceTest {
     @Test
     void verifyEmailNotFoundToken() {
         assertThrows(NotFoundException.class, () -> service.verifyEmail(NOT_FOUND_TOKEN));
-        Mockito.verify(messageSender, Mockito.times(0)).sendEmailVerifiedMessage(Mockito.anyString());
+        Mockito.verify(messageSender, Mockito.times(0)).sendEmailConfirmedMessage(Mockito.anyString());
     }
 
     @Test
     void verifyEmailTokenExpired() {
         assertThrows(EmailVerificationException.class, () -> service.verifyEmail(expiredToken.getToken()));
-        Mockito.verify(messageSender, Mockito.times(0)).sendEmailVerifiedMessage(Mockito.anyString());
+        Mockito.verify(messageSender, Mockito.times(0)).sendEmailConfirmedMessage(Mockito.anyString());
     }
 
     @Test
     void verifyEmailWhenAlreadyVerified() {
         assertThrows(EmailVerificationException.class, () -> service.verifyEmail(alreadyVerifiedToken.getToken()));
-        Mockito.verify(messageSender, Mockito.times(0)).sendEmailVerifiedMessage(Mockito.anyString());
+        Mockito.verify(messageSender, Mockito.times(0)).sendEmailConfirmedMessage(Mockito.anyString());
     }
 
     @Test

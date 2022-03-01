@@ -49,7 +49,7 @@ public class EmailVerificationService {
         checkAlreadyVerified(verificationToken);
         checkTokenExpired(verificationToken);
         verificationToken.setEmailVerified(true);
-        messageSender.sendEmailVerifiedMessage(verificationToken.getEmail());
+        messageSender.sendEmailConfirmedMessage(verificationToken.getEmail());
     }
 
     public void delete(String email) {

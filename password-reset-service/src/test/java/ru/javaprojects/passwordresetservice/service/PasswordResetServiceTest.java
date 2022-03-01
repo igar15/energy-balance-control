@@ -82,20 +82,20 @@ class PasswordResetServiceTest {
     @Test
     void resetPassword() {
         service.resetPassword(notExpiredToken.getToken(), NEW_PASSWORD);
-        Mockito.verify(messageSender, Mockito.times(1)).sendChangePasswordMessage(notExpiredToken.getEmail(), NEW_PASSWORD);
+        Mockito.verify(messageSender, Mockito.times(1)).sendPasswordChangedMessage(notExpiredToken.getEmail(), NEW_PASSWORD);
         assertTrue(repository.findByToken(notExpiredToken.getToken()).isEmpty());
     }
 
     @Test
     void resetPasswordNotFoundToken() {
         assertThrows(NotFoundException.class, () -> service.resetPassword(NOT_FOUND_TOKEN, NEW_PASSWORD));
-        Mockito.verify(messageSender, Mockito.times(0)).sendChangePasswordMessage(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(messageSender, Mockito.times(0)).sendPasswordChangedMessage(Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
     void resetPasswordTokenExpired() {
         assertThrows(PasswordResetException.class, () -> service.resetPassword(expiredToken.getToken(), NEW_PASSWORD));
-        Mockito.verify(messageSender, Mockito.times(0)).sendChangePasswordMessage(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(messageSender, Mockito.times(0)).sendPasswordChangedMessage(Mockito.anyString(), Mockito.anyString());
     }
 
     @Test

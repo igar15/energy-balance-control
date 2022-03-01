@@ -1,8 +1,7 @@
 package ru.javaprojects.userservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.amqp.core.Exchange;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -62,6 +61,34 @@ public class UserServiceApplication {
     @Bean
     public Exchange eventExchange() {
         return new TopicExchange("ebcExchange");
+    }
+
+    @Bean
+    public Queue emailConfirmedQueue() {
+        return new Queue("emailConfirmedQueue");
+    }
+
+    @Bean
+    public Queue passwordChangedQueue() {
+        return new Queue("passwordChangedQueue");
+    }
+
+    @Bean
+    public Binding emailConfirmedBinding() {
+        return BindingBuilder
+                .bind(emailConfirmedQueue())
+                .to(eventExchange())
+                .with("email.confirmed.message")
+                .noargs();
+    }
+
+    @Bean
+    public Binding passwordChangedBinding() {
+        return BindingBuilder
+                .bind(passwordChangedQueue())
+                .to(eventExchange())
+                .with("password.changed.message")
+                .noargs();
     }
 
     @Bean

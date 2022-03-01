@@ -78,7 +78,7 @@ class PasswordResetRestControllerTest extends AbstractControllerTest {
                 .param(PASSWORD_PARAM, NEW_PASSWORD))
                 .andDo(print())
                 .andExpect(status().isOk());
-        Mockito.verify(messageSender, Mockito.times(1)).sendChangePasswordMessage(notExpiredToken.getEmail(), NEW_PASSWORD);
+        Mockito.verify(messageSender, Mockito.times(1)).sendPasswordChangedMessage(notExpiredToken.getEmail(), NEW_PASSWORD);
     }
 
     @Test
@@ -89,7 +89,7 @@ class PasswordResetRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(DATA_NOT_FOUND));
-        Mockito.verify(messageSender, Mockito.times(0)).sendChangePasswordMessage(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(messageSender, Mockito.times(0)).sendPasswordChangedMessage(Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
@@ -100,7 +100,7 @@ class PasswordResetRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR));
-        Mockito.verify(messageSender, Mockito.times(0)).sendChangePasswordMessage(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(messageSender, Mockito.times(0)).sendPasswordChangedMessage(Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
@@ -112,7 +112,7 @@ class PasswordResetRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR))
                 .andExpect(detailMessage(EXCEPTION_INVALID_PASSWORD));
-        Mockito.verify(messageSender, Mockito.times(0)).sendChangePasswordMessage(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(messageSender, Mockito.times(0)).sendPasswordChangedMessage(Mockito.anyString(), Mockito.anyString());
     }
 
     @Test

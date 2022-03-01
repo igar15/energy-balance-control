@@ -55,7 +55,7 @@ class EmailVerificationRestControllerTest extends AbstractControllerTest {
                 .param(TOKEN_PARAM, notExpiredNotVerifiedToken.getToken()))
                 .andDo(print())
                 .andExpect(status().isOk());
-        Mockito.verify(messageSender, Mockito.times(1)).sendEmailVerifiedMessage(notExpiredNotVerifiedToken.getEmail());
+        Mockito.verify(messageSender, Mockito.times(1)).sendEmailConfirmedMessage(notExpiredNotVerifiedToken.getEmail());
         VerificationToken verificationToken = repository.findByEmail(notExpiredNotVerifiedToken.getEmail()).get();
         assertTrue(verificationToken.isEmailVerified());
     }
@@ -68,7 +68,7 @@ class EmailVerificationRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(DATA_NOT_FOUND))
                 .andExpect(detailMessage("Not found verification record with token=" + NOT_FOUND_TOKEN));
-        Mockito.verify(messageSender, Mockito.times(0)).sendEmailVerifiedMessage(Mockito.anyString());
+        Mockito.verify(messageSender, Mockito.times(0)).sendEmailConfirmedMessage(Mockito.anyString());
     }
 
     @Test
@@ -79,7 +79,7 @@ class EmailVerificationRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR))
                 .andExpect(detailMessage("Verification token for " +expiredToken.getEmail() + " expired"));
-        Mockito.verify(messageSender, Mockito.times(0)).sendEmailVerifiedMessage(Mockito.anyString());
+        Mockito.verify(messageSender, Mockito.times(0)).sendEmailConfirmedMessage(Mockito.anyString());
     }
 
     @Test
@@ -90,7 +90,7 @@ class EmailVerificationRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR))
                 .andExpect(detailMessage("Email already verified:" + alreadyVerifiedToken.getEmail()));
-        Mockito.verify(messageSender, Mockito.times(0)).sendEmailVerifiedMessage(Mockito.anyString());
+        Mockito.verify(messageSender, Mockito.times(0)).sendEmailConfirmedMessage(Mockito.anyString());
     }
 
     @Test
