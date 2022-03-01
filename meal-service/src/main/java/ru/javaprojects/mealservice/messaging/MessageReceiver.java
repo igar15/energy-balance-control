@@ -15,7 +15,7 @@ public class MessageReceiver {
         this.service = service;
     }
 
-    @RabbitListener(queues = "mealServiceUserDeletedQueue")
+    @RabbitListener(queues = "${mealService.user.deleted.queue.name}")
     public void receiveUserDeletedMessage(UserDeletedMessage userDeletedMessage) {
         log.info("receive {}", userDeletedMessage);
         log.info("delete all meals for user {}", userDeletedMessage.getUserId());

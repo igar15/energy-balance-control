@@ -15,7 +15,7 @@ public class MessageReceiver {
         this.service = service;
     }
 
-    @RabbitListener(queues = "emailVerifyQueue")
+    @RabbitListener(queues = "${email.verify.queue.name}")
     public void receiveEmailVerifyMessage(String email) {
         log.info("verify email:{}", email);
         try {
@@ -25,7 +25,7 @@ public class MessageReceiver {
         }
     }
 
-    @RabbitListener(queues = "emailVerificationServiceUserDeletedQueue")
+    @RabbitListener(queues = "${emailVerificationService.user.deleted.queue.name}")
     public void receiveUserDeletedMessage(UserDeletedMessage userDeletedMessage) {
         log.info("receive {}", userDeletedMessage);
         log.info("delete email verification token for user {}", userDeletedMessage.getEmail());

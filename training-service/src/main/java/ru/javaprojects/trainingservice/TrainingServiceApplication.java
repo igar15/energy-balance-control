@@ -54,12 +54,12 @@ public class TrainingServiceApplication {
 
     @Bean
     public Exchange eventExchange() {
-        return new TopicExchange("ebcExchange");
+        return new TopicExchange(environment.getProperty("exchanger.name"));
     }
 
     @Bean
     public Queue userDeletedQueue() {
-        return new Queue("trainingServiceUserDeletedQueue");
+        return new Queue(environment.getProperty("trainingService.user.deleted.queue.name"));
     }
 
     @Bean
@@ -67,7 +67,7 @@ public class TrainingServiceApplication {
         return BindingBuilder
                 .bind(userDeletedQueue())
                 .to(eventExchange())
-                .with("user.deleted.message")
+                .with(environment.getProperty("user.deleted.routingKey"))
                 .noargs();
     }
 

@@ -15,7 +15,7 @@ public class MessageReceiver {
         this.service = service;
     }
 
-    @RabbitListener(queues = "emailConfirmedQueue")
+    @RabbitListener(queues = "${email.confirmed.queue.name}")
     public void receiveEmailConfirmedMessage(String email) {
         log.info("email has been confirmed, enable user:{}", email);
         try {
@@ -25,7 +25,7 @@ public class MessageReceiver {
         }
     }
 
-    @RabbitListener(queues = "passwordChangedQueue")
+    @RabbitListener(queues = "${password.changed.queue.name}")
     public void receivePasswordChangedMessage(PasswordChangedMessage passwordChangedMessage) {
         log.info("change password for user:{}", passwordChangedMessage.getEmail());
         try {

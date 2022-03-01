@@ -15,7 +15,7 @@ public class MessageReceiver {
         this.service = service;
     }
 
-    @RabbitListener(queues = "passwordResetQueue")
+    @RabbitListener(queues = "${password.reset.queue.name}")
     public void receivePasswordResetMessage(String email) {
         log.info("reset password for email:{}", email);
         try {
@@ -25,7 +25,7 @@ public class MessageReceiver {
         }
     }
 
-    @RabbitListener(queues = "passwordResetServiceUserDeletedQueue")
+    @RabbitListener(queues = "${passwordResetService.user.deleted.queue.name}")
     public void receiveUserDeletedMessage(UserDeletedMessage userDeletedMessage) {
         log.info("receive {}", userDeletedMessage);
         log.info("delete password reset token for:{}", userDeletedMessage.getEmail());

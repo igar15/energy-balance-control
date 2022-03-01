@@ -2,7 +2,6 @@ package ru.javaprojects.mealservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -54,12 +53,12 @@ public class MealServiceApplication {
 
     @Bean
     public Exchange eventExchange() {
-        return new TopicExchange("ebcExchange");
+        return new TopicExchange(environment.getProperty("exchanger.name"));
     }
 
     @Bean
     public Queue userDeletedQueue() {
-        return new Queue("mealServiceUserDeletedQueue");
+        return new Queue(environment.getProperty("mealService.user.deleted.queue.name"));
     }
 
     @Bean
@@ -67,7 +66,7 @@ public class MealServiceApplication {
         return BindingBuilder
                 .bind(userDeletedQueue())
                 .to(eventExchange())
-                .with("user.deleted.message")
+                .with(environment.getProperty("user.deleted.routingKey"))
                 .noargs();
     }
 

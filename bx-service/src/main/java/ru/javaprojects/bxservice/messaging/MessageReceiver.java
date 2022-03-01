@@ -16,7 +16,7 @@ public class MessageReceiver {
         this.service = service;
     }
 
-    @RabbitListener(queues = "dateQueue")
+    @RabbitListener(queues = "${date.queue.name}")
     public void receiveDateMessage(DateMessage dateMessage) {
         log.info("receive {}", dateMessage);
         if (dateMessage.isUserBxDetailsChanged()) {
@@ -32,7 +32,7 @@ public class MessageReceiver {
         }
     }
 
-    @RabbitListener(queues = "bxServiceUserDeletedQueue")
+    @RabbitListener(queues = "${bxService.user.deleted.queue.name}")
     public void receiveUserDeletedMessage(UserDeletedMessage userDeletedMessage) {
         log.info("receive {}", userDeletedMessage);
         log.info("delete all basic exchanges for user {}", userDeletedMessage.getUserId());

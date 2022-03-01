@@ -15,7 +15,7 @@ public class MessageReceiver {
         this.service = service;
     }
 
-    @RabbitListener(queues = "trainingServiceUserDeletedQueue")
+    @RabbitListener(queues = "${trainingService.user.deleted.queue.name}")
     public void receiveUserDeletedMessage(UserDeletedMessage userDeletedMessage) {
         log.info("receive {}", userDeletedMessage);
         log.info("delete all training data for user {}", userDeletedMessage.getUserId());

@@ -53,17 +53,17 @@ public class PasswordResetServiceApplication {
 
     @Bean
     public Exchange eventExchange() {
-        return new TopicExchange("ebcExchange");
+        return new TopicExchange(environment.getProperty("exchanger.name"));
     }
 
     @Bean
     public Queue userDeletedQueue() {
-        return new Queue("passwordResetServiceUserDeletedQueue");
+        return new Queue(environment.getProperty("passwordResetService.user.deleted.queue.name"));
     }
 
     @Bean
     public Queue passwordResetQueue() {
-        return new Queue("passwordResetQueue");
+        return new Queue(environment.getProperty("password.reset.queue.name"));
     }
 
     @Bean
@@ -71,7 +71,7 @@ public class PasswordResetServiceApplication {
         return BindingBuilder
                 .bind(userDeletedQueue())
                 .to(eventExchange())
-                .with("user.deleted.message")
+                .with(environment.getProperty("user.deleted.routingKey"))
                 .noargs();
     }
 
@@ -80,7 +80,7 @@ public class PasswordResetServiceApplication {
         return BindingBuilder
                 .bind(passwordResetQueue())
                 .to(eventExchange())
-                .with("password.reset.message")
+                .with(environment.getProperty("password.reset.routingKey"))
                 .noargs();
     }
 

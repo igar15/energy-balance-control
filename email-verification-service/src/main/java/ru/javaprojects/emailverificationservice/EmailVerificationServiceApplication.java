@@ -53,17 +53,17 @@ public class EmailVerificationServiceApplication {
 
     @Bean
     public Exchange eventExchange() {
-        return new TopicExchange("ebcExchange");
+        return new TopicExchange(environment.getProperty("exchanger.name"));
     }
 
     @Bean
     public Queue userDeletedQueue() {
-        return new Queue("emailVerificationServiceUserDeletedQueue");
+        return new Queue(environment.getProperty("emailVerificationService.user.deleted.queue.name"));
     }
 
     @Bean
     public Queue emailVerifyQueue() {
-        return new Queue("emailVerifyQueue");
+        return new Queue(environment.getProperty("email.verify.queue.name"));
     }
 
     @Bean
@@ -71,7 +71,7 @@ public class EmailVerificationServiceApplication {
         return BindingBuilder
                 .bind(userDeletedQueue())
                 .to(eventExchange())
-                .with("user.deleted.message")
+                .with(environment.getProperty("user.deleted.routingKey"))
                 .noargs();
     }
 
@@ -80,7 +80,7 @@ public class EmailVerificationServiceApplication {
         return BindingBuilder
                 .bind(emailVerifyQueue())
                 .to(eventExchange())
-                .with("email.verify.message")
+                .with(environment.getProperty("email.verify.routingKey"))
                 .noargs();
     }
 

@@ -55,17 +55,17 @@ public class BxServiceApplication {
 
     @Bean
     public Exchange eventExchange() {
-        return new TopicExchange("ebcExchange");
+        return new TopicExchange(environment.getProperty("exchanger.name"));
     }
 
     @Bean
     public Queue dateQueue() {
-        return new Queue("dateQueue");
+        return new Queue(environment.getProperty("date.queue.name"));
     }
 
     @Bean
     public Queue userDeletedQueue() {
-        return new Queue("bxServiceUserDeletedQueue");
+        return new Queue(environment.getProperty("bxService.user.deleted.queue.name"));
     }
 
     @Bean
@@ -73,7 +73,7 @@ public class BxServiceApplication {
         return BindingBuilder
                 .bind(dateQueue())
                 .to(eventExchange())
-                .with("date.message")
+                .with(environment.getProperty("date.routingKey"))
                 .noargs();
     }
 
@@ -82,7 +82,7 @@ public class BxServiceApplication {
         return BindingBuilder
                 .bind(userDeletedQueue())
                 .to(eventExchange())
-                .with("user.deleted.message")
+                .with(environment.getProperty("user.deleted.routingKey"))
                 .noargs();
     }
 

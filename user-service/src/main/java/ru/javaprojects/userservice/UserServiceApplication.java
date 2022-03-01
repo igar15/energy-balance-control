@@ -60,17 +60,17 @@ public class UserServiceApplication {
 
     @Bean
     public Exchange eventExchange() {
-        return new TopicExchange("ebcExchange");
+        return new TopicExchange(environment.getProperty("exchanger.name"));
     }
 
     @Bean
     public Queue emailConfirmedQueue() {
-        return new Queue("emailConfirmedQueue");
+        return new Queue(environment.getProperty("email.confirmed.queue.name"));
     }
 
     @Bean
     public Queue passwordChangedQueue() {
-        return new Queue("passwordChangedQueue");
+        return new Queue(environment.getProperty("password.changed.queue.name"));
     }
 
     @Bean
@@ -78,7 +78,7 @@ public class UserServiceApplication {
         return BindingBuilder
                 .bind(emailConfirmedQueue())
                 .to(eventExchange())
-                .with("email.confirmed.message")
+                .with(environment.getProperty("email.confirmed.routingKey"))
                 .noargs();
     }
 
@@ -87,7 +87,7 @@ public class UserServiceApplication {
         return BindingBuilder
                 .bind(passwordChangedQueue())
                 .to(eventExchange())
-                .with("password.changed.message")
+                .with(environment.getProperty("password.changed.routingKey"))
                 .noargs();
     }
 
