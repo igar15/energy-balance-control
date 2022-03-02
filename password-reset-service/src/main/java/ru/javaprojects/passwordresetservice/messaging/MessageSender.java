@@ -6,6 +6,7 @@ import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import ru.javaprojects.energybalancecontrolshared.messaging.PasswordChangedMessage;
 
 @Component
 public class MessageSender {

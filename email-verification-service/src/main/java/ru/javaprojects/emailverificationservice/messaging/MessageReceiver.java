@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import ru.javaprojects.emailverificationservice.service.EmailVerificationService;
+import ru.javaprojects.energybalancecontrolshared.messaging.UserDeletedMessage;
 
 @Component
 public class MessageReceiver {

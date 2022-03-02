@@ -6,6 +6,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 import ru.javaprojects.bxservice.service.BasicExchangeService;
+import ru.javaprojects.energybalancecontrolshared.messaging.DateMessage;
+import ru.javaprojects.energybalancecontrolshared.messaging.UserDeletedMessage;
 
 @Component
 public class MessageReceiver {

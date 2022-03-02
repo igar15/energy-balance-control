@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import ru.javaprojects.energybalancecontrolshared.messaging.UserDeletedMessage;
 import ru.javaprojects.passwordresetservice.service.PasswordResetService;
 
 @Component
