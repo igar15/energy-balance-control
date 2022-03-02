@@ -1,6 +1,7 @@
 package ru.javaprojects.mealservice.web.controller;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -12,10 +13,15 @@ import ru.javaprojects.energybalancecontrolshared.test.TestUtil;
 import ru.javaprojects.energybalancecontrolshared.test.WithMockCustomUser;
 import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 import ru.javaprojects.energybalancecontrolshared.web.json.JsonUtil;
+import ru.javaprojects.mealservice.messaging.MessageSender;
 import ru.javaprojects.mealservice.model.Meal;
 import ru.javaprojects.mealservice.repository.MealRepository;
+import ru.javaprojects.mealservice.service.MealService;
 import ru.javaprojects.mealservice.to.MealTo;
 
+import javax.annotation.PostConstruct;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -36,6 +42,19 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MealRepository repository;
+
+    @Autowired
+    private MealService service;
+
+    @Mock
+    private MessageSender messageSender;
+
+    @PostConstruct
+    void setupMealService() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method messageSenderSetter = service.getClass().getDeclaredMethod("setMessageSender", MessageSender.class);
+        messageSenderSetter.setAccessible(true);
+        messageSenderSetter.invoke(service, messageSender);
+    }
 
     @Test
     @WithMockCustomUser(userId = USER_ID_STRING, userRoles = {USER_ROLE})
