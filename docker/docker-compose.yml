@@ -3,12 +3,13 @@ version: "3.9"
 services:
   rabbitmq:
     image: rabbitmq:3-management
+    container_name: rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
     environment:
-      RABBITMQ_DEFAULT_USER: "igar15"
-      RABBITMQ_DEFAULT_PASS: "123456Kmx"
+      RABBITMQ_DEFAULT_USER: igar15
+      RABBITMQ_DEFAULT_PASS: 123456Kmx
     networks:
       ebc-network:
         aliases:
@@ -16,12 +17,13 @@ services:
 
   database:
     image: postgres:latest
+    container_name: database
     ports:
-      - 5432:5432
+      - 5433:5432
     environment:
-      POSTGRES_USER: "igar15"
-      POSTGRES_PASSWORD: "123456Kmx"
-      POSTGRES_DB:       "ebc"
+      POSTGRES_DB: ebc
+      POSTGRES_USER: igar15
+      POSTGRES_PASSWORD: 123456Kmx
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
     networks:
@@ -29,26 +31,29 @@ services:
         aliases:
           - "database"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U igar15"]
+      test: ["CMD-SHELL", "pg_isready -d ebc -U igar15"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   config-server:
     image: ebc/config-server
+    container_name: config-server
     ports:
       - 8029:8029
     environment:
-      SPRING_PROFILES_ACTIVE: "default"
-      ENCRYPT_KEY: "d23e5862-cc5d-4f03-aadf-893cc53a2a35"
-      JWT_SECRETKEY: "6467bf94-6658-4451-afa1-a2467c4cdf19"
-      SPRING_RABBITMQ_HOST: "rabbitmq"
-      SPRING_RABBITMQ_USERNAME: "igar15"
-      SPRING_RABBITMQ_PASSWORD: "123456Kmx"
-      SPRING_SECURITY_USER_NAME: "igar15"
-      SPRING_SECURITY_USER_PASSWORD: "123456Kmx"
+      SPRING_PROFILES_ACTIVE: default
+      ENCRYPT_KEY: d23e5862-cc5d-4f03-aadf-893cc53a2a35
+      JWT_SECRETKEY: 6467bf94-6658-4451-afa1-a2467c4cdf19
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_USERNAME: igar15
+      SPRING_RABBITMQ_PASSWORD: 123456Kmx
+      SPRING_SECURITY_USER_NAME: igar15
+      SPRING_SECURITY_USER_PASSWORD: 123456Kmx
     depends_on:
       rabbitmq:
+        condition: service_started
+      logstash:
         condition: service_started
     networks:
       ebc-network:
@@ -57,13 +62,14 @@ services:
 
   eureka-server:
     image: ebc/eureka-server
+    container_name: eureka-server
     ports:
       - 8027:8027
     environment:
-      SPRING_PROFILES_ACTIVE: "default"
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8029"
-      SPRING_CLOUD_CONFIG_USERNAME: "igar15"
-      SPRING_CLOUD_CONFIG_PASSWORD: "123456Kmx"
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8029
+      SPRING_CLOUD_CONFIG_USERNAME: igar15
+      SPRING_CLOUD_CONFIG_PASSWORD: 123456Kmx
     depends_on:
       database:
         condition: service_healthy
@@ -78,13 +84,14 @@ services:
 
   gateway-server:
     image: ebc/gateway-server
+    container_name: gateway-server
     ports:
       - 8028:8028
     environment:
-      SPRING_PROFILES_ACTIVE: "default"
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8029"
-      SPRING_CLOUD_CONFIG_USERNAME: "igar15"
-      SPRING_CLOUD_CONFIG_PASSWORD: "123456Kmx"
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8029
+      SPRING_CLOUD_CONFIG_USERNAME: igar15
+      SPRING_CLOUD_CONFIG_PASSWORD: 123456Kmx
     depends_on:
       database:
         condition: service_healthy
@@ -94,6 +101,8 @@ services:
         condition: service_started
       eureka-server:
         condition: service_started
+      logstash:
+        condition: service_started
     networks:
       ebc-network:
         aliases:
@@ -101,19 +110,22 @@ services:
 
   user-service:
     image: ebc/user-service
+    container_name: user-service
     ports:
       - 8025:8025
     environment:
-      SPRING_PROFILES_ACTIVE: "default"
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8029"
-      SPRING_CLOUD_CONFIG_USERNAME: "igar15"
-      SPRING_CLOUD_CONFIG_PASSWORD: "123456Kmx"
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8029
+      SPRING_CLOUD_CONFIG_USERNAME: igar15
+      SPRING_CLOUD_CONFIG_PASSWORD: 123456Kmx
     depends_on:
       database:
         condition: service_healthy
       rabbitmq:
         condition: service_started
       config-server:
+        condition: service_started
+      logstash:
         condition: service_started
     networks:
       ebc-network:
@@ -122,19 +134,22 @@ services:
 
   meal-service:
     image: ebc/meal-service
+    container_name: meal-service
     ports:
       - 8020:8020
     environment:
-      SPRING_PROFILES_ACTIVE: "default"
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8029"
-      SPRING_CLOUD_CONFIG_USERNAME: "igar15"
-      SPRING_CLOUD_CONFIG_PASSWORD: "123456Kmx"
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8029
+      SPRING_CLOUD_CONFIG_USERNAME: igar15
+      SPRING_CLOUD_CONFIG_PASSWORD: 123456Kmx
     depends_on:
       database:
         condition: service_healthy
       rabbitmq:
         condition: service_started
       config-server:
+        condition: service_started
+      logstash:
         condition: service_started
     networks:
       ebc-network:
@@ -143,19 +158,22 @@ services:
 
   training-service:
     image: ebc/training-service
+    container_name: training-service
     ports:
       - 8021:8021
     environment:
-      SPRING_PROFILES_ACTIVE: "default"
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8029"
-      SPRING_CLOUD_CONFIG_USERNAME: "igar15"
-      SPRING_CLOUD_CONFIG_PASSWORD: "123456Kmx"
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8029
+      SPRING_CLOUD_CONFIG_USERNAME: igar15
+      SPRING_CLOUD_CONFIG_PASSWORD: 123456Kmx
     depends_on:
       database:
         condition: service_healthy
       rabbitmq:
         condition: service_started
       config-server:
+        condition: service_started
+      logstash:
         condition: service_started
     networks:
       ebc-network:
@@ -164,19 +182,22 @@ services:
 
   password-reset-service:
     image: ebc/password-reset-service
+    container_name: password-reset-service
     ports:
       - 8026:8026
     environment:
-      SPRING_PROFILES_ACTIVE: "default"
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8029"
-      SPRING_CLOUD_CONFIG_USERNAME: "igar15"
-      SPRING_CLOUD_CONFIG_PASSWORD: "123456Kmx"
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8029
+      SPRING_CLOUD_CONFIG_USERNAME: igar15
+      SPRING_CLOUD_CONFIG_PASSWORD: 123456Kmx
     depends_on:
       database:
         condition: service_healthy
       rabbitmq:
         condition: service_started
       config-server:
+        condition: service_started
+      logstash:
         condition: service_started
     networks:
       ebc-network:
@@ -185,17 +206,20 @@ services:
 
   energy-balance-service:
     image: ebc/energy-balance-service
+    container_name: energy-balance-service
     ports:
       - 8023:8023
     environment:
-      SPRING_PROFILES_ACTIVE: "default"
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8029"
-      SPRING_CLOUD_CONFIG_USERNAME: "igar15"
-      SPRING_CLOUD_CONFIG_PASSWORD: "123456Kmx"
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8029
+      SPRING_CLOUD_CONFIG_USERNAME: igar15
+      SPRING_CLOUD_CONFIG_PASSWORD: 123456Kmx
     depends_on:
       rabbitmq:
         condition: service_started
       config-server:
+        condition: service_started
+      logstash:
         condition: service_started
     networks:
       ebc-network:
@@ -204,19 +228,22 @@ services:
 
   email-verification-service:
     image: ebc/email-verification-service
+    container_name: email-verification-service
     ports:
       - 8024:8024
     environment:
-      SPRING_PROFILES_ACTIVE: "default"
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8029"
-      SPRING_CLOUD_CONFIG_USERNAME: "igar15"
-      SPRING_CLOUD_CONFIG_PASSWORD: "123456Kmx"
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8029
+      SPRING_CLOUD_CONFIG_USERNAME: igar15
+      SPRING_CLOUD_CONFIG_PASSWORD: 123456Kmx
     depends_on:
       database:
         condition: service_healthy
       rabbitmq:
         condition: service_started
       config-server:
+        condition: service_started
+      logstash:
         condition: service_started
     networks:
       ebc-network:
@@ -225,19 +252,22 @@ services:
 
   bx-service:
     image: ebc/bx-service
+    container_name: bx-service
     ports:
       - 8022:8022
     environment:
-      SPRING_PROFILES_ACTIVE: "default"
-      SPRING_CLOUD_CONFIG_URI: "http://config-server:8029"
-      SPRING_CLOUD_CONFIG_USERNAME: "igar15"
-      SPRING_CLOUD_CONFIG_PASSWORD: "123456Kmx"
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8029
+      SPRING_CLOUD_CONFIG_USERNAME: igar15
+      SPRING_CLOUD_CONFIG_PASSWORD: 123456Kmx
     depends_on:
       database:
         condition: service_healthy
       rabbitmq:
         condition: service_started
       config-server:
+        condition: service_started
+      logstash:
         condition: service_started
     networks:
       ebc-network:
@@ -273,7 +303,7 @@ services:
     ports:
       - 5601:5601
     environment:
-      ELASTICSEARCH_URL: "http://elasticsearch:9300"
+      ELASTICSEARCH_URL: http://elasticsearch:9300
     networks:
       ebc-network:
         aliases:
