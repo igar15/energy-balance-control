@@ -53,8 +53,6 @@ services:
     depends_on:
       rabbitmq:
         condition: service_started
-      logstash:
-        condition: service_started
     networks:
       ebc-network:
         aliases:
