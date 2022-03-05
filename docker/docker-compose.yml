@@ -44,12 +44,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: default
       ENCRYPT_KEY: d23e5862-cc5d-4f03-aadf-893cc53a2a35
-      JWT_SECRETKEY: 6467bf94-6658-4451-afa1-a2467c4cdf19
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_USERNAME: igar15
-      SPRING_RABBITMQ_PASSWORD: 123456Kmx
-      SPRING_SECURITY_USER_NAME: igar15
-      SPRING_SECURITY_USER_PASSWORD: 123456Kmx
     depends_on:
       rabbitmq:
         condition: service_started
