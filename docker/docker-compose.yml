@@ -65,8 +65,6 @@ services:
       SPRING_CLOUD_CONFIG_USERNAME: igar15
       SPRING_CLOUD_CONFIG_PASSWORD: 123456Kmx
     depends_on:
-      database:
-        condition: service_healthy
       rabbitmq:
         condition: service_started
       config-server:
@@ -87,8 +85,6 @@ services:
       SPRING_CLOUD_CONFIG_USERNAME: igar15
       SPRING_CLOUD_CONFIG_PASSWORD: 123456Kmx
     depends_on:
-      database:
-        condition: service_healthy
       rabbitmq:
         condition: service_started
       config-server:
@@ -119,6 +115,8 @@ services:
         condition: service_started
       config-server:
         condition: service_started
+      eureka-server:
+        condition: service_started
       logstash:
         condition: service_started
     networks:
@@ -142,6 +140,8 @@ services:
       rabbitmq:
         condition: service_started
       config-server:
+        condition: service_started
+      eureka-server:
         condition: service_started
       logstash:
         condition: service_started
@@ -167,6 +167,8 @@ services:
         condition: service_started
       config-server:
         condition: service_started
+      eureka-server:
+        condition: service_started
       logstash:
         condition: service_started
     networks:
@@ -191,6 +193,8 @@ services:
         condition: service_started
       config-server:
         condition: service_started
+      eureka-server:
+        condition: service_started
       logstash:
         condition: service_started
     networks:
@@ -212,6 +216,8 @@ services:
       rabbitmq:
         condition: service_started
       config-server:
+        condition: service_started
+      eureka-server:
         condition: service_started
       logstash:
         condition: service_started
@@ -237,6 +243,8 @@ services:
         condition: service_started
       config-server:
         condition: service_started
+      eureka-server:
+        condition: service_started
       logstash:
         condition: service_started
     networks:
@@ -260,6 +268,8 @@ services:
       rabbitmq:
         condition: service_started
       config-server:
+        condition: service_started
+      eureka-server:
         condition: service_started
       logstash:
         condition: service_started
