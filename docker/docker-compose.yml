@@ -44,6 +44,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: default
       ENCRYPT_KEY: d23e5862-cc5d-4f03-aadf-893cc53a2a35
+      SPRING_SECURITY_USER_NAME: igar15
+      SPRING_SECURITY_USER_PASSWORD: 123456Kmx
     depends_on:
       rabbitmq:
         condition: service_started
