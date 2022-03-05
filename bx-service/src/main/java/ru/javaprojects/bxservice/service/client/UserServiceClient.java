@@ -1,13 +1,10 @@
 package ru.javaprojects.bxservice.service.client;
 
-import feign.FeignException;
-import feign.FeignException.ServiceUnavailable;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -19,7 +16,6 @@ import ru.javaprojects.energybalancecontrolshared.web.security.JwtProvider;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Component
 public class UserServiceClient {
@@ -59,11 +55,11 @@ public class UserServiceClient {
         return environment.getProperty("authorization.token.header.prefix") + jwtProvider.generateAuthorizationToken(String.valueOf(userId));
     }
 
-    @FeignClient(name = "user-service")
+    @FeignClient(name = "gateway-server")
     public interface UserServiceFeignClient {
         Logger logger = LoggerFactory.getLogger(UserServiceFeignClient.class);
 
-        @GetMapping("/api/profile/bx-details")
+        @GetMapping("/user-service/api/profile/bx-details")
         @CircuitBreaker(name = "user-service-get-bx-details", fallbackMethod = "throwFailedConnectionException")
         UserBxDetails getUserBxDetails(@RequestHeader(AUTHORIZATION) String authorizationHeader);
 

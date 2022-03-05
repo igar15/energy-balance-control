@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 
-@FeignClient(name = "training-service")
+@FeignClient(name = "gateway-server", contextId = "trainingServiceClient")
 public interface TrainingServiceClient {
     Logger logger = LoggerFactory.getLogger(TrainingServiceClient.class);
 
-    @GetMapping("/api/exercises/total-calories-burned")
+    @GetMapping("/training-service/api/exercises/total-calories-burned")
     @CircuitBreaker(name = "training-service-get-calories", fallbackMethod = "getInvalidTrainingCaloriesValue")
     Integer getTrainingCalories(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date);
 

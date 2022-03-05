@@ -2,12 +2,6 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <springProperty scope="context" name="application_name" source="spring.application.name"/>
-    <springProfile name="dev">
-        <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-            <destination>localhost:5000</destination>
-            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-        </appender>
-    </springProfile>
     <springProfile name="default">
         <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
             <destination>logstash:5000</destination>
@@ -15,7 +9,9 @@
         </appender>
     </springProfile>
     <root level="INFO">
-        <appender-ref ref="logstash"/>
+        <springProfile name="default">
+            <appender-ref ref="logstash"/>
+        </springProfile>
         <appender-ref ref="CONSOLE"/>
     </root>
     <logger name="org.springframework" level="INFO"/>

@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 
-@FeignClient(name = "bx-service")
+@FeignClient(name = "gateway-server", contextId = "bxServiceClient")
 public interface BxServiceClient {
     Logger logger = LoggerFactory.getLogger(BxServiceClient.class);
 
-    @GetMapping("/api/bx")
+    @GetMapping("/bx-service/api/bx")
     @CircuitBreaker(name = "bx-service-get-calories", fallbackMethod = "getInvalidBxCaloriesValue")
     Integer getBxCalories(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date);
 
