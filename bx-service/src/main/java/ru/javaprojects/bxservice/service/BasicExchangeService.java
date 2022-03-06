@@ -11,7 +11,6 @@ import ru.javaprojects.bxservice.service.client.UserServiceClient;
 import java.time.LocalDate;
 import java.util.List;
 
-import static ru.javaprojects.bxservice.service.client.UserBxDetails.Sex.MAN;
 import static ru.javaprojects.bxservice.util.BasicExchangeUtil.calculateBxCalories;
 
 @Service

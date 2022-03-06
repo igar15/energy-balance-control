@@ -11,7 +11,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.javaprojects.energybalancecontrolshared.util.ValidationUtil;
 import ru.javaprojects.userservice.model.User;
 import ru.javaprojects.userservice.service.UserService;
 import ru.javaprojects.userservice.to.AdminUserTo;

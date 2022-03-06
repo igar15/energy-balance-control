@@ -29,7 +29,6 @@ public class EnergyBalanceRestController {
     public EnergyBalanceReport getReport(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         long userId = SecurityUtil.authUserId();
         log.info("getReport for date {} for user {}", date, userId);
-        //TODO we do not pass userId to service -> check that feign clients pass through existed Auth header when call remote services
         return service.getReport(date);
     }
 }
