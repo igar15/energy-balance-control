@@ -3,6 +3,7 @@ package ru.javaprojects.gatewayserver.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -47,6 +48,7 @@ public class WebSecurity {
                 .securityContextRepository(securityContextRepository)
                 .authorizeExchange()
                 .pathMatchers(freePaths).permitAll()
+                .pathMatchers(HttpMethod.OPTIONS).permitAll()
                 .pathMatchers("/actuator/*").hasRole("ADMIN")
                 .anyExchange().authenticated()
                 .and().exceptionHandling()
