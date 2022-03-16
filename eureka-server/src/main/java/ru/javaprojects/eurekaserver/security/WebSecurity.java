@@ -31,7 +31,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .requestMatchers().antMatchers("/actuator/*", "/")
+                .requestMatchers().antMatchers("/actuator/*")
                 .and()
                 .authorizeRequests()
                 .anyRequest().hasRole("ADMIN")
@@ -48,6 +48,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         protected void configure(HttpSecurity http) throws Exception {
             http
                     .antMatcher("/eureka/**")
+                    .antMatcher("/")
                     .authorizeRequests().anyRequest().authenticated()
                     .and()
                     .csrf().disable()
