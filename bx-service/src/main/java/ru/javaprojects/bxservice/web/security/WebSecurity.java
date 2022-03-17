@@ -11,6 +11,7 @@ import ru.javaprojects.energybalancecontrolshared.web.security.RestAuthenticatio
 @Configuration
 @EnableWebSecurity
 public class WebSecurity extends JwtWebSecurity {
+
     public WebSecurity(JwtAuthorizationFilter jwtAuthorizationFilter,
                        RestAuthenticationEntryPoint restAuthenticationEntryPoint,
                        RestAccessDeniedHandler restAccessDeniedHandler) {
@@ -21,7 +22,7 @@ public class WebSecurity extends JwtWebSecurity {
     protected void configureAuthorizeRequests(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/actuator/*").access("hasRole('ADMIN') and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
+                .antMatchers("/actuator/*").hasRole("ADMIN")
                 .anyRequest().access("isAuthenticated() and hasIpAddress(@environment.getProperty('gateway-server.ip'))");
     }
 }

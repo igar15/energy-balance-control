@@ -23,10 +23,9 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 public class WebSecurity {
-
     @Value("${gateway-server.free-paths}")
     private String[] freePaths;
-    @Value("${gateway-server.allowed-origins}")
+    @Value("${allowed-origins}")
     private List<String> allowedOrigins;
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
