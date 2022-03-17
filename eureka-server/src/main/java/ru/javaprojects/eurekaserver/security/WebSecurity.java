@@ -47,8 +47,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http
-                    .antMatcher("/eureka/**")
-                    .antMatcher("/")
+                    .requestMatchers().antMatchers("/eureka/**", "/").and()
                     .authorizeRequests().anyRequest().authenticated()
                     .and()
                     .csrf().disable()
