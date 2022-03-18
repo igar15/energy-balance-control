@@ -22,7 +22,7 @@ public class WebSecurity extends JwtWebSecurity {
     protected void configureAuthorizeRequests(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/actuator/*").hasRole("ADMIN")
+                .antMatchers("/actuator/*").access("hasRole('ADMIN') and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
                 .anyRequest().access("isAuthenticated() and hasIpAddress(@environment.getProperty('gateway-server.ip'))");
     }
 }
