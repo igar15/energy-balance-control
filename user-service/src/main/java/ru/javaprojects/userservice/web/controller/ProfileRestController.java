@@ -1,5 +1,8 @@
 package ru.javaprojects.userservice.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +36,7 @@ import static ru.javaprojects.userservice.util.UserUtil.createNewFromTo;
 @RestController
 @RequestMapping(value = ProfileRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
+@Tag(name = "Profile Rest Controller")
 public class ProfileRestController {
     static final String REST_URL = "/api/profile";
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -48,6 +52,8 @@ public class ProfileRestController {
     }
 
     @PostMapping("/login")
+    @Operation(description = "Login to app")
+    @SecurityRequirements
     public ResponseEntity<User> login(@RequestParam String email, @RequestParam String password) {
         log.info("login user {}", email);
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email.toLowerCase(), password));
@@ -59,6 +65,8 @@ public class ProfileRestController {
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Register in app")
+    @SecurityRequirements
     public ResponseEntity<User> register(@Valid @RequestBody NewUserTo newUserTo) {
         log.info("register user {}", newUserTo);
         User created = service.create(createNewFromTo(newUserTo));
@@ -68,6 +76,7 @@ public class ProfileRestController {
     }
 
     @GetMapping
+    @Operation(description = "Get user profile data")
     public User get() {
         long userId = SecurityUtil.authUserId();
         log.info("get {}", userId);
@@ -75,6 +84,7 @@ public class ProfileRestController {
     }
 
     @GetMapping("/bx-details")
+    @Operation(description = "Get user BX data")
     public UserBxDetails getBxDetails() {
         long userId = SecurityUtil.authUserId();
         log.info("getBxDetails for user {}", userId);
@@ -83,6 +93,7 @@ public class ProfileRestController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Update user profile data")
     public void update(@Valid @RequestBody UserTo userTo) {
         long userId = SecurityUtil.authUserId();
         log.info("update {} with id={}", userTo, userId);
@@ -92,6 +103,7 @@ public class ProfileRestController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Delete user profile")
     public void delete() {
         long userId = SecurityUtil.authUserId();
         log.info("delete {}", userId);
@@ -100,6 +112,7 @@ public class ProfileRestController {
 
     @PatchMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Change user password")
     public void changePassword(@RequestParam @Size(min = 5, max = 32) String password) {
         long userId = SecurityUtil.authUserId();
         log.info("change password for user {}", userId);
@@ -108,6 +121,7 @@ public class ProfileRestController {
 
     @PutMapping("/password/reset")
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(description = "Reset user password")
     public void resetPassword(@RequestParam String email) {
         log.info("reset password for user {}", email);
         service.resetPassword(email);
@@ -115,6 +129,7 @@ public class ProfileRestController {
 
     @PutMapping("/email/verify")
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(description = "Send email verification")
     public void sendEmailVerify(@RequestParam String email) {
         log.info("send email verify for user {}", email);
         service.sendEmailVerify(email);

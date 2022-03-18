@@ -64,6 +64,8 @@ public class WebSecurity extends JwtWebSecurity {
                 .antMatchers("/api/profile/password/reset").access("isAnonymous() and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
                 .antMatchers("/api/profile/email/verify").access("isAnonymous() and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
                 .antMatchers("/actuator/*").hasRole("ADMIN")
+                .antMatchers("/swagger*/**").permitAll()
+                .antMatchers("/v3/api-docs/**").permitAll()
                 .anyRequest().access("isAuthenticated() and hasIpAddress(@environment.getProperty('gateway-server.ip'))");
     }
 }

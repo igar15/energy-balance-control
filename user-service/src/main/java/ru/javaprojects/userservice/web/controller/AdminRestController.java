@@ -1,5 +1,7 @@
 package ru.javaprojects.userservice.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -21,12 +23,14 @@ import java.net.URI;
 
 import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.assureIdConsistent;
 import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.checkNew;
+import static ru.javaprojects.userservice.web.swagger.OpenApiConfig.ALLOWED_ADMIN;
 
 
 @RestController
 @RequestMapping(value = AdminRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
 @Secured("ROLE_ADMIN")
+@Tag(name = "Admin Rest Controller" + ALLOWED_ADMIN)
 public class AdminRestController {
     private final Logger log = LoggerFactory.getLogger(getClass());
     static final String REST_URL = "/api/users";
@@ -37,24 +41,28 @@ public class AdminRestController {
     }
 
     @GetMapping
+    @Operation(description = "Get user page" + ALLOWED_ADMIN)
     public Page<User> getPage(Pageable pageable) {
         log.info("getPage(pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
         return service.getPage(pageable);
     }
 
     @GetMapping("/by")
+    @Operation(description = "Get user page by keyword" + ALLOWED_ADMIN)
     public Page<User> getPageByKeyword(Pageable pageable, @RequestParam String keyword) {
         log.info("getPage(pageNumber={}, pageSize={}) by keyword {}", pageable.getPageNumber(), pageable.getPageSize(), keyword);
         return service.getPageByKeyword(keyword, pageable);
     }
 
     @GetMapping("/{id}")
+    @Operation(description = "Get user" + ALLOWED_ADMIN)
     public User get(@PathVariable long id) {
         log.info("get {}", id);
         return service.get(id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Create new user" + ALLOWED_ADMIN)
     public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user) {
         log.info("create {}", user);
         checkNew(user);
@@ -67,6 +75,7 @@ public class AdminRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Update user" + ALLOWED_ADMIN)
     public void update(@Valid @RequestBody AdminUserTo adminUserTo, @PathVariable long id) {
         log.info("update {} with id={}", adminUserTo, id);
         assureIdConsistent(adminUserTo, id);
@@ -75,6 +84,7 @@ public class AdminRestController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Delete user" + ALLOWED_ADMIN)
     public void delete(@PathVariable long id) {
         log.info("delete {}", id);
         service.delete(id);
@@ -82,6 +92,7 @@ public class AdminRestController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Enable user" + ALLOWED_ADMIN)
     public void enable(@PathVariable long id) {
         log.info("enable {}", id);
         service.enable(id);
@@ -89,6 +100,7 @@ public class AdminRestController {
 
     @PatchMapping("/{id}/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Change user's password" + ALLOWED_ADMIN)
     public void changePassword(@PathVariable long id, @RequestParam @Size(min = 5, max = 32) String password) {
         log.info("change password for user {}", id);
         service.changePassword(id, password);
