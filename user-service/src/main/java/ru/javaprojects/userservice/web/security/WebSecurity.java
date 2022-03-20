@@ -64,8 +64,8 @@ public class WebSecurity extends JwtWebSecurity {
                 .antMatchers("/api/profile/password/reset").access("isAnonymous() and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
                 .antMatchers("/api/profile/email/verify").access("isAnonymous() and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
                 .antMatchers("/actuator/*").access("hasRole('ADMIN') and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
-                .antMatchers("/swagger*/**").permitAll()
-                .antMatchers("/v3/api-docs/**").permitAll()
+                .antMatchers("/swagger*/**").access("hasIpAddress(@environment.getProperty('gateway-server.ip'))")
+                .antMatchers("/v3/api-docs/**").access("hasIpAddress(@environment.getProperty('gateway-server.ip'))")
                 .anyRequest().access("isAuthenticated() and hasIpAddress(@environment.getProperty('gateway-server.ip'))");
     }
 }

@@ -23,6 +23,8 @@ public class WebSecurity extends JwtWebSecurity {
         http
                 .authorizeRequests()
                 .antMatchers("/actuator/*").access("hasRole('ADMIN') and hasIpAddress(@environment.getProperty('gateway-server.ip'))")
+                .antMatchers("/swagger*/**").access("hasIpAddress(@environment.getProperty('gateway-server.ip'))")
+                .antMatchers("/v3/api-docs/**").access("hasIpAddress(@environment.getProperty('gateway-server.ip'))")
                 .anyRequest().access("permitAll() and hasIpAddress(@environment.getProperty('gateway-server.ip'))");
     }
 }

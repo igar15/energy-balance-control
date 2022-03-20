@@ -1,6 +1,9 @@
 package ru.javaprojects.userservice.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.net.URI;
 
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.assureIdConsistent;
 import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.checkNew;
 import static ru.javaprojects.userservice.web.swagger.OpenApiConfig.ALLOWED_ADMIN;
@@ -42,14 +46,18 @@ public class AdminRestController {
 
     @GetMapping
     @Operation(description = "Get user page" + ALLOWED_ADMIN)
-    public Page<User> getPage(Pageable pageable) {
+    @Parameters({@Parameter(name = "page", in = QUERY, description = "Zero-based page index (0..N)", schema = @Schema(type = "integer", defaultValue = "0")),
+                 @Parameter(name = "size", in = QUERY, description = "The size of the page to be returned", schema = @Schema(type = "integer", defaultValue = "20"))})
+    public Page<User> getPage(@Parameter(hidden = true) Pageable pageable) {
         log.info("getPage(pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
         return service.getPage(pageable);
     }
 
     @GetMapping("/by")
     @Operation(description = "Get user page by keyword" + ALLOWED_ADMIN)
-    public Page<User> getPageByKeyword(Pageable pageable, @RequestParam String keyword) {
+    @Parameters({@Parameter(name = "page", in = QUERY, description = "Zero-based page index (0..N)", schema = @Schema(type = "integer", defaultValue = "0")),
+                 @Parameter(name = "size", in = QUERY, description = "The size of the page to be returned", schema = @Schema(type = "integer", defaultValue = "20"))})
+    public Page<User> getPageByKeyword(@Parameter(hidden = true) Pageable pageable, @RequestParam String keyword) {
         log.info("getPage(pageNumber={}, pageSize={}) by keyword {}", pageable.getPageNumber(), pageable.getPageSize(), keyword);
         return service.getPageByKeyword(keyword, pageable);
     }

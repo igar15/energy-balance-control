@@ -15,10 +15,6 @@
     <name>user-service</name>
     <description>User Web Service</description>
 
-    <properties>
-        <springdoc.version>1.6.6</springdoc.version>
-    </properties>
-
     <dependencies>
         <!--Web-->
         <dependency>
@@ -114,13 +110,8 @@
         <!--Swagger-->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${springdoc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-security</artifactId>
-            <version>${springdoc.version}</version>
+            <artifactId>springdoc-openapi-webmvc-core</artifactId>
+            <version>1.6.6</version>
         </dependency>
 
         <!--Test-->

@@ -1,5 +1,7 @@
 package ru.javaprojects.trainingservice.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import static ru.javaprojects.energybalancecontrolshared.util.ValidationUtil.che
 
 @RestController
 @RequestMapping(value = ExerciseTypeController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Exercise Type Rest Controller")
 public class ExerciseTypeController {
     static final String REST_URL = "/api/exercise-types";
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -28,6 +31,7 @@ public class ExerciseTypeController {
     }
 
     @GetMapping
+    @Operation(description = "Get all exercise types")
     public List<ExerciseType> getAll() {
         long userId = SecurityUtil.authUserId();
         log.info("getAll for user {}", userId);
@@ -36,6 +40,7 @@ public class ExerciseTypeController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(description = "Create new exercise type")
     public ExerciseType create(@Valid @RequestBody ExerciseTypeTo exerciseTypeTo) {
         long userId = SecurityUtil.authUserId();
         log.info("create {} for user {}", exerciseTypeTo, userId);
@@ -45,6 +50,7 @@ public class ExerciseTypeController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Update exercise type")
     public void update(@Valid @RequestBody ExerciseTypeTo exerciseTypeTo, @PathVariable long id) {
         long userId = SecurityUtil.authUserId();
         log.info("update {} for user {}", exerciseTypeTo, userId);
@@ -54,6 +60,7 @@ public class ExerciseTypeController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Delete exercise type")
     public void delete(@PathVariable long id) {
         long userId = SecurityUtil.authUserId();
         log.info("delete exerciseType {} for user {}", id, userId);

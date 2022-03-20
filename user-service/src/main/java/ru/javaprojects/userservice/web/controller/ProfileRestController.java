@@ -122,6 +122,7 @@ public class ProfileRestController {
     @PutMapping("/password/reset")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(description = "Reset user password")
+    @SecurityRequirements
     public void resetPassword(@RequestParam String email) {
         log.info("reset password for user {}", email);
         service.resetPassword(email);
@@ -130,6 +131,7 @@ public class ProfileRestController {
     @PutMapping("/email/verify")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(description = "Send email verification")
+    @SecurityRequirements
     public void sendEmailVerify(@RequestParam String email) {
         log.info("send email verify for user {}", email);
         service.sendEmailVerify(email);
