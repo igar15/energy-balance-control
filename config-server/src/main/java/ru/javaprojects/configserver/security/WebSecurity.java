@@ -23,7 +23,7 @@ import java.util.List;
 @EnableWebSecurity
 @Order(1)
 public class WebSecurity extends WebSecurityConfigurerAdapter {
-    @Value("${config-server.allowed-origins}")
+    @Value("${allowed-origins}")
     private List<String> allowedOrigins;
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;

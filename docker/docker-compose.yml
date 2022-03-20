@@ -341,6 +341,23 @@ services:
         aliases:
           - "zipkin"
 
+  angular-ebc:
+    image: ebc/angular-ebc
+    container_name: angular-ebc
+    ports:
+      - 4201:4201
+    depends_on:
+      gateway-server:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_started
+    networks:
+      ebc-network:
+        aliases:
+          - "angular-ebc"
+
 volumes:
   esdata1:
     driver: local
