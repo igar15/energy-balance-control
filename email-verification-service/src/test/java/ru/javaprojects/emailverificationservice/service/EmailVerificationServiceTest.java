@@ -18,7 +18,10 @@ import ru.javaprojects.emailverificationservice.util.exception.EmailVerification
 import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 
 import javax.annotation.PostConstruct;
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
 import java.util.Date;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.javaprojects.emailverificationservice.testdata.VerificationTokenTestData.*;
@@ -45,12 +48,13 @@ class EmailVerificationServiceTest {
     void setupEmailVerificationService() {
         service.setMailSender(mailSender);
         service.setMessageSender(messageSender);
+        Mockito.when(mailSender.createMimeMessage()).thenReturn(new MimeMessage(Session.getDefaultInstance(new Properties())));
     }
 
     @Test
     void sendVerificationEmail() {
         service.sendVerificationEmail(NEW_USER_EMAIL);
-        Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(SimpleMailMessage.class));
+        Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(MimeMessage.class));
         VerificationToken verificationToken = repository.findByEmail(NEW_USER_EMAIL).get();
         assertFalse(verificationToken.isEmailVerified());
         assertTrue(verificationToken.getExpiryDate().after(new Date()));
@@ -65,7 +69,7 @@ class EmailVerificationServiceTest {
     @Test
     void sendVerificationEmailWhenEmailExistButNotVerified() {
         assertDoesNotThrow(() -> service.sendVerificationEmail(notExpiredNotVerifiedToken.getEmail()));
-        Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(SimpleMailMessage.class));
+        Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(MimeMessage.class));
         VerificationToken verificationToken = repository.findByEmail(notExpiredNotVerifiedToken.getEmail()).get();
         assertFalse(verificationToken.isEmailVerified());
         assertTrue(verificationToken.getExpiryDate().after(new Date()));

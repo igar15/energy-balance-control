@@ -5,7 +5,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -18,7 +17,10 @@ import ru.javaprojects.passwordresetservice.repository.PasswordResetTokenReposit
 import ru.javaprojects.passwordresetservice.util.exception.PasswordResetException;
 
 import javax.annotation.PostConstruct;
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
 import java.util.Date;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.javaprojects.passwordresetservice.testdata.PasswordResetTokenTestData.*;
@@ -45,12 +47,13 @@ class PasswordResetServiceTest {
     void setupEmailVerificationService() {
         service.setMailSender(mailSender);
         service.setMessageSender(messageSender);
+        Mockito.when(mailSender.createMimeMessage()).thenReturn(new MimeMessage(Session.getDefaultInstance(new Properties())));
     }
 
     @Test
     void sendPasswordResetEmail() {
         service.sendPasswordResetEmail(USER_EMAIL);
-        Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(SimpleMailMessage.class));
+        Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(MimeMessage.class));
         PasswordResetToken passwordResetToken = repository.findByEmail(USER_EMAIL).get();
         assertTrue(passwordResetToken.getExpiryDate().after(new Date()));
     }
@@ -58,7 +61,7 @@ class PasswordResetServiceTest {
     @Test
     void sendPasswordResetEmailWhenTokenAlreadyExist() {
         service.sendPasswordResetEmail(notExpiredToken.getEmail());
-        Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(SimpleMailMessage.class));
+        Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(MimeMessage.class));
         PasswordResetToken passwordResetToken = repository.findByEmail(notExpiredToken.getEmail()).get();
         assertTrue(passwordResetToken.getExpiryDate().after(new Date()));
         assertNotEquals(notExpiredToken.getToken(), passwordResetToken.getToken());
