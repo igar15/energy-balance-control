@@ -1,16 +1,19 @@
 package ru.javaprojects.emailverificationservice.service;
 
 import org.springframework.core.env.Environment;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.emailverificationservice.messaging.MessageSender;
 import ru.javaprojects.emailverificationservice.model.VerificationToken;
 import ru.javaprojects.emailverificationservice.repository.VerificationTokenRepository;
+import ru.javaprojects.emailverificationservice.util.exception.EmailVerificationException;
 import ru.javaprojects.energybalancecontrolshared.util.exception.NotFoundException;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
 import static ru.javaprojects.emailverificationservice.util.VerificationTokenUtil.*;
@@ -62,13 +65,18 @@ public class EmailVerificationService {
     }
 
     private void sendEmail(String email, String token) {
-        String url = String.format("%s?token=%s", environment.getProperty("email.verification-token.url"), token);
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setTo(email);
-        mail.setSubject("Email Verification");
-        mail.setText("Please open the following URL to verify your email: \r\n" + url);
-        mail.setFrom(environment.getProperty("support.email"));
-        mailSender.send(mail);
+        String url = String.format("<a href='%s?token=%s'>Email Verification Link</a>", environment.getProperty("email.verification-token.url"), token);
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, "utf-8");
+            mimeMessageHelper.setTo(email);
+            mimeMessageHelper.setFrom(environment.getProperty("support.email"));
+            mimeMessageHelper.setSubject("EBC System: Email Verification Message");
+            mimeMessageHelper.setText("<p>Please follow the link to verify your email address:</p>" + url, true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new EmailVerificationException(e.getMessage());
+        }
     }
 
     //use only for tests
