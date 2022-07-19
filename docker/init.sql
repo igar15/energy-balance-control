@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS meals
     calories    INTEGER   NOT NULL,
     user_id     BIGINT    NOT NULL
 );
-CREATE UNIQUE INDEX IF NOT EXISTS meals_unique_user_datetime_idx ON meals (user_id, date_time);
+CREATE UNIQUE INDEX meals_unique_user_datetime_description_idx ON meals (user_id, date_time, description);
 
 CREATE TABLE IF NOT EXISTS exercise_types
 (

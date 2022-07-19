@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time", "description"},
+        name = "meals_unique_user_datetime_description_idx")})
 @Access(AccessType.FIELD)
 public class Meal {
     public static final int START_SEQ = 100000;

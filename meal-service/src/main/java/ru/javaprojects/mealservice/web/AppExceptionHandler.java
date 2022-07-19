@@ -19,8 +19,8 @@ import static ru.javaprojects.energybalancecontrolshared.util.exception.ErrorTyp
 
 @RestControllerAdvice
 public class AppExceptionHandler extends BasicAppExceptionHandler {
-    public static final String EXCEPTION_DUPLICATE_DATE_TIME = "Meal with this date and time already exists";
-    public static final String MEAL_DATE_TIME_CONSTRAIN = "meals_unique_user_datetime_idx";
+    public static final String EXCEPTION_DUPLICATE_DATE_TIME = "Meal with this description on this date and time already exists";
+    public static final String MEAL_DESCRIPTION_DATE_TIME_CONSTRAIN = "meals_unique_user_datetime_description_idx";
 
 
     @ExceptionHandler(NotFoundException.class)
@@ -33,7 +33,7 @@ public class AppExceptionHandler extends BasicAppExceptionHandler {
         String rootMsg = ValidationUtil.getRootCause(e).getMessage();
         if (rootMsg != null) {
             String lowerCaseMsg = rootMsg.toLowerCase();
-            if (lowerCaseMsg.contains(MEAL_DATE_TIME_CONSTRAIN)) {
+            if (lowerCaseMsg.contains(MEAL_DESCRIPTION_DATE_TIME_CONSTRAIN)) {
                 return logAndGetErrorInfo(req, e, false, DATA_ERROR, EXCEPTION_DUPLICATE_DATE_TIME);
             }
         }

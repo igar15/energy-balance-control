@@ -123,6 +123,7 @@ class MealRestControllerTest extends AbstractControllerTest {
     void createDuplicate() throws Exception {
         MealTo newMealTo = getNewTo();
         newMealTo.setDateTime(meal1.getDateTime());
+        newMealTo.setDescription(meal1.getDescription());
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newMealTo)))
@@ -204,6 +205,7 @@ class MealRestControllerTest extends AbstractControllerTest {
     void updateDuplicate() throws Exception {
         MealTo updatedTo = getUpdatedTo();
         updatedTo.setDateTime(meal2.getDateTime());
+        updatedTo.setDescription(meal2.getDescription());
         perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updatedTo)))

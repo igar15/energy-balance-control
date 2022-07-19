@@ -72,7 +72,12 @@ class MealServiceTest {
 
     @Test
     void duplicateDateTimeCreate() {
-        assertThrows(DataAccessException.class, () -> service.create(new MealTo(null, meal1.getDateTime(), "duplicate", 250), USER_ID));
+        assertDoesNotThrow(() -> service.create(new MealTo(null, meal1.getDateTime(), "other_description", 250), USER_ID));
+    }
+
+    @Test
+    void duplicateDateTimeAndDescriptionCreate() {
+        assertThrows(DataAccessException.class, () -> service.create(new MealTo(null, meal1.getDateTime(), meal1.getDescription(), 250), USER_ID));
     }
 
     @Test
@@ -110,6 +115,14 @@ class MealServiceTest {
     void duplicateDateTimeUpdate() {
         MealTo updatedTo = getUpdatedTo();
         updatedTo.setDateTime(meal2.getDateTime());
+        assertDoesNotThrow(() -> service.update(updatedTo, USER_ID));
+    }
+
+    @Test
+    void duplicateDateTimeAndDescriptionUpdate() {
+        MealTo updatedTo = getUpdatedTo();
+        updatedTo.setDateTime(meal2.getDateTime());
+        updatedTo.setDescription(meal2.getDescription());
         assertThrows(DataAccessException.class, () -> service.update(updatedTo, USER_ID));
     }
 
