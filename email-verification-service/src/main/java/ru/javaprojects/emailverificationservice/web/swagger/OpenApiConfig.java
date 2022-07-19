@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
                 license = @License(name = "Apache 2.0", url = "http://www.apache.org/licenses/LICENSE-2.0"),
                 contact = @Contact(url = "https://javaprojects.ru", name = "Igor Shlyakhtenkov", email = "ishlyakhtenkov@yandex.ru")
         ),
-        servers = {@Server(url = "https://javaprojects.ru:8028/email-verification-service", description = "Internet Server url"),
+        servers = {@Server(url = "http://87.255.8.65:8028/email-verification-service", description = "Internet Server url"),
                 @Server(url = "http://localhost:8028/email-verification-service", description = "Local Server url")},
         tags = {@Tag(name = "Email Verification Rest Controller")}
 )

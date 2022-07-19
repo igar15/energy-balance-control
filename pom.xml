@@ -33,7 +33,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<spring-cloud.version>2021.0.0</spring-cloud.version>
-		<docker.image.prefix>ebc</docker.image.prefix>
+		<docker.image.prefix>javaprojects/ebc_</docker.image.prefix>
 	</properties>
 
 	<dependencies>
@@ -74,7 +74,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<image>
-						<name>${docker.image.prefix}/${project.artifactId}:latest</name>
+						<name>${docker.image.prefix}${project.artifactId}:latest</name>
 					</image>
 				</configuration>
 			</plugin>
