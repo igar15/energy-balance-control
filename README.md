@@ -1,5 +1,5 @@
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a6fd0d1b442142dd849183e941d3085f)](https://www.codacy.com/gh/igar15/energy-balance-control/dashboard)
-[![Build Status](https://app.travis-ci.com/igar15/energy-balance-control.svg?branch=master)](https://app.travis-ci.com/github/igar15/energy-balance-control)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a6fd0d1b442142dd849183e941d3085f)](https://www.codacy.com/gh/ishlyakhtenkov/energy-balance-control/dashboard)
+[![Build Status](https://app.travis-ci.com/ishlyakhtenkov/energy-balance-control.svg?branch=master)](https://app.travis-ci.com/github/ishlyakhtenkov/energy-balance-control)
 
 Energy Balance Control project 
 =================================
